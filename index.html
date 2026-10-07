@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget & Auto - Web App Realtime Cloud</title>
-
+    <title>Budget & Auto - Web App Cloud</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -203,8 +202,7 @@
         <a href="#" class="nav-link active" onclick="navigate('dashboard', this)">📊 Dashboard Budget</a>
         <a href="#" class="nav-link" onclick="navigate('auto', this)">🚗 Gestione Auto</a>
         <a href="#" class="nav-link" onclick="navigate('history', this)">🗓 Storico Mesi</a>
-        <a href="#" class="nav-link" onclick="navigate('cloud', this)">☁️ Realtime Cloud Sync</a>
-        <a href="#" class="nav-link" onclick="navigate('backup', this)">💾 Backup & Ripristino JSON</a>
+        <a href="#" class="nav-link" onclick="navigate('backup', this)">☁️ Sincronizza & Backup</a>
     </nav>
 
     <!-- Modale Budget Quote Fisse -->
@@ -280,11 +278,10 @@
         </div>
         <div class="form-group">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <label style="margin-bottom:0;">Tipo di Intervento / Categoria</label>
+                <label style="margin-bottom:0;">Tipo di Intervento</label>
                 <button type="button" onclick="openNewCategoryPrompt()" style="background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:bold; cursor:pointer;">+ Nuova</button>
             </div>
             <select id="maint-type" onchange="checkCustomCategory(this.value)">
-                <!-- Opzioni popolate dinamicamente -->
             </select>
         </div>
         <div class="form-group" id="custom-category-group" style="display:none;">
@@ -348,7 +345,6 @@
                     </div>
                 </div>
 
-                <!-- Scheda Bisogni -->
                 <div class="macro-stat">
                     <div class="macro-header">
                         <span style="color: var(--primary);">🔴 Bisogni (<span id="lbl-r50">50</span>%)</span>
@@ -361,7 +357,6 @@
                     <div class="progress-bg"><div id="bar-50" class="progress-fill" style="width: 0%; background: var(--primary);"></div></div>
                 </div>
 
-                <!-- Scheda Svago -->
                 <div class="macro-stat">
                     <div class="macro-header">
                         <span style="color: var(--warning);">🟡 Svago (<span id="lbl-r30">30</span>%)</span>
@@ -374,7 +369,6 @@
                     <div class="progress-bg"><div id="bar-30" class="progress-fill" style="width: 0%; background: var(--warning);"></div></div>
                 </div>
 
-                <!-- Scheda Risparmio -->
                 <div class="macro-stat">
                     <div class="macro-header">
                         <span style="color: var(--success);">🟢 Risparmio (<span id="lbl-r20">20</span>%)</span>
@@ -388,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- Sezione: Fisse & Accantonamenti -->
             <div class="card">
                 <h2>
                     <span>Fisse & Accantonamenti <br><small id="current-month-label" style="font-size:0.8rem; font-weight:normal; color:var(--text-light);"></small></span>
@@ -436,32 +429,10 @@
             </div>
         </div>
 
-        <!-- CLOUD CONFIG (FIREBASE REALTIME AUTOMATICO) -->
-        <div id="cloud" class="page">
-            <div class="card">
-                <h2><span>☁️ Sincronizzazione Realtime Firebase</span></h2>
-                <p style="font-size: 0.88rem; color: var(--text-light); line-height: 1.5; margin-bottom: 14px;">
-                    Incolla qui l'URL del tuo database Firebase. Ogni nuovo inserimento si sincronizzerà all'istante su tutti i tuoi dispositivi senza toccare file.
-                </p>
-                
-                <div class="form-group">
-                    <label>Firebase Database URL</label>
-                    <input type="text" id="firebase-db-url" placeholder="https://tuo-progetto-default-rtdb.europe-west1.firebasedatabase.app">
-                </div>
-
-                <div class="form-group">
-                    <label>Nome Chiave / Profilo</label>
-                    <input type="text" id="firebase-sync-key" placeholder="es. mie_finanze" value="mie_finanze">
-                </div>
-
-                <button class="btn" onclick="setupFirebaseRealtime()">⚡ Collega e Attiva Realtime</button>
-            </div>
-        </div>
-
         <!-- SEZIONE BACKUP & RIPRISTINO COMPLETO -->
         <div id="backup" class="page">
             <div class="card" style="border: 2px solid var(--primary);">
-                <h2><span>☁️ Backup & Ripristino Cloud Diretto</span></h2>
+                <h2><span>☁️ Sincronizzazione Cloud</span></h2>
                 <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
                     Usa questi pulsanti per scambiare i dati tra Cellulare e PC senza scaricare file a mano.
                 </p>
@@ -525,8 +496,6 @@
         const defaultData = {
             salary: 1900,
             targetMonth: '',
-            firebaseUrl: '',
-            firebaseKey: 'mie_finanze',
             ratios: { r50: 50, r30: 30, r20: 20 },
             quotas: [
                 { id: 1, name: 'Assicurazione Auto', amount: 400, freq: 'annual', macro: '50' },
@@ -541,21 +510,20 @@
             }
         };
         
-        let appData = JSON.parse(localStorage.getItem('budgetAppV14')) 
+        let appData = JSON.parse(localStorage.getItem('budgetAppV15')) 
+                   || JSON.parse(localStorage.getItem('budgetAppV14'))
                    || JSON.parse(localStorage.getItem('budgetAppV13')) 
                    || JSON.parse(localStorage.getItem('budgetAppV12')) 
                    || defaultData;
 
         if (!appData.ratios) appData.ratios = { r50: 50, r30: 30, r20: 20 };
-        if (!appData.firebaseKey) appData.firebaseKey = 'mie_finanze';
         if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
         if (!appData.car.categories || !Array.isArray(appData.car.categories)) {
             appData.car.categories = initialCategories;
         }
         if (appData.expenses) delete appData.expenses;
-        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+        localStorage.setItem('budgetAppV15', JSON.stringify(appData));
 
-        let firebaseDbRef = null;
         let isRemoteUpdate = false;
 
         function applyTheme(theme) {
@@ -630,22 +598,18 @@
             if(pageId === 'dashboard') calculateBudget();
             if(pageId === 'history') renderHistory();
             if(pageId === 'auto') { renderFuel(); renderMaint(); }
-            if(pageId === 'cloud') { 
-                document.getElementById('firebase-db-url').value = appData.firebaseUrl || ''; 
-                document.getElementById('firebase-sync-key').value = appData.firebaseKey || 'mie_finanze'; 
-            }
         }
 
         function updateStatusBadge(status, text) {
             const el = document.getElementById('cloud-status-indicator');
+            if(!el) return;
             el.className = 'sync-badge ' + (status === 'online' ? 'sync-online' : status === 'loading' ? 'sync-loading' : 'sync-offline');
             el.innerHTML = `<span>${text}</span>`;
         }
 
-        
         function getFirebaseRestUrl() {
-            let url = DEFAULT_FIREBASE_URL || appData.firebaseUrl;
-            let key = DEFAULT_FIREBASE_KEY || appData.firebaseKey || 'mie_finanze';
+            let url = DEFAULT_FIREBASE_URL;
+            let key = DEFAULT_FIREBASE_KEY;
             if (!url) return null;
             if (!url.startsWith('https://')) url = 'https://' + url;
             if (url.endsWith('/')) url = url.slice(0, -1);
@@ -653,11 +617,11 @@
         }
 
         function saveData() {
-            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+            localStorage.setItem('budgetAppV15', JSON.stringify(appData));
             
             const endpoint = getFirebaseRestUrl();
             if (endpoint && !isRemoteUpdate) {
-                updateStatusBadge('loading', '⏳ Salvataggio Cloud in corso...');
+                updateStatusBadge('loading', '⏳ Salvataggio Cloud...');
                 fetch(endpoint, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -667,7 +631,7 @@
                     if (res.ok) {
                         updateStatusBadge('online', '⚡ Cloud Sincronizzato');
                     } else if (res.status === 401 || res.status === 403) {
-                        updateStatusBadge('offline', '⚠️ Permessi Firebase Negati (Regole)');
+                        updateStatusBadge('offline', '⚠️ Permessi Cloud Negati');
                     } else {
                         updateStatusBadge('offline', '⚠️ Errore Cloud HTTP ' + res.status);
                     }
@@ -682,7 +646,7 @@
 
         function uploadBackupToFirebase() {
             const endpoint = getFirebaseRestUrl();
-            if (!endpoint) return alert("URL Cloud non configurato.");
+            if (!endpoint) return alert("URL Cloud non configurato nel codice.");
             
             updateStatusBadge('loading', '⏳ Invio dati al Cloud...');
             fetch(endpoint, {
@@ -695,8 +659,7 @@
                     updateStatusBadge('online', '⚡ Cloud Sincronizzato');
                     alert("✅ Dati caricati sul Cloud con successo! Ora puoi aprire l'app da PC e cliccare su 'Scarica e Importa Dati dal Cloud'.");
                 } else if (res.status === 401 || res.status === 403) {
-                    alert("⚠️ Accesso Negato da Firebase!
-Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write su true.");
+                    alert("⚠️ Accesso Negato da Firebase!\nVai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write su true.");
                     updateStatusBadge('offline', '⚠️ Regole Firebase Bloccate');
                 } else {
                     alert("Errore HTTP: " + res.status);
@@ -728,7 +691,9 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
                         isRemoteUpdate = true;
                         appData = Object.assign({}, defaultData, data);
                         if (!appData.car.categories) appData.car.categories = initialCategories;
-                        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+                        localStorage.setItem('budgetAppV15', JSON.stringify(appData));
+                        
+                        // Aggiorna la vista
                         document.getElementById('dash-salary').value = appData.salary;
                         document.getElementById('ratio-50').value = appData.ratios.r50;
                         document.getElementById('ratio-30').value = appData.ratios.r30;
@@ -751,26 +716,56 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
                 });
         }
 
-        function setupFirebaseRealtime() {
-            let url = document.getElementById('firebase-db-url').value.trim();
-            const key = document.getElementById('firebase-sync-key').value.trim() || 'mie_finanze';
+        // --- GESTIONE CATEGORIE DINAMICHE MANUTENZIONE ---
+        function populateMaintCategories(selectedCategory = '') {
+            const select = document.getElementById('maint-type');
+            select.innerHTML = '';
+            
+            const cats = appData.car.categories || initialCategories;
+            cats.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c;
+                select.appendChild(opt);
+            });
 
-            if (!url) {
-                appData.firebaseUrl = '';
-                appData.firebaseKey = '';
-                saveData();
-                updateStatusBadge('offline', '📱 Memoria Locale');
-                alert("Sincronizzazione Cloud disattivata.");
-                return;
+            const customOpt = document.createElement('option');
+            customOpt.value = '__custom__';
+            customOpt.innerText = '➕ Crea Nuova Categoria...';
+            select.appendChild(customOpt);
+
+            if (selectedCategory && cats.includes(selectedCategory)) {
+                select.value = selectedCategory;
+                document.getElementById('custom-category-group').style.display = 'none';
+            } else if (selectedCategory) {
+                select.value = '__custom__';
+                document.getElementById('custom-category-group').style.display = 'block';
+                document.getElementById('maint-custom-type').value = selectedCategory;
+            } else {
+                document.getElementById('custom-category-group').style.display = 'none';
             }
+        }
 
-            if (!url.startsWith('https://')) url = 'https://' + url;
-            if (url.endsWith('/')) url = url.slice(0, -1);
+        function checkCustomCategory(val) {
+            const group = document.getElementById('custom-category-group');
+            if (val === '__custom__') {
+                group.style.display = 'block';
+                document.getElementById('maint-custom-type').focus();
+            } else {
+                group.style.display = 'none';
+            }
+        }
 
-            appData.firebaseUrl = url;
-            appData.firebaseKey = key;
-            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
-            downloadBackupFromFirebase(true);
+        function openNewCategoryPrompt() {
+            const newCat = prompt("Inserisci il nome della nuova categoria di manutenzione:");
+            if (newCat && newCat.trim()) {
+                const name = newCat.trim();
+                if (!appData.car.categories.includes(name)) {
+                    appData.car.categories.push(name);
+                    saveData();
+                }
+                populateMaintCategories(name);
+            }
         }
 
         // --- BACKUP CLASSICO FILE JSON ---
@@ -816,7 +811,8 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
             const str = JSON.stringify(appData);
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(str).then(() => {
-                    alert("✅ Dati copiati negli appunti!\nIncollali nelle tue Note o dove preferisci.");
+                    alert("✅ Dati copiati negli appunti!
+Incollali nelle tue Note o dove preferisci.");
                 }).catch(() => {
                     prompt("Copia manualmente questo codice di backup:", str);
                 });
@@ -880,7 +876,9 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
 
             const selectEl = document.getElementById('budget-target-month');
             const selectedText = selectEl.options[selectEl.selectedIndex] ? selectEl.options[selectEl.selectedIndex].text : '';
-            document.getElementById('current-month-label').innerText = 'Mese: ' + selectedText.toUpperCase();
+            if(document.getElementById('current-month-label')) {
+                document.getElementById('current-month-label').innerText = 'Mese: ' + selectedText.toUpperCase();
+            }
 
             const qList = document.getElementById('quotas-list');
             qList.innerHTML = '';
@@ -1075,7 +1073,6 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
             }
         }
 
-        // --- AUTO: CARBURANTE ---
         function openFuelModal(id = null) {
             document.getElementById('fuel-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
@@ -1186,7 +1183,6 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
             });
         }
 
-        // --- AUTO: MANUTENZIONE ---
         function openMaintModal(id = null) {
             document.getElementById('maint-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
@@ -1306,10 +1302,10 @@ Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write s
         document.getElementById('ratio-20').value = appData.ratios.r20;
         calculateBudget();
 
-        // Connessione e allineamento automatico all'avvio via REST API
+        // Connessione e allineamento automatico all'avvio via API REST
         if (getFirebaseRestUrl()) {
             downloadBackupFromFirebase(false);
-            // Sincronizzazione periodica leggera ogni 30 secondi
+            // Salva/Sincronizza in automatico in background ogni 30 secondi per mantenere gli schermi allineati
             setInterval(() => { downloadBackupFromFirebase(false); }, 30000);
         }
     </script>
