@@ -178,7 +178,6 @@
         }
         .month-header span:last-child { background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem;}
         
-        /* Gestione collapse schede */
         .toggle-icon { display: inline-block; font-size: 0.8rem; transition: transform 0.3s; margin-right: 6px; }
         .month-group.collapsed .toggle-icon { transform: rotate(-90deg); }
         .month-group.collapsed .list-item { display: none; }
@@ -219,6 +218,7 @@
         <div class="drawer-header">Menu Principale</div>
         <a href="#" class="nav-link active" onclick="navigate('dashboard', this)">📊 Dashboard Budget</a>
         <a href="#" class="nav-link" onclick="navigate('auto', this)">🚗 Gestione Auto</a>
+        <a href="#" class="nav-link" onclick="navigate('stats', this)">📈 Statistiche Auto</a>
         <a href="#" class="nav-link" onclick="navigate('history', this)">🗓 Storico Mesi</a>
         <a href="#" class="nav-link" onclick="navigate('settings', this)">⚙️ Impostazioni</a>
     </nav>
@@ -433,6 +433,30 @@
                     <button class="add-btn" onclick="openMaintModal()">+</button>
                 </h2>
                 <div id="maint-list"></div>
+            </div>
+        </div>
+
+        <!-- STATISTICHE AUTO -->
+        <div id="stats" class="page">
+            <div class="month-selector-box">
+                <label>Filtra per Anno:</label>
+                <select id="stats-year-filter" onchange="renderStats()" style="font-weight:bold; font-size:1rem; border-color:var(--primary);">
+                </select>
+            </div>
+
+            <div class="card">
+                <h2><span>Riepilogo Totale Auto</span></h2>
+                <div id="stats-totals"></div>
+            </div>
+
+            <div class="card">
+                <h2><span>Manutenzione per Categoria</span></h2>
+                <div id="stats-maint"></div>
+            </div>
+
+            <div class="card">
+                <h2><span>Carburante per Tipologia</span></h2>
+                <div id="stats-fuel"></div>
             </div>
         </div>
 
@@ -661,6 +685,7 @@
             if(pageId === 'dashboard') calculateBudget();
             if(pageId === 'history') renderHistory();
             if(pageId === 'auto') { renderFuel(); renderMaint(); }
+            if(pageId === 'stats') { initStatsYearSelector(); renderStats(); }
         }
 
         function updateStatusBadge(status, text) {
@@ -834,6 +859,84 @@
                 }
                 populateMaintCategories(name);
             }
+        }
+
+        // --- STATISTICHE AUTO ---
+        function initStatsYearSelector() {
+            const sel = document.getElementById('stats-year-filter');
+            sel.innerHTML = '<option value="all">Tutto il periodo</option>';
+            
+            const years = new Set();
+            appData.car.fuel.forEach(f => { if(f.date) years.add(f.date.substring(0,4)); });
+            appData.car.maintenance.forEach(m => { if(m.date) years.add(m.date.substring(0,4)); });
+            
+            Array.from(years).sort().reverse().forEach(y => {
+                sel.innerHTML += `<option value="${y}">${y}</option>`;
+            });
+        }
+
+        function renderStats() {
+            const year = document.getElementById('stats-year-filter').value;
+            
+            let fuelData = appData.car.fuel || [];
+            let maintData = appData.car.maintenance || [];
+
+            if (year !== 'all') {
+                fuelData = fuelData.filter(f => f.date && f.date.startsWith(year));
+                maintData = maintData.filter(m => m.date && m.date.startsWith(year));
+            }
+
+            const totalFuel = fuelData.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+            const totalMaint = maintData.reduce((acc, curr) => acc + (parseFloat(curr.cost) || 0), 0);
+            const grandTotal = totalFuel + totalMaint;
+
+            document.getElementById('stats-totals').innerHTML = `
+                <div class="row"><div class="info-col">Spesa Carburante</div><div class="amount-col" style="color:var(--warning)">€ ${totalFuel.toFixed(2)}</div></div>
+                <div class="row"><div class="info-col">Spesa Manutenzione</div><div class="amount-col" style="color:var(--danger)">€ ${totalMaint.toFixed(2)}</div></div>
+                <div class="row total-row"><div class="info-col">Totale Auto</div><div class="amount-col">€ ${grandTotal.toFixed(2)}</div></div>
+            `;
+
+            const maintByCat = {};
+            maintData.forEach(m => {
+                maintByCat[m.type] = (maintByCat[m.type] || 0) + (parseFloat(m.cost) || 0);
+            });
+            const sortedMaint = Object.keys(maintByCat).sort((a,b) => maintByCat[b] - maintByCat[a]);
+            
+            let maintHtml = '';
+            sortedMaint.forEach(cat => {
+                const pct = totalMaint > 0 ? (maintByCat[cat] / totalMaint) * 100 : 0;
+                maintHtml += `
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                            <span>${cat}</span><strong>€ ${maintByCat[cat].toFixed(2)}</strong>
+                        </div>
+                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:var(--danger)"></div></div>
+                    </div>
+                `;
+            });
+            if(!maintHtml) maintHtml = '<p style="color:var(--text-light); font-size:0.85rem;">Nessuna spesa nel periodo.</p>';
+            document.getElementById('stats-maint').innerHTML = maintHtml;
+
+            const fuelByType = {};
+            fuelData.forEach(f => {
+                fuelByType[f.type] = (fuelByType[f.type] || 0) + (parseFloat(f.total) || 0);
+            });
+            
+            let fuelHtml = '';
+            Object.keys(fuelByType).forEach(type => {
+                const pct = totalFuel > 0 ? (fuelByType[type] / totalFuel) * 100 : 0;
+                const color = type === 'GPL' ? 'var(--success)' : 'var(--warning)';
+                fuelHtml += `
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                            <span>${type}</span><strong>€ ${fuelByType[type].toFixed(2)}</strong>
+                        </div>
+                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:${color}"></div></div>
+                    </div>
+                `;
+            });
+            if(!fuelHtml) fuelHtml = '<p style="color:var(--text-light); font-size:0.85rem;">Nessun rifornimento nel periodo.</p>';
+            document.getElementById('stats-fuel').innerHTML = fuelHtml;
         }
 
         // --- BACKUP CLASSICO FILE JSON ---
@@ -1303,8 +1406,7 @@
                                 </div>
                                 <div class="list-body">
                                     <div style="flex:1;">
-                                        <div style="font-weight: 500; color: var(--primary);">${m.type}</div>
-                                        ${m.notes ? `<div style="font-size: 0.8rem; color: var(--text-light); margin-top:2px;">📝 ${m.notes}</div>` : ''}
+                                        <div style="font-weight: 500; color: var(--primary);">${m.type}</div>${m.notes ? `<div style="font-size: 0.8rem; color: var(--text-light); margin-top:2px;">📝 ${m.notes}</div>` : ''}
                                     </div>
                                     <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
                                         - €${m.cost.toFixed(2)}
@@ -1319,6 +1421,20 @@
                     </div>
                 `;
             });
+        }
+
+        function clearData() {
+            if(confirm("Sei sicuro di voler resettare l'intera app? Eliminerà quote, auto e storico.")) {
+                localStorage.clear();
+                appData = JSON.parse(JSON.stringify(defaultData));
+                document.getElementById('dash-salary').value = appData.salary;
+                document.getElementById('ratio-50').value = 50;
+                document.getElementById('ratio-30').value = 30;
+                document.getElementById('ratio-20').value = 20;
+                initMonthSelector();
+                calculateBudget(); alert("Dati resettati."); 
+                navigate('dashboard', document.querySelectorAll('.nav-link')[0]);
+            }
         }
 
         initMonthSelector();
