@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget & Auto - Web App V12</title>
+    <title>Budget & Auto - Web App Realtime Cloud</title>
+    <!-- Firebase SDK Compatibile -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -94,6 +97,15 @@
         .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); box-shadow: none; }
         .btn-outline:hover { background: var(--primary-light); }
         
+        .sync-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.8rem; padding: 4px 10px; border-radius: 20px;
+            font-weight: 500; margin-bottom: 12px;
+        }
+        .sync-online { background: rgba(22, 163, 74, 0.15); color: var(--success); }
+        .sync-offline { background: rgba(107, 114, 128, 0.15); color: var(--text-light); }
+        .sync-loading { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
         .month-selector-box {
             background: var(--primary-light);
             border: 2px solid var(--primary);
@@ -162,10 +174,6 @@
         .list-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-light); }
         .list-body { display: flex; justify-content: space-between; align-items: center; }
 
-        .file-upload-wrapper {
-            position: relative;
-            margin-top: 10px;
-        }
         .file-upload-input {
             width: 100%;
             padding: 12px;
@@ -174,6 +182,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.9rem;
+            margin-top: 6px;
         }
     </style>
 </head>
@@ -196,7 +205,8 @@
         <a href="#" class="nav-link active" onclick="navigate('dashboard', this)">📊 Dashboard Budget</a>
         <a href="#" class="nav-link" onclick="navigate('auto', this)">🚗 Gestione Auto</a>
         <a href="#" class="nav-link" onclick="navigate('history', this)">🗓 Storico Mesi</a>
-        <a href="#" class="nav-link" onclick="navigate('backup', this)">💾 Backup & Ripristino</a>
+        <a href="#" class="nav-link" onclick="navigate('cloud', this)">☁️ Realtime Cloud Sync</a>
+        <a href="#" class="nav-link" onclick="navigate('backup', this)">💾 Backup & Ripristino JSON</a>
     </nav>
 
     <!-- Modale Budget Quote Fisse -->
@@ -271,16 +281,17 @@
             <input type="date" id="maint-date">
         </div>
         <div class="form-group">
-            <label>Tipo di Intervento</label>
-            <select id="maint-type">
-                <option value="Tagliando completo">Tagliando completo</option>
-                <option value="Cambio olio e filtro">Cambio olio e filtro</option>
-                <option value="Sostituzione filtro GPL Landi">Sostituzione filtro GPL Landi</option>
-                <option value="Controllo gioco valvole">Controllo gioco valvole</option>
-                <option value="Sostituzione candele">Sostituzione candele</option>
-                <option value="Pneumatici">Sostituzione Pneumatici</option>
-                <option value="Altro">Altro...</option>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="margin-bottom:0;">Tipo di Intervento / Categoria</label>
+                <button type="button" onclick="openNewCategoryPrompt()" style="background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:bold; cursor:pointer;">+ Nuova</button>
+            </div>
+            <select id="maint-type" onchange="checkCustomCategory(this.value)">
+                <!-- Opzioni popolate dinamicamente -->
             </select>
+        </div>
+        <div class="form-group" id="custom-category-group" style="display:none;">
+            <label>Nome Nuova Categoria Personalizzata</label>
+            <input type="text" id="maint-custom-type" placeholder="Es. Sostituzione Pastiglie Freni">
         </div>
         <div class="form-group">
             <label>Chilometraggio (Km)</label>
@@ -302,12 +313,16 @@
         <!-- DASHBOARD -->
         <div id="dashboard" class="page active">
             
+            <div id="cloud-status-indicator" class="sync-badge sync-offline">
+                <span>📱 Memoria Locale</span>
+            </div>
+
             <div class="month-selector-box">
                 <label for="budget-target-month">🎯 Mese di Competenza del Budget:</label>
                 <select id="budget-target-month" onchange="calculateBudget();" style="font-weight:bold; font-size:1rem; border-color:var(--primary);">
                 </select>
                 <small style="color:var(--text-light); display:block; margin-top:4px;">
-                    Imposta il mese a cui destinare lo stipendio (es. stipendio di fine agosto per settembre).
+                    Imposta il mese a cui destinare lo stipendio.
                 </small>
             </div>
 
@@ -423,7 +438,29 @@
             </div>
         </div>
 
-        <!-- SEZIONE BACKUP & RIPRISTINO COMPLETO (OTTIMIZZATA PER CELLULARE) -->
+        <!-- CLOUD CONFIG (FIREBASE REALTIME AUTOMATICO) -->
+        <div id="cloud" class="page">
+            <div class="card">
+                <h2><span>☁️ Sincronizzazione Realtime Firebase</span></h2>
+                <p style="font-size: 0.88rem; color: var(--text-light); line-height: 1.5; margin-bottom: 14px;">
+                    Incolla qui l'URL del tuo database Firebase. Ogni nuovo inserimento si sincronizzerà all'istante su tutti i tuoi dispositivi senza toccare file.
+                </p>
+                
+                <div class="form-group">
+                    <label>Firebase Database URL</label>
+                    <input type="text" id="firebase-db-url" placeholder="https://tuo-progetto-default-rtdb.europe-west1.firebasedatabase.app">
+                </div>
+
+                <div class="form-group">
+                    <label>Nome Chiave / Profilo</label>
+                    <input type="text" id="firebase-sync-key" placeholder="es. mie_finanze" value="mie_finanze">
+                </div>
+
+                <button class="btn" onclick="setupFirebaseRealtime()">⚡ Collega e Attiva Realtime</button>
+            </div>
+        </div>
+
+        <!-- SEZIONE BACKUP & RIPRISTINO COMPLETO -->
         <div id="backup" class="page">
             <div class="card">
                 <h2><span>📁 File Backup (.json)</span></h2>
@@ -433,8 +470,8 @@
                 
                 <button class="btn" style="background: var(--success);" onclick="exportData()">💾 Scarica File Backup (.json)</button>
                 
-                <div class="file-upload-wrapper">
-                    <label style="font-weight:bold; color:var(--primary); margin-bottom:4px;">Ripristina da File Backup:</label>
+                <div style="margin-top: 14px;">
+                    <label style="font-weight:bold; color:var(--primary); font-size:0.9rem;">Ripristina da File Backup:</label>
                     <input type="file" id="import-json-file" accept=".json,application/json,text/plain,*/*" class="file-upload-input" onchange="importData(event)">
                 </div>
             </div>
@@ -456,9 +493,23 @@
     </main>
 
     <script>
+        const initialCategories = [
+            'Tagliando completo',
+            'Cambio olio e filtro',
+            'Sostituzione filtro GPL Landi',
+            'Controllo gioco valvole',
+            'Sostituzione candele',
+            'Sostituzione Pneumatici',
+            'Freni (Pastiglie/Dischi)',
+            'Batteria Start & Stop',
+            'Altro'
+        ];
+
         const defaultData = {
             salary: 1900,
             targetMonth: '',
+            firebaseUrl: '',
+            firebaseKey: 'mie_finanze',
             ratios: { r50: 50, r30: 30, r20: 20 },
             quotas: [
                 { id: 1, name: 'Assicurazione Auto', amount: 400, freq: 'annual', macro: '50' },
@@ -466,17 +517,29 @@
                 { id: 3, name: 'Assicurazione Vita', amount: 120, freq: 'annual', macro: '20' }
             ],
             history: [],
-            car: { fuel: [], maintenance: [] }
+            car: { 
+                fuel: [], 
+                maintenance: [],
+                categories: initialCategories
+            }
         };
         
-        let appData = JSON.parse(localStorage.getItem('budgetAppV12')) 
-                   || JSON.parse(localStorage.getItem('budgetAppV11')) 
-                   || JSON.parse(localStorage.getItem('budgetAppV10')) 
+        let appData = JSON.parse(localStorage.getItem('budgetAppV14')) 
+                   || JSON.parse(localStorage.getItem('budgetAppV13')) 
+                   || JSON.parse(localStorage.getItem('budgetAppV12')) 
                    || defaultData;
 
         if (!appData.ratios) appData.ratios = { r50: 50, r30: 30, r20: 20 };
+        if (!appData.firebaseKey) appData.firebaseKey = 'mie_finanze';
+        if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
+        if (!appData.car.categories || !Array.isArray(appData.car.categories)) {
+            appData.car.categories = initialCategories;
+        }
         if (appData.expenses) delete appData.expenses;
-        localStorage.setItem('budgetAppV12', JSON.stringify(appData));
+        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+
+        let firebaseDbRef = null;
+        let isRemoteUpdate = false;
 
         function applyTheme(theme) {
             document.body.setAttribute('data-theme', theme);
@@ -550,12 +613,149 @@
             if(pageId === 'dashboard') calculateBudget();
             if(pageId === 'history') renderHistory();
             if(pageId === 'auto') { renderFuel(); renderMaint(); }
+            if(pageId === 'cloud') { 
+                document.getElementById('firebase-db-url').value = appData.firebaseUrl || ''; 
+                document.getElementById('firebase-sync-key').value = appData.firebaseKey || 'mie_finanze'; 
+            }
+        }
+
+        function updateStatusBadge(status, text) {
+            const el = document.getElementById('cloud-status-indicator');
+            el.className = 'sync-badge ' + (status === 'online' ? 'sync-online' : status === 'loading' ? 'sync-loading' : 'sync-offline');
+            el.innerHTML = `<span>${text}</span>`;
         }
 
         function saveData() {
-            localStorage.setItem('budgetAppV12', JSON.stringify(appData));
+            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+            
+            if (firebaseDbRef && !isRemoteUpdate) {
+                updateStatusBadge('loading', '⏳ Sincronizzazione Realtime...');
+                firebaseDbRef.set(appData)
+                    .then(() => updateStatusBadge('online', '⚡ Realtime Cloud Connesso'))
+                    .catch(() => updateStatusBadge('offline', '⚠️ Errore Connessione Cloud'));
+            } else if (!firebaseDbRef) {
+                updateStatusBadge('offline', '📱 Memoria Locale');
+            }
         }
 
+        function setupFirebaseRealtime() {
+            let url = document.getElementById('firebase-db-url').value.trim();
+            const key = document.getElementById('firebase-sync-key').value.trim() || 'mie_finanze';
+
+            if (!url) {
+                appData.firebaseUrl = '';
+                appData.firebaseKey = '';
+                saveData();
+                firebaseDbRef = null;
+                updateStatusBadge('offline', '📱 Memoria Locale');
+                alert("Sincronizzazione Cloud disattivata.");
+                return;
+            }
+
+            if (!url.startsWith('https://')) url = 'https://' + url;
+            if (url.endsWith('/')) url = url.slice(0, -1);
+
+            appData.firebaseUrl = url;
+            appData.firebaseKey = key;
+            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp({ databaseURL: url });
+                }
+                
+                updateStatusBadge('loading', '⏳ Connessione a Firebase...');
+                firebaseDbRef = firebase.database().ref(key);
+
+                firebaseDbRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && (data.salary !== undefined || data.quotas !== undefined)) {
+                        isRemoteUpdate = true;
+                        appData = Object.assign({}, defaultData, data);
+                        if (!appData.car.categories) appData.car.categories = initialCategories;
+                        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+                        document.getElementById('dash-salary').value = appData.salary;
+                        document.getElementById('ratio-50').value = appData.ratios.r50;
+                        document.getElementById('ratio-30').value = appData.ratios.r30;
+                        document.getElementById('ratio-20').value = appData.ratios.r20;
+                        calculateBudget();
+                        renderFuel();
+                        renderMaint();
+                        renderHistory();
+                        isRemoteUpdate = false;
+                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
+                    } else {
+                        firebaseDbRef.set(appData);
+                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
+                    }
+                }, (error) => {
+                    updateStatusBadge('offline', '⚠️ Permessi Database Non Validi');
+                    alert("Errore connessione Firebase: controlla che le 'Regole' del Realtime Database siano (.read: true, .write: true).");
+                });
+
+                alert("✅ Connessione Realtime riuscita!");
+                navigate('dashboard', document.querySelectorAll('.nav-link')[0]);
+            } catch(e) {
+                alert("Errore inizializzazione: " + e.message);
+                updateStatusBadge('offline', '⚠️ Errore Configurazione');
+            }
+        }
+
+        // --- GESTIONE CATEGORIE DINAMICHE MANUTENZIONE ---
+        function populateMaintCategories(selectedCategory = '') {
+            const select = document.getElementById('maint-type');
+            select.innerHTML = '';
+            
+            const cats = appData.car.categories || initialCategories;
+            cats.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.innerText = c;
+                select.appendChild(opt);
+            });
+
+            // Opzione speciale per digitare al volo
+            const customOpt = document.createElement('option');
+            customOpt.value = '__custom__';
+            customOpt.innerText = '➕ Crea Nuova Categoria...';
+            select.appendChild(customOpt);
+
+            if (selectedCategory && cats.includes(selectedCategory)) {
+                select.value = selectedCategory;
+                document.getElementById('custom-category-group').style.display = 'none';
+            } else if (selectedCategory) {
+                // Se non è nell'elenco predefinito, mostriamo la casella
+                select.value = '__custom__';
+                document.getElementById('custom-category-group').style.display = 'block';
+                document.getElementById('maint-custom-type').value = selectedCategory;
+            } else {
+                document.getElementById('custom-category-group').style.display = 'none';
+            }
+        }
+
+        function checkCustomCategory(val) {
+            const group = document.getElementById('custom-category-group');
+            if (val === '__custom__') {
+                group.style.display = 'block';
+                document.getElementById('maint-custom-type').focus();
+            } else {
+                group.style.display = 'none';
+            }
+        }
+
+        function openNewCategoryPrompt() {
+            const newCat = prompt("Inserisci il nome della nuova categoria di manutenzione:");
+            if (newCat && newCat.trim()) {
+                const name = newCat.trim();
+                if (!appData.car.categories.includes(name)) {
+                    appData.car.categories.push(name);
+                    saveData();
+                }
+                populateMaintCategories(name);
+            }
+        }
+
+        // --- BACKUP CLASSICO FILE JSON ---
         function exportData() {
             const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchorNode = document.createElement('a');
@@ -576,6 +776,7 @@
                     const imported = JSON.parse(e.target.result);
                     if (imported && (imported.salary !== undefined || imported.quotas !== undefined)) { 
                         appData = Object.assign({}, defaultData, imported); 
+                        if (!appData.car.categories) appData.car.categories = initialCategories;
                         saveData(); 
                         alert("✅ Backup ripristinato con successo!");
                         location.reload(); 
@@ -592,6 +793,7 @@
             reader.readAsText(file);
         }
 
+        // --- BACKUP TESTUALE RAPIDO ---
         function copyBackupText() {
             const str = JSON.stringify(appData);
             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -612,6 +814,7 @@
                 const imported = JSON.parse(text);
                 if (imported && (imported.salary !== undefined || imported.quotas !== undefined)) {
                     appData = Object.assign({}, defaultData, imported);
+                    if (!appData.car.categories) appData.car.categories = initialCategories;
                     saveData();
                     alert("✅ Backup ripristinato con successo!");
                     location.reload();
@@ -854,6 +1057,7 @@
             }
         }
 
+        // --- AUTO: CARBURANTE ---
         function openFuelModal(id = null) {
             document.getElementById('fuel-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
@@ -964,13 +1168,14 @@
             });
         }
 
+        // --- AUTO: MANUTENZIONE ---
         function openMaintModal(id = null) {
             document.getElementById('maint-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
                 const m = appData.car.maintenance.find(x => x.id === id);
                 document.getElementById('maint-id').value = m.id;
                 document.getElementById('maint-date').value = m.date;
-                document.getElementById('maint-type').value = m.type;
+                populateMaintCategories(m.type);
                 document.getElementById('maint-km').value = m.km;
                 document.getElementById('maint-cost').value = m.cost;
                 document.getElementById('maint-notes').value = m.notes;
@@ -980,6 +1185,7 @@
                 document.getElementById('maint-km').value = '';
                 document.getElementById('maint-cost').value = '';
                 document.getElementById('maint-notes').value = '';
+                populateMaintCategories();
                 document.getElementById('maint-modal-title').innerText = 'Aggiungi Intervento';
             }
             openModal('maint-modal');
@@ -988,10 +1194,20 @@
         function saveMaint() {
             const id = document.getElementById('maint-id').value;
             const date = document.getElementById('maint-date').value;
-            const type = document.getElementById('maint-type').value;
+            let type = document.getElementById('maint-type').value;
             const km = parseInt(document.getElementById('maint-km').value) || 0;
             const cost = parseFloat(document.getElementById('maint-cost').value) || 0;
             const notes = document.getElementById('maint-notes').value || '';
+
+            if (type === '__custom__') {
+                const customVal = document.getElementById('maint-custom-type').value.trim();
+                if (!customVal) return alert("Inserisci il nome della nuova categoria.");
+                type = customVal;
+                // Salviamo la categoria nella lista permanente per riusarla
+                if (!appData.car.categories.includes(type)) {
+                    appData.car.categories.push(type);
+                }
+            }
 
             if (!date) return alert("Inserisci la data.");
 
@@ -1036,7 +1252,8 @@
                                 </div>
                                 <div class="list-body">
                                     <div style="flex:1;">
-                                        <div style="font-weight: 500; color: var(--primary);">${m.type}</div>${m.notes ? `<div style="font-size: 0.8rem; color: var(--text-light); margin-top:2px;">📝 ${m.notes}</div>` : ''}
+                                        <div style="font-weight: 500; color: var(--primary);">${m.type}</div>
+                                        ${m.notes ? `<div style="font-size: 0.8rem; color: var(--text-light); margin-top:2px;">📝 ${m.notes}</div>` : ''}
                                     </div>
                                     <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
                                         - €${m.cost.toFixed(2)}
@@ -1051,7 +1268,7 @@
         }
 
         function clearData() {
-            if(confirm("Sei sicuro di voler resettare l'intera app? Eliminerà spese, auto e storico.")) {
+            if(confirm("Sei sicuro di voler resettare l'intera app? Eliminerà quote, auto e storico.")) {
                 localStorage.clear();
                 appData = JSON.parse(JSON.stringify(defaultData));
                 document.getElementById('dash-salary').value = appData.salary;
@@ -1070,6 +1287,28 @@
         document.getElementById('ratio-30').value = appData.ratios.r30;
         document.getElementById('ratio-20').value = appData.ratios.r20;
         calculateBudget();
+
+        if (appData.firebaseUrl) {
+            try {
+                if (!firebase.apps.length) firebase.initializeApp({ databaseURL: appData.firebaseUrl });
+                firebaseDbRef = firebase.database().ref(appData.firebaseKey || 'mie_finanze');
+                firebaseDbRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && (data.salary !== undefined || data.quotas !== undefined)) {
+                        isRemoteUpdate = true;
+                        appData = Object.assign({}, defaultData, data);
+                        if (!appData.car.categories) appData.car.categories = initialCategories;
+                        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+                        calculateBudget();
+                        renderFuel();
+                        renderMaint();
+                        renderHistory();
+                        isRemoteUpdate = false;
+                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
+                    }
+                });
+            } catch(e) {}
+        }
     </script>
 </body>
 </html>
