@@ -18,6 +18,8 @@
             --border: #e5e7eb;
             --input-bg: #ffffff;
             --bar-bg: #e2e8f0;
+            --app-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --app-font-size: 16px;
         }
 
         [data-theme="dark"] {
@@ -35,7 +37,8 @@
             --bar-bg: #4b5563;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; font-family: var(--app-font); }
+        html { font-size: var(--app-font-size); }
         body { margin: 0; background: var(--bg-color); color: var(--text); padding-top: 60px; transition: background 0.3s, color 0.3s; }
         
         header {
@@ -162,8 +165,14 @@
             padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;
             display: flex; justify-content: space-between; align-items: center;
             font-size: 0.95rem; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer; user-select: none;
         }
         .month-header span:last-child { background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem;}
+        
+        /* Gestione collapse schede */
+        .toggle-icon { display: inline-block; font-size: 0.8rem; transition: transform 0.3s; margin-right: 6px; }
+        .month-group.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .month-group.collapsed .list-item { display: none; }
 
         .tag-gpl { background: rgba(22, 163, 74, 0.15); color: var(--success); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
         .tag-benzina { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
@@ -202,7 +211,7 @@
         <a href="#" class="nav-link active" onclick="navigate('dashboard', this)">📊 Dashboard Budget</a>
         <a href="#" class="nav-link" onclick="navigate('auto', this)">🚗 Gestione Auto</a>
         <a href="#" class="nav-link" onclick="navigate('history', this)">🗓 Storico Mesi</a>
-        <a href="#" class="nav-link" onclick="navigate('backup', this)">☁️ Sincronizza & Backup</a>
+        <a href="#" class="nav-link" onclick="navigate('settings', this)">⚙️ Impostazioni</a>
     </nav>
 
     <!-- Modale Budget Quote Fisse -->
@@ -429,15 +438,45 @@
             </div>
         </div>
 
-        <!-- SEZIONE BACKUP & RIPRISTINO COMPLETO -->
-        <div id="backup" class="page">
+        <!-- IMPOSTAZIONI -->
+        <div id="settings" class="page">
+            
+            <div class="card">
+                <h2><span>🎨 Aspetto e Testo</span></h2>
+                <div class="form-group">
+                    <label>Tema</label>
+                    <select id="setting-theme" onchange="changeSetting('theme', this.value)">
+                        <option value="light">☀️ Chiaro</option>
+                        <option value="dark">🌙 Scuro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dimensione Testo</label>
+                    <select id="setting-fontsize" onchange="changeSetting('fontsize', this.value)">
+                        <option value="14px">Piccolo</option>
+                        <option value="16px">Normale</option>
+                        <option value="18px">Grande</option>
+                        <option value="20px">Molto Grande</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Carattere (Font)</label>
+                    <select id="setting-font" onchange="changeSetting('font', this.value)">
+                        <option value="'Segoe UI', system-ui, sans-serif">Standard</option>
+                        <option value="Arial, Helvetica, sans-serif">Arial</option>
+                        <option value="'Courier New', Courier, monospace">Monospace</option>
+                        <option value="Georgia, serif">Georgia</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="card" style="border: 2px solid var(--primary);">
                 <h2><span>☁️ Sincronizzazione Cloud</span></h2>
                 <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
-                    Usa questi pulsanti per scambiare i dati tra Cellulare e PC senza scaricare file a mano.
+                    Sincronizza i dati con Firebase per averli su tutti i dispositivi.
                 </p>
                 <button class="btn" style="background: var(--primary);" onclick="uploadBackupToFirebase()">
-                    ⬆️ 1. Salva Dati Attuali sul Cloud (Invia)
+                    ⬆️ 1. Invia Dati di questo Dispositivo
                 </button>
                 <button class="btn" style="background: var(--success); margin-top: 10px;" onclick="downloadBackupFromFirebase(true)">
                     ⬇️ 2. Scarica e Importa Dati dal Cloud
@@ -445,9 +484,9 @@
             </div>
 
             <div class="card">
-                <h2><span>📁 File Backup (.json) Locale</span></h2>
+                <h2><span>📁 Backup Locale (.json)</span></h2>
                 <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 12px;">
-                    Salva tutti i tuoi dati sul dispositivo o ripristina un file precedentemente scaricato.
+                    Scarica una copia fisica dei dati o ripristina un backup precedente.
                 </p>
                 
                 <button class="btn" style="background: var(--success);" onclick="exportData()">💾 Scarica File Backup (.json)</button>
@@ -456,20 +495,6 @@
                     <label style="font-weight:bold; color:var(--primary); font-size:0.9rem;">Ripristina da File Backup:</label>
                     <input type="file" id="import-json-file" accept=".json,application/json,text/plain,*/*" class="file-upload-input" onchange="importData(event)">
                 </div>
-            </div>
-
-            <div class="card">
-                <h2><span>📋 Metodo Rapido (Testo)</span></h2>
-                <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 10px;">
-                    Se lo smartphone non fa selezionare il file, puoi copiare i dati come testo nelle tue Note.
-                </p>
-                <button class="btn btn-outline" onclick="copyBackupText()">📋 Copia Dati negli Appunti</button>
-                <textarea id="restore-text" rows="3" style="margin-top:10px;" placeholder="Incolla qui il codice di backup..."></textarea>
-                <button class="btn btn-outline" style="margin-top: 6px;" onclick="restoreFromText()">📥 Ripristina da Testo Incollato</button>
-            </div>
-
-            <div class="card">
-                <button class="btn" style="background: var(--danger);" onclick="clearData()">⚠️ Elimina Tutto</button>
             </div>
         </div>
     </main>
@@ -517,7 +542,11 @@
                    || defaultData;
 
         if (!appData.ratios) appData.ratios = { r50: 50, r30: 30, r20: 20 };
+        if (!appData.quotas) appData.quotas = [];
+        if (!appData.history) appData.history = [];
         if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
+        if (!appData.car.fuel) appData.car.fuel = [];
+        if (!appData.car.maintenance) appData.car.maintenance = [];
         if (!appData.car.categories || !Array.isArray(appData.car.categories)) {
             appData.car.categories = initialCategories;
         }
@@ -526,18 +555,43 @@
 
         let isRemoteUpdate = false;
 
-        function applyTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-            document.getElementById('theme-toggle').innerText = theme === 'dark' ? '☀️' : '🌙';
+        // --- GESTIONE IMPOSTAZIONI ---
+        let localSettings = JSON.parse(localStorage.getItem('budgetAppSettings')) || {
+            theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+            fontsize: '16px',
+            font: "'Segoe UI', system-ui, sans-serif"
+        };
+
+        function changeSetting(key, value) {
+            localSettings[key] = value;
+            localStorage.setItem('budgetAppSettings', JSON.stringify(localSettings));
+            applySettings();
         }
+
         function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('budgetAppTheme', newTheme);
-            applyTheme(newTheme);
+            localSettings.theme = localSettings.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('budgetAppSettings', JSON.stringify(localSettings));
+            applySettings();
         }
-        const savedTheme = localStorage.getItem('budgetAppTheme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        applyTheme(savedTheme);
+
+        function applySettings() {
+            document.body.setAttribute('data-theme', localSettings.theme);
+            const toggleBtn = document.getElementById('theme-toggle');
+            if(toggleBtn) toggleBtn.innerText = localSettings.theme === 'dark' ? '☀️' : '🌙';
+            
+            document.documentElement.style.setProperty('--app-font-size', localSettings.fontsize);
+            document.documentElement.style.setProperty('--app-font', localSettings.font);
+
+            const themeSel = document.getElementById('setting-theme');
+            if(themeSel) themeSel.value = localSettings.theme;
+            const sizeSel = document.getElementById('setting-fontsize');
+            if(sizeSel) sizeSel.value = localSettings.fontsize;
+            const fontSel = document.getElementById('setting-font');
+            if(fontSel) fontSel.value = localSettings.font;
+        }
+
+        // Applica al caricamento
+        applySettings();
 
         function initMonthSelector() {
             const select = document.getElementById('budget-target-month');
@@ -690,6 +744,11 @@
                     if (data && (data.salary !== undefined || data.quotas !== undefined || data.car !== undefined)) {
                         isRemoteUpdate = true;
                         appData = Object.assign({}, defaultData, data);
+                        if (!appData.quotas) appData.quotas = [];
+                        if (!appData.history) appData.history = [];
+                        if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
+                        if (!appData.car.fuel) appData.car.fuel = [];
+                        if (!appData.car.maintenance) appData.car.maintenance = [];
                         if (!appData.car.categories) appData.car.categories = initialCategories;
                         localStorage.setItem('budgetAppV15', JSON.stringify(appData));
                         
@@ -804,39 +863,6 @@
                 alert("Impossibile aprire il file su questo dispositivo.");
             };
             reader.readAsText(file);
-        }
-
-        // --- BACKUP TESTUALE RAPIDO ---
-        function copyBackupText() {
-            const str = JSON.stringify(appData);
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(str).then(() => {
-                    alert("✅ Dati copiati negli appunti!\nIncollali nelle tue Note o dove preferisci.");
-                }).catch(() => {
-                    prompt("Copia manualmente questo codice di backup:", str);
-                });
-            } else {
-                prompt("Copia manualmente questo codice di backup:", str);
-            }
-        }
-
-        function restoreFromText() {
-            const text = document.getElementById('restore-text').value.trim();
-            if(!text) return alert("Incolla prima il testo di backup nel campo!");
-            try {
-                const imported = JSON.parse(text);
-                if (imported && (imported.salary !== undefined || imported.quotas !== undefined)) {
-                    appData = Object.assign({}, defaultData, imported);
-                    if (!appData.car.categories) appData.car.categories = initialCategories;
-                    saveData();
-                    alert("✅ Backup ripristinato con successo!");
-                    location.reload();
-                } else {
-                    alert("Il testo non corrisponde a un backup valido.");
-                }
-            } catch(e) {
-                alert("Errore nel formato del testo incollato.");
-            }
         }
 
         function getMacroLabel(val) {
@@ -1150,8 +1176,8 @@
             grouped.forEach(g => {
                 list.innerHTML += `
                     <div class="month-group">
-                        <div class="month-header">
-                            <span style="text-transform: capitalize;">📅 ${g.label}</span>
+                        <div class="month-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                            <span style="text-transform: capitalize;"><span class="toggle-icon">▼</span> 📅 ${g.label}</span>
                             <span>€ ${g.total.toFixed(2)}</span>
                         </div>
                         ${g.items.sort((a,b) => new Date(b.date) - new Date(a.date)).map(f => {
@@ -1169,10 +1195,13 @@
                                                 ${f.price > 0 ? `€${parseFloat(f.price).toFixed(3)}/L • ${f.liters} L` : ''}
                                             </div>
                                         </div>
-                                        <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger);">
+                                        <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
                                             - €${f.total.toFixed(2)}
                                         </div>
-                                        <div><button class="action-btn delete-btn" onclick="deleteFuel(${f.id})">🗑️</button></div>
+                                        <div style="display:flex; gap:4px;">
+                                            <button class="action-btn edit-btn" onclick="openFuelModal(${f.id})">✏️</button>
+                                            <button class="action-btn delete-btn" onclick="deleteFuel(${f.id})">🗑️</button>
+                                        </div>
                                     </div>
                                 </div>
                             `;
@@ -1253,8 +1282,8 @@
             grouped.forEach(g => {
                 list.innerHTML += `
                     <div class="month-group">
-                        <div class="month-header">
-                            <span style="text-transform: capitalize;">📅 ${g.label}</span>
+                        <div class="month-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                            <span style="text-transform: capitalize;"><span class="toggle-icon">▼</span> 📅 ${g.label}</span>
                             <span>€ ${g.total.toFixed(2)}</span>
                         </div>
                         ${g.items.sort((a,b) => new Date(b.date) - new Date(a.date)).map(m => `
@@ -1271,27 +1300,16 @@
                                     <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
                                         - €${m.cost.toFixed(2)}
                                     </div>
-                                    <div><button class="action-btn delete-btn" onclick="deleteMaint(${m.id})">🗑️</button></div>
+                                    <div style="display:flex; gap:4px;">
+                                        <button class="action-btn edit-btn" onclick="openMaintModal(${m.id})">✏️</button>
+                                        <button class="action-btn delete-btn" onclick="deleteMaint(${m.id})">🗑️</button>
+                                    </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 `;
             });
-        }
-
-        function clearData() {
-            if(confirm("Sei sicuro di voler resettare l'intera app? Eliminerà quote, auto e storico.")) {
-                localStorage.clear();
-                appData = JSON.parse(JSON.stringify(defaultData));
-                document.getElementById('dash-salary').value = appData.salary;
-                document.getElementById('ratio-50').value = 50;
-                document.getElementById('ratio-30').value = 30;
-                document.getElementById('ratio-20').value = 20;
-                initMonthSelector();
-                calculateBudget(); alert("Dati resettati."); 
-                navigate('dashboard', document.querySelectorAll('.nav-link')[0]);
-            }
         }
 
         initMonthSelector();
