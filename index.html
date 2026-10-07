@@ -811,8 +811,7 @@
             const str = JSON.stringify(appData);
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(str).then(() => {
-                    alert("✅ Dati copiati negli appunti!
-Incollali nelle tue Note o dove preferisci.");
+                    alert("✅ Dati copiati negli appunti!\nIncollali nelle tue Note o dove preferisci.");
                 }).catch(() => {
                     prompt("Copia manualmente questo codice di backup:", str);
                 });
