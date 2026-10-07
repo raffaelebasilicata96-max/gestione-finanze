@@ -2,556 +2,1094 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget & Auto - Web App Cloud</title>
-    
-    <!-- Icone e configurazione Web App Mobile -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
-    <link rel="apple-touch-icon" href="icona.png">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Finance & Fleet Studio</title>
+
+    <!-- Google Fonts & System Integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Firebase Compat SDK per Google Auth e Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <meta name="theme-color" content="#090d16">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Finanze">
-    
+    <meta name="apple-mobile-web-app-title" content="FinanceStudio">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z'/></svg>">
+
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #eff6ff;
-            --success: #16a34a;
-            --warning: #f59e0b;
-            --danger: #dc2626;
-            --bg-color: #f3f4f6;
+            --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-size-base: 15px;
+
+            /* Light Luxury Slate Theme */
+            --bg: #f8fafc;
             --surface: #ffffff;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
-            --input-bg: #ffffff;
-            --bar-bg: #e2e8f0;
-            --app-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            --app-font-size: 16px;
+            --surface-elevated: #ffffff;
+            --border: #e2e8f0;
+            --border-subtle: #edf2f7;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+
+            --brand-primary: #1e293b;
+            --brand-accent: #2563eb;
+            --brand-accent-soft: rgba(37, 99, 235, 0.08);
+
+            --emerald: #059669;
+            --emerald-soft: rgba(5, 150, 105, 0.1);
+            --amber: #d97706;
+            --amber-soft: rgba(217, 119, 6, 0.1);
+            --rose: #e11d48;
+            --rose-soft: rgba(225, 29, 72, 0.1);
+
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-card: 0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
 
         [data-theme="dark"] {
-            --primary: #3b82f6;
-            --primary-light: #1e3a8a;
-            --success: #22c55e;
-            --warning: #fbbf24;
-            --danger: #ef4444;
-            --bg-color: #111827;
-            --surface: #1f2937;
-            --text: #f3f4f6;
-            --text-light: #9ca3af;
-            --border: #374151;
-            --input-bg: #374151;
-            --bar-bg: #4b5563;
+            --bg: #090d16;
+            --surface: #111726;
+            --surface-elevated: #161e31;
+            --border: #1e293b;
+            --border-subtle: #172033;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --brand-primary: #f8fafc;
+            --brand-accent: #3b82f6;
+            --brand-accent-soft: rgba(59, 130, 246, 0.12);
+
+            --emerald: #10b981;
+            --emerald-soft: rgba(16, 185, 129, 0.12);
+            --amber: #f59e0b;
+            --amber-soft: rgba(245, 158, 11, 0.12);
+            --rose: #f43f5e;
+            --rose-soft: rgba(244, 63, 94, 0.12);
+
+            --nav-bg: rgba(17, 23, 38, 0.85);
+            --header-bg: rgba(9, 13, 22, 0.85);
+            --shadow-subtle: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
         }
 
-        * { box-sizing: border-box; font-family: var(--app-font); }
-        html { font-size: var(--app-font-size); }
-        body { margin: 0; background: var(--bg-color); color: var(--text); padding-top: 60px; transition: background 0.3s, color 0.3s; }
-        
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 60px;
-            background: var(--primary); color: white;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 1000;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            -webkit-tap-highlight-color: transparent;
         }
-        .header-left { display: flex; align-items: center; }
-        .menu-btn {
-            background: none; border: none; color: white;
-            font-size: 24px; cursor: pointer; margin-right: 16px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
-        }
-        .overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 1001;
-        }
-        .drawer {
-            position: fixed; top: 0; left: -280px; bottom: 0; width: 280px;
-            background: var(--surface); box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-            transition: left 0.3s ease; z-index: 1002; display: flex; flex-direction: column;
-            overflow-y: auto;
-        }
-        .drawer.open { left: 0; }
-        .drawer-header { padding: 24px 20px; background: var(--primary-light); color: var(--primary); font-weight: bold; font-size: 1.2rem; border-bottom: 1px solid var(--border); }
-        .drawer a {
-            padding: 16px 20px; text-decoration: none; color: var(--text);
-            border-bottom: 1px solid var(--border); display: block; transition: background 0.2s;
-        }
-        .drawer a:hover, .drawer a.active { background: var(--primary-light); color: var(--primary); border-left: 4px solid var(--primary); padding-left: 16px; }
-        
-        .page { display: none; padding: 16px; max-width: 600px; margin: 0 auto; animation: fadeIn 0.3s ease; padding-bottom: 80px; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: background 0.3s; }
-        h2 { margin-top: 0; font-size: 1.15rem; color: var(--text); display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
-        .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-light); font-weight: 500;}
-        input[type="number"], input[type="text"], input[type="date"], select, textarea {
-            width: 100%; padding: 12px; border: 1px solid var(--border);
-            border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; 
-            background: var(--input-bg); color: var(--text);
-        }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
-        
-        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center; }
-        .row:last-child { border-bottom: none; }
-        .total-row { font-weight: bold; font-size: 1.05rem; color: var(--primary); background: var(--primary-light); padding: 12px; border-radius: 8px; margin-top: 8px;}
-        .btn {
-            background: var(--primary); color: white; border: none;
-            padding: 14px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: bold;
-            cursor: pointer; margin-top: 10px; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn:hover { filter: brightness(1.1); }
-        .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); box-shadow: none; }
-        .btn-outline:hover { background: var(--primary-light); }
-        
-        .sync-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 0.8rem; padding: 4px 10px; border-radius: 20px;
-            font-weight: 500; margin-bottom: 12px;
-        }
-        .sync-online { background: rgba(22, 163, 74, 0.15); color: var(--success); }
-        .sync-offline { background: rgba(107, 114, 128, 0.15); color: var(--text-light); }
-        .sync-loading { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
-        .month-selector-box {
-            background: var(--primary-light);
-            border: 2px solid var(--primary);
-            border-radius: 10px;
-            padding: 12px;
+        html {
+            font-size: var(--font-size-base);
+            height: 100%;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100%;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 64px);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
+            transition: background-color 0.25s ease, color 0.25s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Brand Bar */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: calc(env(safe-area-inset-top, 0px) + 64px);
+            padding-top: env(safe-area-inset-top, 0px);
+            background: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--brand-accent) 0%, #1e1b4b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+        }
+
+        .brand-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sync-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .sync-pill.online {
+            background: var(--emerald-soft);
+            color: var(--emerald);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        .sync-pill.loading {
+            background: var(--amber-soft);
+            color: var(--amber);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        .sync-pill.offline {
+            background: var(--surface-elevated);
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sophisticated Card System */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-card);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 16px;
         }
-        .month-selector-box label {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .ratio-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-        .ratio-box { text-align: center; background: var(--input-bg); padding: 6px; border-radius: 8px; border: 1px solid var(--border); }
-        .ratio-box label { font-size: 0.72rem; margin-bottom: 2px; font-weight: bold; }
-        .ratio-box input { text-align: center; padding: 4px; font-weight: bold; font-size: 0.95rem; }
-
-        .macro-stat { margin-bottom: 14px; background: var(--input-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
-        .macro-header { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 4px; }
-        .macro-sub { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 6px; }
-        .progress-bg { background: var(--bar-bg); height: 10px; border-radius: 5px; overflow: hidden; position: relative; }
-        .progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease, background 0.3s ease; }
-
-        .tag-macro-50 { background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .tag-macro-30 { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .tag-macro-20 { background: rgba(34, 197, 94, 0.15); color: var(--success); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-
-        .action-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 4px; margin-left: 6px; border-radius: 4px;}
-        .action-btn:hover { background: var(--border); }
-        .edit-btn { color: var(--primary); }
-        .delete-btn { color: var(--danger); }
-        .info-col { flex: 1; }
-        .amount-col { font-weight: 500; text-align: right; margin-right: 8px;}
-
-        .modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--surface); padding: 22px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1003; width: 92%; max-width: 400px;
-            max-height: 90vh; overflow-y: auto;
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
-        .modal.active { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        
-        .add-btn {
-            background: var(--primary-light); color: var(--primary);
-            border: none; border-radius: 50%; width: 34px; height: 34px;
-            font-size: 18px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+
+        /* Minimal Luxury Form Inputs */
+        .input-group {
+            margin-bottom: 16px;
         }
-        .add-btn:hover { filter: brightness(0.9); }
-
-        .month-group { margin-bottom: 20px; }
-        .month-header {
-            background: var(--primary); color: white;
-            padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.95rem; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            cursor: pointer; user-select: none;
+        .input-group:last-child {
+            margin-bottom: 0;
         }
-        .month-header span:last-child { background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem;}
-        
-        .toggle-icon { display: inline-block; font-size: 0.8rem; transition: transform 0.3s; margin-right: 6px; }
-        .month-group.collapsed .toggle-icon { transform: rotate(-90deg); }
-        .month-group.collapsed .list-item { display: none; }
 
-        .tag-gpl { background: rgba(22, 163, 74, 0.15); color: var(--success); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .tag-benzina { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .list-item { background: var(--input-bg); padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border); }
-        .list-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-light); }
-        .list-body { display: flex; justify-content: space-between; align-items: center; }
+        .input-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
 
-        .file-upload-input {
+        .input-control {
             width: 100%;
-            padding: 12px;
-            background: var(--input-bg);
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .input-control:focus {
+            border-color: var(--brand-accent);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px var(--brand-accent-soft);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: var(--radius-md);
             font-size: 0.9rem;
-            margin-top: 6px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-primary {
+            background: var(--brand-accent);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+        }
+        .btn-primary:hover {
+            filter: brightness(1.08);
+        }
+        .btn-secondary {
+            background: var(--surface-elevated);
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--border-subtle);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .btn-outline:hover {
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+        .btn-success {
+            background: var(--emerald);
+            color: #ffffff;
+        }
+
+        .icon-btn-add {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-accent-soft);
+            color: var(--brand-accent);
+            border: 1px solid rgba(37,99,235,0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .icon-btn-add:hover {
+            background: var(--brand-accent);
+            color: #ffffff;
+        }
+
+        /* Metric Hero Cards */
+        .hero-metric {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+        .hero-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .hero-metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: -0.02em;
+        }
+        .hero-metric-sub {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .hero-progress {
+            height: 6px;
+            background: var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .hero-progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Ratio split grid */
+        .ratios-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .ratio-tile {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            text-align: center;
+        }
+        .ratio-tile-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .ratio-tile input {
+            width: 100%;
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        /* Transaction List Items */
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .list-row:last-child { border-bottom: none; }
+
+        .list-row-title { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+        .list-row-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+        .list-row-amount { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; text-align: right; }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s, background-color 0.15s;
+        }
+        .action-icon-btn:hover {
+            color: var(--text-primary);
+            background: var(--border-subtle);
+        }
+        .action-icon-btn.delete:hover {
+            color: var(--rose);
+            background: var(--rose-soft);
+        }
+
+        /* Collapsible Month Accordions for Fleet */
+        .accordion-group {
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+        }
+        .accordion-header {
+            padding: 12px 16px;
+            background: var(--surface-elevated);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: background-color 0.15s;
+        }
+        .accordion-group:not(.collapsed) .accordion-header {
+            border-bottom-color: var(--border);
+        }
+        .accordion-header-title {
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: capitalize;
+        }
+        .accordion-header-badge {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--brand-accent);
+        }
+        .chevron {
+            transition: transform 0.25s ease;
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+        }
+        .accordion-group.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        .accordion-body {
+            padding: 0 16px;
+        }
+        .accordion-group.collapsed .accordion-body {
+            display: none;
+        }
+
+        /* Native-Feel Fixed Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(env(safe-area-inset-bottom, 0px) + 68px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 950;
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 600;
+            gap: 4px;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.15s ease;
+        }
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.2s ease;
+        }
+        .nav-item.active {
+            color: var(--brand-accent);
+        }
+        .nav-item.active svg {
+            transform: translateY(-2px);
+        }
+
+        /* Modal Sheets */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-top: 1px solid var(--border);
+            padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 24px) 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1001;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-sheet.active, .modal-overlay.active { display: block; }
+        .sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 999px;
+            margin: -10px auto 18px auto;
+        }
+
+        /* Account Status Bar */
+        .account-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--brand-accent-soft);
+            color: var(--brand-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            overflow: hidden;
+        }
+        .account-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .account-meta { flex: 1; margin-left: 12px; }
+        .account-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+        .account-email { font-size: 0.78rem; color: var(--text-muted); }
+
+        /* Chips & Badges */
+        .tag-badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .tag-badge.tag-gpl { background: var(--emerald-soft); color: var(--emerald); }
+        .tag-badge.tag-benzina { background: var(--amber-soft); color: var(--amber); }
+
+        /* Stats Filters */
+        .stats-grid-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <button class="menu-btn" onclick="toggleMenu()">
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            <h1 style="font-size: 1.15rem; margin: 0;">Gestione Finanze</h1>
+    <!-- Header Topbar -->
+    <header class="topbar">
+        <div class="brand-title">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4zm8-17l7 14H5zm0 3.8L7.9 14h8.2z"/></svg>
+            </div>
+            <span>Finanze Studio</span>
         </div>
-        <button id="theme-toggle" onclick="toggleTheme()" style="background:none; border:none; font-size:22px; cursor:pointer;" title="Cambia Tema">☀️</button>
+        <div class="topbar-actions">
+            <div id="cloud-pill" class="sync-pill online" onclick="manualCloudSync()">
+                <div class="pulse-dot"></div>
+                <span id="cloud-pill-text">Cloud Sincronizzato</span>
+            </div>
+        </div>
     </header>
 
-    <div class="overlay" id="overlay" onclick="closeAllOverlays()"></div>
-    
-    <nav class="drawer" id="drawer">
-        <div class="drawer-header">Menu Principale</div>
-        <a href="#" class="nav-link active" onclick="navigate('dashboard', this)">📊 Dashboard Budget</a>
-        <a href="#" class="nav-link" onclick="navigate('auto', this)">🚗 Gestione Auto</a>
-        <a href="#" class="nav-link" onclick="navigate('stats', this)">📈 Statistiche Auto</a>
-        <a href="#" class="nav-link" onclick="navigate('history', this)">🗓 Storico Mesi</a>
-        <a href="#" class="nav-link" onclick="navigate('settings', this)">⚙️ Impostazioni</a>
-    </nav>
+    <!-- Overlay & Modals -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeAllModals()"></div>
 
-    <!-- Modale Budget Quote Fisse -->
-    <div class="modal" id="quota-modal">
-        <h3 id="modal-title" style="margin-top:0;">Aggiungi Spesa Fissa</h3>
-        <input type="hidden" id="modal-id">
-        <div class="form-group">
-            <label>Nome Categoria</label>
-            <input type="text" id="modal-name" placeholder="Es. Assicurazione Casa">
+    <!-- Modale Spesa Fissa Budget -->
+    <div class="modal-sheet" id="modal-quota">
+        <div class="sheet-handle"></div>
+        <h3 id="quota-modal-title" style="margin-bottom: 16px; font-weight: 700;">Quota Fissa Budget</h3>
+        <input type="hidden" id="quota-id">
+        <div class="input-group">
+            <label class="input-label">Nome Spesa / Accantonamento</label>
+            <input type="text" id="quota-name" class="input-control" placeholder="Es. Assicurazione Casa, Fondo Emergenza">
         </div>
-        <div class="form-group">
-            <label>Importo (€)</label>
-            <input type="number" id="modal-amount" placeholder="Es. 300">
+        <div class="input-group">
+            <label class="input-label">Importo Totale (€)</label>
+            <input type="number" step="0.01" id="quota-amount" class="input-control" placeholder="Es. 350.00">
         </div>
-        <div class="form-group">
-            <label>Frequenza del Pagamento</label>
-            <select id="modal-freq">
+        <div class="input-group">
+            <label class="input-label">Cadenza Pagamento</label>
+            <select id="quota-freq" class="input-control">
                 <option value="monthly">Mensile (1 volta al mese)</option>
                 <option value="semiannual">Semestrale (1 volta ogni 6 mesi)</option>
                 <option value="annual" selected>Annuale (1 volta all'anno)</option>
             </select>
         </div>
-        <div class="form-group">
-            <label>Appartiene a (Regola Budget)</label>
-            <select id="modal-q-macro">
-                <option value="50">🔴 Bisogni (Spese fisse/obbligatorie)</option>
+        <div class="input-group">
+            <label class="input-label">Pillar Regola 50/30/20</label>
+            <select id="quota-macro" class="input-control">
+                <option value="50">🔴 Bisogni (Spese obbligatorie e fisse)</option>
                 <option value="30">🟡 Svago (Abbonamenti, svago programmato)</option>
-                <option value="20">🟢 Risparmio (Quote per investimenti/fondi)</option>
+                <option value="20">🟢 Risparmio (Investimenti e accantonamenti)</option>
             </select>
         </div>
-        <button class="btn" onclick="saveQuota()">Salva Categoria</button>
-        <button class="btn btn-outline" onclick="closeModal('quota-modal')">Annulla</button>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveQuotaItem()">Salva Quota</button>
+            <button class="btn btn-outline" onclick="closeModal('modal-quota')">Annulla</button>
+        </div>
     </div>
 
     <!-- Modale Rifornimento Auto -->
-    <div class="modal" id="fuel-modal">
-        <h3 id="fuel-modal-title" style="margin-top:0;">Aggiungi Rifornimento</h3>
+    <div class="modal-sheet" id="modal-fuel">
+        <div class="sheet-handle"></div>
+        <h3 id="fuel-modal-title" style="margin-bottom: 16px; font-weight: 700;">Rifornimento Carburante</h3>
         <input type="hidden" id="fuel-id">
-        <div class="form-group">
-            <label>Data</label>
-            <input type="date" id="fuel-date">
+        <div class="input-group">
+            <label class="input-label">Data</label>
+            <input type="date" id="fuel-date" class="input-control">
         </div>
-        <div class="form-group">
-            <label>Carburante</label>
-            <select id="fuel-type">
+        <div class="input-group">
+            <label class="input-label">Tipologia Carburante</label>
+            <select id="fuel-type" class="input-control">
                 <option value="GPL">GPL</option>
                 <option value="Benzina">Benzina</option>
             </select>
         </div>
-        <div class="form-group">
-            <label>Distributore (Opzionale)</label>
-            <input type="text" id="fuel-station" placeholder="Es. Eni, Q8...">
+        <div class="input-group">
+            <label class="input-label">Stazione di Servizio</label>
+            <input type="text" id="fuel-station" class="input-control" placeholder="Es. Eni, IP, Q8...">
         </div>
-        <div class="form-group">
-            <label>Prezzo al Litro (€)</label>
-            <input type="number" step="0.001" id="fuel-price" placeholder="Es. 0.690">
+        <div class="stats-grid-filters">
+            <div class="input-group">
+                <label class="input-label">Prezzo / Litro (€)</label>
+                <input type="number" step="0.001" id="fuel-price" class="input-control" placeholder="0.690">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Importo Totale (€)</label>
+                <input type="number" step="0.01" id="fuel-total" class="input-control" placeholder="25.00">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Importo Totale (€)</label>
-            <input type="number" step="0.01" id="fuel-total" placeholder="Es. 20.00">
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveFuelItem()">Salva Rifornimento</button>
+            <button class="btn btn-outline" onclick="closeModal('modal-fuel')">Annulla</button>
         </div>
-        <button class="btn" onclick="saveFuel()">Salva Rifornimento</button>
-        <button class="btn btn-outline" onclick="closeModal('fuel-modal')">Annulla</button>
     </div>
 
     <!-- Modale Manutenzione Auto -->
-    <div class="modal" id="maint-modal">
-        <h3 id="maint-modal-title" style="margin-top:0;">Aggiungi Manutenzione</h3>
+    <div class="modal-sheet" id="modal-maint">
+        <div class="sheet-handle"></div>
+        <h3 id="maint-modal-title" style="margin-bottom: 16px; font-weight: 700;">Intervento Officina & Manutenzione</h3>
         <input type="hidden" id="maint-id">
-        <div class="form-group">
-            <label>Data</label>
-            <input type="date" id="maint-date">
+        <div class="input-group">
+            <label class="input-label">Data Intervento</label>
+            <input type="date" id="maint-date" class="input-control">
         </div>
-        <div class="form-group">
+        <div class="input-group">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <label style="margin-bottom:0;">Tipo di Intervento</label>
-                <button type="button" onclick="openNewCategoryPrompt()" style="background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:bold; cursor:pointer;">+ Nuova</button>
+                <label class="input-label" style="margin-bottom:0;">Categoria Intervento</label>
+                <span onclick="addNewMaintCategory()" style="font-size:0.75rem; font-weight:700; color:var(--brand-accent); cursor:pointer;">+ Nuova</span>
             </div>
-            <select id="maint-type" onchange="checkCustomCategory(this.value)">
+            <select id="maint-type" class="input-control" onchange="checkCustomMaintCat(this.value)">
             </select>
         </div>
-        <div class="form-group" id="custom-category-group" style="display:none;">
-            <label>Nome Nuova Categoria Personalizzata</label>
-            <input type="text" id="maint-custom-type" placeholder="Es. Sostituzione Pastiglie Freni">
+        <div class="input-group" id="maint-custom-group" style="display:none;">
+            <label class="input-label">Nome Nuova Categoria</label>
+            <input type="text" id="maint-custom-name" class="input-control" placeholder="Es. Sostituzione Pastiglie Freni">
         </div>
-        <div class="form-group">
-            <label>Chilometraggio (Km)</label>
-            <input type="number" id="maint-km" placeholder="Es. 85000">
+        <div class="stats-grid-filters">
+            <div class="input-group">
+                <label class="input-label">Chilometraggio (Km)</label>
+                <input type="number" id="maint-km" class="input-control" placeholder="Es. 38500">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Costo Totale (€)</label>
+                <input type="number" step="0.01" id="maint-cost" class="input-control" placeholder="Es. 120.00">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Costo Totale (€)</label>
-            <input type="number" step="0.01" id="maint-cost" placeholder="Es. 150.00">
+        <div class="input-group">
+            <label class="input-label">Officina / Note (Opzionale)</label>
+            <input type="text" id="maint-notes" class="input-control" placeholder="Es. Meccanico Papà, Elettrauto Tommaso">
         </div>
-        <div class="form-group">
-            <label>Note aggiuntive (Opzionale)</label>
-            <input type="text" id="maint-notes" placeholder="Es. Prossimo cambio tra 15.000km">
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveMaintItem()">Salva Intervento</button>
+            <button class="btn btn-outline" onclick="closeModal('modal-maint')">Annulla</button>
         </div>
-        <button class="btn" onclick="saveMaint()">Salva Intervento</button>
-        <button class="btn btn-outline" onclick="closeModal('maint-modal')">Annulla</button>
     </div>
 
-    <main>
-        <!-- DASHBOARD -->
-        <div id="dashboard" class="page active">
-            
-            <div id="cloud-status-indicator" class="sync-badge sync-offline">
-                <span>📱 Memoria Locale</span>
-            </div>
+    <!-- MAIN APP CONTENT PANELS -->
+    <main class="container">
 
-            <div class="month-selector-box">
-                <label for="budget-target-month">🎯 Mese di Competenza del Budget:</label>
-                <select id="budget-target-month" onchange="calculateBudget();" style="font-weight:bold; font-size:1rem; border-color:var(--primary);">
-                </select>
-                <small style="color:var(--text-light); display:block; margin-top:4px;">
-                    Imposta il mese a cui destinare lo stipendio.
-                </small>
-            </div>
-
-            <div class="card">
-                <h2><span>Obiettivi Budget & Quote</span></h2>
-                
-                <div class="form-group">
-                    <label>Stipendio (€)</label>
-                    <input type="number" id="dash-salary" value="1900" oninput="calculateBudget()">
-                </div>
-
-                <label>Percentuali Budget (%)</label>
-                <div class="ratio-inputs">
-                    <div class="ratio-box">
-                        <label style="color:var(--primary);">Bisogni</label>
-                        <input type="number" id="ratio-50" value="50" oninput="calculateBudget()">
-                    </div>
-                    <div class="ratio-box">
-                        <label style="color:var(--warning);">Svago</label>
-                        <input type="number" id="ratio-30" value="30" oninput="calculateBudget()">
-                    </div>
-                    <div class="ratio-box">
-                        <label style="color:var(--success);">Risparmio</label>
-                        <input type="number" id="ratio-20" value="20" oninput="calculateBudget()">
-                    </div>
-                </div>
-
-                <div class="macro-stat">
-                    <div class="macro-header">
-                        <span style="color: var(--primary);">🔴 Bisogni (<span id="lbl-r50">50</span>%)</span>
-                        <span id="remain-50">0.00 €</span>
-                    </div>
-                    <div class="macro-sub">
-                        <span>Quote Fisse: <strong id="spent-50">0 €</strong></span>
-                        <span>Budget Massimo: <span id="budget-50">0 €</span></span>
-                    </div>
-                    <div class="progress-bg"><div id="bar-50" class="progress-fill" style="width: 0%; background: var(--primary);"></div></div>
-                </div>
-
-                <div class="macro-stat">
-                    <div class="macro-header">
-                        <span style="color: var(--warning);">🟡 Svago (<span id="lbl-r30">30</span>%)</span>
-                        <span id="remain-30">0.00 €</span>
-                    </div>
-                    <div class="macro-sub">
-                        <span>Quote Fisse: <strong id="spent-30">0 €</strong></span>
-                        <span>Budget Massimo: <span id="budget-30">0 €</span></span>
-                    </div>
-                    <div class="progress-bg"><div id="bar-30" class="progress-fill" style="width: 0%; background: var(--warning);"></div></div>
-                </div>
-
-                <div class="macro-stat">
-                    <div class="macro-header">
-                        <span style="color: var(--success);">🟢 Risparmio (<span id="lbl-r20">20</span>%)</span>
-                        <span id="remain-20">0.00 €</span>
-                    </div>
-                    <div class="macro-sub">
-                        <span>Quote Fisse: <strong id="spent-20">0 €</strong></span>
-                        <span>Obiettivo Minimo: <span id="budget-20">0 €</span></span>
-                    </div>
-                    <div class="progress-bg"><div id="bar-20" class="progress-fill" style="width: 0%; background: var(--success);"></div></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>
-                    <span>Fisse & Accantonamenti <br><small id="current-month-label" style="font-size:0.8rem; font-weight:normal; color:var(--text-light);"></small></span>
-                    <button class="add-btn" onclick="openQuotaModal()">+</button>
-                </h2>
-                <div id="quotas-list"></div>
-                <div class="row total-row">
-                    <span>Totale Quote Mensili:</span>
-                    <span id="quotas-total">0.00 €</span>
-                </div>
-            </div>
-
-            <button id="save-month-btn" class="btn" style="font-size:1.05rem; padding: 16px;" onclick="saveMonth()">
-                💾 Salva e Chiudi Mese Selezionato
-            </button>
-        </div>
-
-        <!-- GESTIONE AUTO -->
-        <div id="auto" class="page">
-            <div class="card">
-                <h2>
-                    <span>⛽ Rifornimenti</span>
-                    <button class="add-btn" onclick="openFuelModal()">+</button>
-                </h2>
-                <div id="fuel-list"></div>
-            </div>
-
-            <div class="card">
-                <h2>
-                    <span>🔧 Manutenzione</span>
-                    <button class="add-btn" onclick="openMaintModal()">+</button>
-                </h2>
-                <div id="maint-list"></div>
-            </div>
-        </div>
-
-        <!-- STATISTICHE AUTO -->
-        <div id="stats" class="page">
-            <div class="month-selector-box">
-                <label>Filtra per Anno:</label>
-                <select id="stats-year-filter" onchange="renderStats()" style="font-weight:bold; font-size:1rem; border-color:var(--primary);">
-                </select>
-            </div>
-
-            <div class="card">
-                <h2><span>Riepilogo Totale Auto</span></h2>
-                <div id="stats-totals"></div>
-            </div>
-
-            <div class="card">
-                <h2><span>Manutenzione per Categoria</span></h2>
-                <div id="stats-maint"></div>
-            </div>
-
-            <div class="card">
-                <h2><span>Carburante per Tipologia</span></h2>
-                <div id="stats-fuel"></div>
-            </div>
-        </div>
-
-        <!-- STORICO MESI SALVATI -->
-        <div id="history" class="page">
-            <div class="card">
-                <h2><span>🗓 Storico Mesi Chiusi</span></h2>
-                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 20px;">
-                    Resoconti salvati per ciascun mese con stipendio e quote fisse accantonate.
-                </p>
-                <div id="history-list"></div>
-            </div>
-        </div>
-
-        <!-- IMPOSTAZIONI -->
-        <div id="settings" class="page">
+        <!-- ================= TAB 1: BUDGET & FINANZE ================= -->
+        <section id="tab-budget" class="tab-panel active">
             
             <div class="card">
-                <h2><span>🎨 Aspetto e Testo</span></h2>
-                <div class="form-group">
-                    <label>Tema</label>
-                    <select id="setting-theme" onchange="changeSetting('theme', this.value)">
-                        <option value="light">☀️ Chiaro</option>
-                        <option value="dark">🌙 Scuro</option>
-                    </select>
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Stipendio e Obiettivi Budget</div>
+                        <div class="card-subtitle">Pianificazione finanziaria mensile</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Dimensione Testo</label>
-                    <select id="setting-fontsize" onchange="changeSetting('fontsize', this.value)">
-                        <option value="14px">Piccolo</option>
-                        <option value="16px">Normale</option>
-                        <option value="18px">Grande</option>
-                        <option value="20px">Molto Grande</option>
-                    </select>
+
+                <div class="stats-grid-filters">
+                    <div class="input-group">
+                        <label class="input-label">Mese Competenza</label>
+                        <select id="budget-month-select" class="input-control" onchange="calculateBudgetMetrics()"></select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Entrata Netta (€)</label>
+                        <input type="number" id="budget-salary" class="input-control" value="1900" oninput="calculateBudgetMetrics()">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Carattere (Font)</label>
-                    <select id="setting-font" onchange="changeSetting('font', this.value)">
-                        <option value="'Segoe UI', system-ui, sans-serif">Standard</option>
-                        <option value="Arial, Helvetica, sans-serif">Arial</option>
-                        <option value="'Courier New', Courier, monospace">Monospace</option>
-                        <option value="Georgia, serif">Georgia</option>
-                    </select>
+
+                <div style="margin-top:10px; margin-bottom:12px;">
+                    <label class="input-label">Ripartizione Regola</label>
+                    <div class="ratios-grid">
+                        <div class="ratio-tile">
+                            <div class="ratio-tile-label" style="color:var(--brand-accent);">🔴 Bisogni</div>
+                            <input type="number" id="ratio-50" value="50" oninput="calculateBudgetMetrics()">
+                        </div>
+                        <div class="ratio-tile">
+                            <div class="ratio-tile-label" style="color:var(--amber);">🟡 Svago</div>
+                            <input type="number" id="ratio-30" value="30" oninput="calculateBudgetMetrics()">
+                        </div>
+                        <div class="ratio-tile">
+                            <div class="ratio-tile-label" style="color:var(--emerald);">🟢 Risparmio</div>
+                            <input type="number" id="ratio-20" value="20" oninput="calculateBudgetMetrics()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schede Pillar -->
+                <div class="hero-metric">
+                    <div class="hero-metric-header">
+                        <span style="color:var(--brand-accent);">Bisogni & Spese Fisse (<span id="lbl-r50">50</span>%)</span>
+                        <span id="remain-50" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                    </div>
+                    <div class="hero-metric-sub">
+                        <span>Quote: <b id="spent-50">0 €</b></span>
+                        <span>Massimo consentito: <span id="max-50">0 €</span></span>
+                    </div>
+                    <div class="hero-progress"><div id="bar-50" class="hero-progress-fill" style="width:0%; background:var(--brand-accent);"></div></div>
+                </div>
+
+                <div class="hero-metric">
+                    <div class="hero-metric-header">
+                        <span style="color:var(--amber);">Svago & Personale (<span id="lbl-r30">30</span>%)</span>
+                        <span id="remain-30" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                    </div>
+                    <div class="hero-metric-sub">
+                        <span>Quote: <b id="spent-30">0 €</b></span>
+                        <span>Massimo consentito: <span id="max-30">0 €</span></span>
+                    </div>
+                    <div class="hero-progress"><div id="bar-30" class="hero-progress-fill" style="width:0%; background:var(--amber);"></div></div>
+                </div>
+
+                <div class="hero-metric">
+                    <div class="hero-metric-header">
+                        <span style="color:var(--emerald);">Risparmio & Investimenti (<span id="lbl-r20">20</span>%)</span>
+                        <span id="remain-20" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                    </div>
+                    <div class="hero-metric-sub">
+                        <span>Quote: <b id="spent-20">0 €</b></span>
+                        <span>Target mensile: <span id="max-20">0 €</span></span>
+                    </div>
+                    <div class="hero-progress"><div id="bar-20" class="hero-progress-fill" style="width:0%; background:var(--emerald);"></div></div>
                 </div>
             </div>
 
-            <div class="card" style="border: 2px solid var(--primary);">
-                <h2><span>☁️ Sincronizzazione Cloud</span></h2>
-                <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
-                    Sincronizza i dati con Firebase per averli su tutti i dispositivi.
-                </p>
-                <button class="btn" style="background: var(--primary);" onclick="uploadBackupToFirebase()">
-                    ⬆️ 1. Invia Dati di questo Dispositivo
-                </button>
-                <button class="btn" style="background: var(--success); margin-top: 10px;" onclick="downloadBackupFromFirebase(true)">
-                    ⬇️ 2. Scarica e Importa Dati dal Cloud
+            <!-- Fisse & Quote -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Fisse & Accantonamenti</div>
+                        <div class="card-subtitle">Quote ricorrenti rateizzate mensilmente</div>
+                    </div>
+                    <button class="icon-btn-add" onclick="openQuotaModal()">+</button>
+                </div>
+                <div id="quotas-list-container"></div>
+                <div class="list-row" style="margin-top:10px; border-top:1px solid var(--border); padding-top:12px;">
+                    <div class="list-row-title" style="font-weight:700;">Totale Accantonamenti Mensili</div>
+                    <div id="quotas-total-amount" class="list-row-amount" style="color:var(--brand-accent); font-size:1.05rem;">0.00 €</div>
+                </div>
+                <button id="btn-save-month-record" class="btn btn-primary" style="margin-top: 14px;" onclick="archiveMonthSummary()">
+                    💾 Archivia e Salva Mese Selezionato
                 </button>
             </div>
 
+            <!-- Storico Mesi Chiusi -->
             <div class="card">
-                <h2><span>📁 Backup Locale (.json)</span></h2>
-                <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 12px;">
-                    Scarica una copia fisica dei dati o ripristina un backup precedente.
-                </p>
-                
-                <button class="btn" style="background: var(--success);" onclick="exportData()">💾 Scarica File Backup (.json)</button>
-                
-                <div style="margin-top: 14px;">
-                    <label style="font-weight:bold; color:var(--primary); font-size:0.9rem;">Ripristina da File Backup:</label>
-                    <input type="file" id="import-json-file" accept=".json,application/json,text/plain,*/*" class="file-upload-input" onchange="importData(event)">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Storico Mesi Archiviati</div>
+                        <div class="card-subtitle">Bilancio storico entrate e risparmio netto</div>
+                    </div>
+                </div>
+                <div id="history-records-container"></div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: GESTIONE AUTO (SEPARATA) ================= -->
+        <section id="tab-auto" class="tab-panel">
+            
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Rifornimenti Carburante</div>
+                        <div class="card-subtitle">Log GPL e Benzina raggruppati per mese</div>
+                    </div>
+                    <button class="icon-btn-add" onclick="openFuelModal()">+</button>
+                </div>
+                <div id="fuel-accordion-container"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Manutenzioni & Officina</div>
+                        <div class="card-subtitle">Interventi, tagliandi, olio e ruote</div>
+                    </div>
+                    <button class="icon-btn-add" onclick="openMaintModal()">+</button>
+                </div>
+                <div id="maint-accordion-container"></div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: STATISTICHE AUTO (ANNO & MESE) ================= -->
+        <section id="tab-stats" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Monitoraggio Spese Flotta</div>
+                        <div class="card-subtitle">Analisi granulare per periodo e categoria</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid-filters">
+                    <div class="input-group">
+                        <label class="input-label">Filtro Anno</label>
+                        <select id="stats-filter-year" class="input-control" onchange="onStatsYearChange()"></select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Filtro Mese</label>
+                        <select id="stats-filter-month" class="input-control" onchange="renderFleetAnalytics()"></select>
+                    </div>
+                </div>
+
+                <!-- Indicatori Generali -->
+                <div id="stats-kpi-summary"></div>
+            </div>
+
+            <!-- Ripartizione Manutenzione per Categoria -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Manutenzione per Categoria</div>
+                        <div class="card-subtitle">Incidenza percentuale delle operazioni</div>
+                    </div>
+                </div>
+                <div id="stats-maint-breakdown"></div>
+            </div>
+
+            <!-- Ripartizione Carburante -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Carburante per Tipologia</div>
+                        <div class="card-subtitle">GPL vs Benzina</div>
+                    </div>
+                </div>
+                <div id="stats-fuel-breakdown"></div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: ACCOUNT, EXPORT EXCEL & IMPOSTAZIONI ================= -->
+        <section id="tab-settings" class="tab-panel">
+            
+            <!-- Profilo e Accesso Google -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Account Google</div>
+                        <div class="card-subtitle">Autenticazione cloud personale</div>
+                    </div>
+                </div>
+
+                <div id="auth-box-content" class="account-card">
+                    <div class="account-avatar" id="user-avatar-initial">U</div>
+                    <div class="account-meta">
+                        <div class="account-name" id="user-display-name">Sessione Locale</div>
+                        <div class="account-email" id="user-display-email">Collega il tuo account Google</div>
+                    </div>
+                    <button class="btn btn-outline" id="btn-auth-toggle" style="width:auto; padding:8px 14px;" onclick="handleGoogleAuth()">Accedi</button>
                 </div>
             </div>
-        </div>
+
+            <!-- Esportazione Dati Excel & Backup -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Esportazione & Backup Dati</div>
+                        <div class="card-subtitle">Esporta su Excel, Fogli Google o file JSON</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" style="margin-bottom:10px;" onclick="exportToExcelCSV()">
+                    <svg style="width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Scarica Foglio Excel / Fogli Google (.csv)
+                </button>
+
+                <button class="btn btn-secondary" style="margin-bottom:14px;" onclick="exportLocalJson()">
+                    <svg style="width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Scarica Backup Completo (.json)
+                </button>
+
+                <div>
+                    <label class="input-label">Ripristina da File Backup (.json)</label>
+                    <input type="file" id="import-file-input" accept=".json,application/json,text/plain" class="input-control" onchange="importLocalJson(event)">
+                </div>
+            </div>
+
+            <!-- Personalizzazione Visiva Sofisticata -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Aspetto & Tipografia</div>
+                        <div class="card-subtitle">Personalizzazione tema e leggibilità</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid-filters">
+                    <div class="input-group">
+                        <label class="input-label">Tema Interfaccia</label>
+                        <select id="setting-theme" class="input-control" onchange="updateDesignSetting('theme', this.value)">
+                            <option value="dark">🌙 Dark Slate</option>
+                            <option value="light">☀️ Light Pure</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Dimensione Testo</label>
+                        <select id="setting-fontsize" class="input-control" onchange="updateDesignSetting('fontsize', this.value)">
+                            <option value="14px">Compatto (14px)</option>
+                            <option value="15px">Equilibrato (15px)</option>
+                            <option value="16.5px">Ampio (16.5px)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </section>
     </main>
 
-    <script>
-        // ==========================================
-        // CONFIGURAZIONE DATABASE FISSO CLOUD
-        const DEFAULT_FIREBASE_URL = "https://gestione-finanza-be6ee-default-rtdb.europe-west1.firebasedatabase.app";
-        const DEFAULT_FIREBASE_KEY = "mie_finanze";
-        // ==========================================
+    <!-- Bottom Navigation Bar (Stile App Nativa) -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" onclick="switchNavTab('budget', this)">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Budget</span>
+        </a>
+        <a class="nav-item" onclick="switchNavTab('auto', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            <span>Auto</span>
+        </a>
+        <a class="nav-item" onclick="switchNavTab('stats', this)">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Statistiche</span>
+        </a>
+        <a class="nav-item" onclick="switchNavTab('settings', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Impostazioni</span>
+        </a>
+    </nav>
 
-        const initialCategories = [
+    <!-- CORE LOGIC ENGINE SCRIPT -->
+    <script>
+        // Configurazione permanente Firebase Realtime Database
+        const FIREBASE_REST_BASE = "https://gestione-finanza-be6ee-default-rtdb.europe-west1.firebasedatabase.app";
+        const FIREBASE_SYNC_KEY = "mie_finanze";
+
+        const standardFleetCategories = [
             'Tagliando completo',
             'Cambio olio e filtro',
+            'Aggiunta olio',
             'Sostituzione filtro GPL Landi',
             'Controllo gioco valvole',
             'Sostituzione candele',
-            'Sostituzione Pneumatici',
-            'Freni (Pastiglie/Dischi)',
+            'Cambio Ruote Anteriori',
+            'Cambio Ruote Posteriori',
+            'Revisione',
+            'Tagliando + Pasticche',
             'Batteria Start & Stop',
             'Altro'
         ];
 
-        const defaultData = {
+        const schemaModel = {
             salary: 1900,
             targetMonth: '',
             ratios: { r50: 50, r30: 30, r20: 20 },
@@ -561,503 +1099,372 @@
                 { id: 3, name: 'Assicurazione Vita', amount: 120, freq: 'annual', macro: '20' }
             ],
             history: [],
-            car: { 
-                fuel: [], 
+            car: {
+                fuel: [],
                 maintenance: [],
-                categories: initialCategories
+                categories: standardFleetCategories
             }
         };
-        
-        let appData = JSON.parse(localStorage.getItem('budgetAppV15')) 
-                   || JSON.parse(localStorage.getItem('budgetAppV14'))
-                   || JSON.parse(localStorage.getItem('budgetAppV13')) 
-                   || JSON.parse(localStorage.getItem('budgetAppV12')) 
-                   || defaultData;
 
-        if (!appData.ratios) appData.ratios = { r50: 50, r30: 30, r20: 20 };
-        if (!appData.quotas) appData.quotas = [];
-        if (!appData.history) appData.history = [];
-        if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
-        if (!appData.car.fuel) appData.car.fuel = [];
-        if (!appData.car.maintenance) appData.car.maintenance = [];
-        if (!appData.car.categories || !Array.isArray(appData.car.categories)) {
-            appData.car.categories = initialCategories;
+        // Caricamento Dati
+        let store = JSON.parse(localStorage.getItem('financeStudioStoreV1'))
+                 || JSON.parse(localStorage.getItem('budgetAppV15'))
+                 || JSON.parse(localStorage.getItem('budgetAppV14'))
+                 || schemaModel;
+
+        if (!store.ratios) store.ratios = { r50: 50, r30: 30, r20: 20 };
+        if (!store.quotas) store.quotas = [];
+        if (!store.history) store.history = [];
+        if (!store.car) store.car = { fuel: [], maintenance: [], categories: standardFleetCategories };
+        if (!store.car.fuel) store.car.fuel = [];
+        if (!store.car.maintenance) store.car.maintenance = [];
+        if (!store.car.categories || !Array.isArray(store.car.categories)) store.car.categories = standardFleetCategories;
+
+        let currentUser = null;
+        let isWritingRemote = false;
+
+        // Inizializzazione Firebase Compat per Auth
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    databaseURL: FIREBASE_REST_BASE,
+                    authDomain: "gestione-finanza-be6ee.firebaseapp.com"
+                });
+            }
+            firebase.auth().onAuthStateChanged(user => {
+                currentUser = user;
+                renderAuthProfile();
+            });
+        } catch(e) {
+            console.log("Firebase Auth init fallback: " + e.message);
         }
-        if (appData.expenses) delete appData.expenses;
-        localStorage.setItem('budgetAppV15', JSON.stringify(appData));
 
-        let isRemoteUpdate = false;
-
-        // --- GESTIONE IMPOSTAZIONI ---
-        let localSettings = JSON.parse(localStorage.getItem('budgetAppSettings')) || {
-            theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-            fontsize: '16px',
-            font: "'Segoe UI', system-ui, sans-serif"
+        // Gestione Design e Preferenze
+        let uiPrefs = JSON.parse(localStorage.getItem('financeStudioUIPrefs')) || {
+            theme: 'dark',
+            fontsize: '15px'
         };
 
-        function changeSetting(key, value) {
-            localSettings[key] = value;
-            localStorage.setItem('budgetAppSettings', JSON.stringify(localSettings));
-            applySettings();
+        function applyDesignPreferences() {
+            document.body.setAttribute('data-theme', uiPrefs.theme);
+            document.documentElement.style.setProperty('--font-size-base', uiPrefs.fontsize);
+
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            if (themeToggleBtn) themeToggleBtn.innerText = uiPrefs.theme === 'dark' ? '🌙' : '☀️';
+
+            const selTheme = document.getElementById('setting-theme');
+            if (selTheme) selTheme.value = uiPrefs.theme;
+            const selSize = document.getElementById('setting-fontsize');
+            if (selSize) selSize.value = uiPrefs.fontsize;
+        }
+
+        function updateDesignSetting(key, val) {
+            uiPrefs[key] = val;
+            localStorage.setItem('financeStudioUIPrefs', JSON.stringify(uiPrefs));
+            applyDesignPreferences();
         }
 
         function toggleTheme() {
-            localSettings.theme = localSettings.theme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('budgetAppSettings', JSON.stringify(localSettings));
-            applySettings();
+            updateDesignSetting('theme', uiPrefs.theme === 'dark' ? 'light' : 'dark');
         }
 
-        function applySettings() {
-            document.body.setAttribute('data-theme', localSettings.theme);
-            const toggleBtn = document.getElementById('theme-toggle');
-            if(toggleBtn) toggleBtn.innerText = localSettings.theme === 'dark' ? '☀️' : '🌙';
-            
-            document.documentElement.style.setProperty('--app-font-size', localSettings.fontsize);
-            document.documentElement.style.setProperty('--app-font', localSettings.font);
+        // Navigation Engine
+        function switchNavTab(tabName, element) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
-            const themeSel = document.getElementById('setting-theme');
-            if(themeSel) themeSel.value = localSettings.theme;
-            const sizeSel = document.getElementById('setting-fontsize');
-            if(sizeSel) sizeSel.value = localSettings.fontsize;
-            const fontSel = document.getElementById('setting-font');
-            if(fontSel) fontSel.value = localSettings.font;
+            const targetPanel = document.getElementById(`tab-${tabName}`);
+            if (targetPanel) targetPanel.classList.add('active');
+            if (element) element.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabName === 'budget') calculateBudgetMetrics();
+            if (tabName === 'auto') { renderFuelView(); renderMaintView(); }
+            if (tabName === 'stats') { initStatsFilters(); renderFleetAnalytics(); }
+            if (tabName === 'settings') renderAuthProfile();
         }
 
-        // Applica al caricamento
-        applySettings();
-
-        function initMonthSelector() {
-            const select = document.getElementById('budget-target-month');
-            select.innerHTML = '';
-            
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth();
-
-            for (let i = -2; i <= 6; i++) {
-                const d = new Date(currentYear, currentMonth + i, 1);
-                const valKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                const label = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
-                
-                const opt = document.createElement('option');
-                opt.value = valKey;
-                opt.innerText = label.charAt(0).toUpperCase() + label.slice(1);
-                select.appendChild(opt);
-            }
-
-            if (appData.targetMonth) {
-                select.value = appData.targetMonth;
-            } else {
-                const defaultOffset = (now.getDate() >= 20) ? 1 : 0;
-                const defDate = new Date(currentYear, currentMonth + defaultOffset, 1);
-                const defKey = `${defDate.getFullYear()}-${String(defDate.getMonth() + 1).padStart(2, '0')}`;
-                select.value = defKey;
-                appData.targetMonth = defKey;
-            }
+        // Sincronizzazione Cloud REST
+        function getEndpointUrl() {
+            return `${FIREBASE_REST_BASE}/${FIREBASE_SYNC_KEY}.json`;
         }
 
-        const drawer = document.getElementById('drawer');
-        const overlay = document.getElementById('overlay');
-        const pages = document.querySelectorAll('.page');
-        const navLinks = document.querySelectorAll('.nav-link');
+        function updateCloudPill(status, label) {
+            const pill = document.getElementById('cloud-pill');
+            const txt = document.getElementById('cloud-pill-text');
+            if (!pill || !txt) return;
 
-        function toggleMenu() {
-            drawer.classList.toggle('open');
-            overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none';
+            pill.className = `sync-pill ${status}`;
+            txt.innerText = label;
         }
 
-        function closeAllOverlays() {
-            drawer.classList.remove('open');
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-            overlay.style.display = 'none';
-        }
+        function commitLocalStore() {
+            localStorage.setItem('financeStudioStoreV1', JSON.stringify(store));
 
-        function navigate(pageId, element) {
-            pages.forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            
-            if(element) {
-                navLinks.forEach(l => l.classList.remove('active'));
-                element.classList.add('active');
-            }
-            closeAllOverlays();
-            
-            if(pageId === 'dashboard') calculateBudget();
-            if(pageId === 'history') renderHistory();
-            if(pageId === 'auto') { renderFuel(); renderMaint(); }
-            if(pageId === 'stats') { initStatsYearSelector(); renderStats(); }
-        }
-
-        function updateStatusBadge(status, text) {
-            const el = document.getElementById('cloud-status-indicator');
-            if(!el) return;
-            el.className = 'sync-badge ' + (status === 'online' ? 'sync-online' : status === 'loading' ? 'sync-loading' : 'sync-offline');
-            el.innerHTML = `<span>${text}</span>`;
-        }
-
-        function getFirebaseRestUrl() {
-            let url = DEFAULT_FIREBASE_URL;
-            let key = DEFAULT_FIREBASE_KEY;
-            if (!url) return null;
-            if (!url.startsWith('https://')) url = 'https://' + url;
-            if (url.endsWith('/')) url = url.slice(0, -1);
-            return `${url}/${key}.json`;
-        }
-
-        function saveData() {
-            localStorage.setItem('budgetAppV15', JSON.stringify(appData));
-            
-            const endpoint = getFirebaseRestUrl();
-            if (endpoint && !isRemoteUpdate) {
-                updateStatusBadge('loading', '⏳ Salvataggio Cloud...');
-                fetch(endpoint, {
+            if (!isWritingRemote) {
+                updateCloudPill('loading', 'Sincronizzazione...');
+                fetch(getEndpointUrl(), {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appData)
+                    body: JSON.stringify(store)
                 })
-                .then(res => {
-                    if (res.ok) {
-                        updateStatusBadge('online', '⚡ Cloud Sincronizzato');
-                    } else if (res.status === 401 || res.status === 403) {
-                        updateStatusBadge('offline', '⚠️ Permessi Cloud Negati');
-                    } else {
-                        updateStatusBadge('offline', '⚠️ Errore Cloud HTTP ' + res.status);
-                    }
+                .then(r => {
+                    if (r.ok) updateCloudPill('online', 'Cloud Sincronizzato');
+                    else updateCloudPill('offline', 'Verifica Regole');
                 })
-                .catch(err => {
-                    updateStatusBadge('offline', '⚠️ Errore Rete / Connessione');
-                });
-            } else if (!endpoint) {
-                updateStatusBadge('offline', '📱 Memoria Locale');
+                .catch(() => updateCloudPill('offline', 'Offline'));
             }
         }
 
-        function uploadBackupToFirebase() {
-            const endpoint = getFirebaseRestUrl();
-            if (!endpoint) return alert("URL Cloud non configurato nel codice.");
-            
-            updateStatusBadge('loading', '⏳ Invio dati al Cloud...');
-            fetch(endpoint, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(appData)
-            })
-            .then(res => {
-                if (res.ok) {
-                    updateStatusBadge('online', '⚡ Cloud Sincronizzato');
-                    alert("✅ Dati caricati sul Cloud con successo! Ora puoi aprire l'app da PC e cliccare su 'Scarica e Importa Dati dal Cloud'.");
-                } else if (res.status === 401 || res.status === 403) {
-                    alert("⚠️ Accesso Negato da Firebase!\nVai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write su true.");
-                    updateStatusBadge('offline', '⚠️ Regole Firebase Bloccate');
-                } else {
-                    alert("Errore HTTP: " + res.status);
-                }
-            })
-            .catch(err => {
-                alert("Errore di rete: " + err.message);
-            });
-        }
-
-        function downloadBackupFromFirebase(showAlert = false) {
-            const endpoint = getFirebaseRestUrl();
-            if (!endpoint) {
-                if (showAlert) alert("URL Cloud non configurato.");
-                return;
-            }
-
-            updateStatusBadge('loading', '⏳ Scaricamento dal Cloud...');
-            fetch(endpoint)
-                .then(res => {
-                    if (res.ok) return res.json();
-                    if (res.status === 401 || res.status === 403) {
-                        throw new Error("Permesso negato: controlla le Regole (.read e .write) su Firebase Console!");
-                    }
-                    throw new Error("Errore HTTP " + res.status);
-                })
+        function manualCloudSync() {
+            updateCloudPill('loading', 'Scaricamento...');
+            fetch(getEndpointUrl())
+                .then(r => r.json())
                 .then(data => {
-                    if (data && (data.salary !== undefined || data.quotas !== undefined || data.car !== undefined)) {
-                        isRemoteUpdate = true;
-                        appData = Object.assign({}, defaultData, data);
-                        if (!appData.quotas) appData.quotas = [];
-                        if (!appData.history) appData.history = [];
-                        if (!appData.car) appData.car = { fuel: [], maintenance: [], categories: initialCategories };
-                        if (!appData.car.fuel) appData.car.fuel = [];
-                        if (!appData.car.maintenance) appData.car.maintenance = [];
-                        if (!appData.car.categories) appData.car.categories = initialCategories;
-                        localStorage.setItem('budgetAppV15', JSON.stringify(appData));
+                    if (data && (data.salary !== undefined || data.car !== undefined)) {
+                        isWritingRemote = true;
+                        store = Object.assign({}, schemaModel, data);
+                        if (!store.quotas) store.quotas = [];
+                        if (!store.history) store.history = [];
+                        if (!store.car) store.car = { fuel: [], maintenance: [], categories: standardFleetCategories };
+                        if (!store.car.fuel) store.car.fuel = [];
+                        if (!store.car.maintenance) store.car.maintenance = [];
+                        if (!store.car.categories) store.car.categories = standardFleetCategories;
                         
-                        // Aggiorna la vista
-                        document.getElementById('dash-salary').value = appData.salary;
-                        document.getElementById('ratio-50').value = appData.ratios.r50;
-                        document.getElementById('ratio-30').value = appData.ratios.r30;
-                        document.getElementById('ratio-20').value = appData.ratios.r20;
-                        calculateBudget();
-                        renderFuel();
-                        renderMaint();
-                        renderHistory();
-                        isRemoteUpdate = false;
-                        updateStatusBadge('online', '⚡ Cloud Sincronizzato');
-                        if (showAlert) alert("✅ Dati scaricati e sincronizzati dal Cloud!");
+                        localStorage.setItem('financeStudioStoreV1', JSON.stringify(store));
+                        isWritingRemote = false;
+
+                        calculateBudgetMetrics();
+                        renderFuelView();
+                        renderMaintView();
+                        updateCloudPill('online', 'Cloud Sincronizzato');
                     } else {
-                        updateStatusBadge('online', '⚡ Cloud Connesso (Vuoto)');
-                        if (showAlert) alert("⚠️ Il database Cloud è ancora vuoto. Premi prima 'Salva Dati Attuali sul Cloud' dal dispositivo con i dati!");
+                        commitLocalStore();
                     }
                 })
-                .catch(err => {
-                    updateStatusBadge('offline', '⚠️ Errore: ' + err.message);
-                    if (showAlert) alert("Errore Cloud: " + err.message);
-                });
+                .catch(() => updateCloudPill('offline', 'Offline'));
         }
 
-        // --- GESTIONE CATEGORIE DINAMICHE MANUTENZIONE ---
-        function populateMaintCategories(selectedCategory = '') {
-            const select = document.getElementById('maint-type');
-            select.innerHTML = '';
-            
-            const cats = appData.car.categories || initialCategories;
-            cats.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.innerText = c;
-                select.appendChild(opt);
-            });
-
-            const customOpt = document.createElement('option');
-            customOpt.value = '__custom__';
-            customOpt.innerText = '➕ Crea Nuova Categoria...';
-            select.appendChild(customOpt);
-
-            if (selectedCategory && cats.includes(selectedCategory)) {
-                select.value = selectedCategory;
-                document.getElementById('custom-category-group').style.display = 'none';
-            } else if (selectedCategory) {
-                select.value = '__custom__';
-                document.getElementById('custom-category-group').style.display = 'block';
-                document.getElementById('maint-custom-type').value = selectedCategory;
-            } else {
-                document.getElementById('custom-category-group').style.display = 'none';
-            }
-        }
-
-        function checkCustomCategory(val) {
-            const group = document.getElementById('custom-category-group');
-            if (val === '__custom__') {
-                group.style.display = 'block';
-                document.getElementById('maint-custom-type').focus();
-            } else {
-                group.style.display = 'none';
-            }
-        }
-
-        function openNewCategoryPrompt() {
-            const newCat = prompt("Inserisci il nome della nuova categoria di manutenzione:");
-            if (newCat && newCat.trim()) {
-                const name = newCat.trim();
-                if (!appData.car.categories.includes(name)) {
-                    appData.car.categories.push(name);
-                    saveData();
+        // ================= GESTIONE AUTH & PROFILO GOOGLE =================
+        function handleGoogleAuth() {
+            if (currentUser) {
+                if (confirm("Vuoi disconnettere il tuo account Google?")) {
+                    firebase.auth().signOut().then(() => {
+                        currentUser = null;
+                        renderAuthProfile();
+                    });
                 }
-                populateMaintCategories(name);
+            } else {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                firebase.auth().signInWithPopup(provider)
+                    .then(res => {
+                        currentUser = res.user;
+                        renderAuthProfile();
+                        manualCloudSync();
+                    })
+                    .catch(err => {
+                        alert("Accesso Google: " + err.message);
+                    });
             }
         }
 
-        // --- STATISTICHE AUTO ---
-        function initStatsYearSelector() {
-            const sel = document.getElementById('stats-year-filter');
-            sel.innerHTML = '<option value="all">Tutto il periodo</option>';
-            
-            const years = new Set();
-            appData.car.fuel.forEach(f => { if(f.date) years.add(f.date.substring(0,4)); });
-            appData.car.maintenance.forEach(m => { if(m.date) years.add(m.date.substring(0,4)); });
-            
-            Array.from(years).sort().reverse().forEach(y => {
-                sel.innerHTML += `<option value="${y}">${y}</option>`;
-            });
-        }
+        function renderAuthProfile() {
+            const avatar = document.getElementById('user-avatar-initial');
+            const nameEl = document.getElementById('user-display-name');
+            const emailEl = document.getElementById('user-display-email');
+            const btn = document.getElementById('btn-auth-toggle');
 
-        function renderStats() {
-            const year = document.getElementById('stats-year-filter').value;
-            
-            let fuelData = appData.car.fuel || [];
-            let maintData = appData.car.maintenance || [];
-
-            if (year !== 'all') {
-                fuelData = fuelData.filter(f => f.date && f.date.startsWith(year));
-                maintData = maintData.filter(m => m.date && m.date.startsWith(year));
+            if (currentUser) {
+                nameEl.innerText = currentUser.displayName || "Utente Google";
+                emailEl.innerText = currentUser.email || "";
+                btn.innerText = "Esci";
+                if (currentUser.photoURL) {
+                    avatar.innerHTML = `<img src="${currentUser.photoURL}" alt="User">`;
+                } else {
+                    avatar.innerText = (currentUser.displayName || "G").charAt(0).toUpperCase();
+                }
+            } else {
+                nameEl.innerText = "Sessione Locale";
+                emailEl.innerText = "Collega il tuo account Google";
+                btn.innerText = "Accedi con Google";
+                avatar.innerHTML = `<svg style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
             }
-
-            const totalFuel = fuelData.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
-            const totalMaint = maintData.reduce((acc, curr) => acc + (parseFloat(curr.cost) || 0), 0);
-            const grandTotal = totalFuel + totalMaint;
-
-            document.getElementById('stats-totals').innerHTML = `
-                <div class="row"><div class="info-col">Spesa Carburante</div><div class="amount-col" style="color:var(--warning)">€ ${totalFuel.toFixed(2)}</div></div>
-                <div class="row"><div class="info-col">Spesa Manutenzione</div><div class="amount-col" style="color:var(--danger)">€ ${totalMaint.toFixed(2)}</div></div>
-                <div class="row total-row"><div class="info-col">Totale Auto</div><div class="amount-col">€ ${grandTotal.toFixed(2)}</div></div>
-            `;
-
-            const maintByCat = {};
-            maintData.forEach(m => {
-                maintByCat[m.type] = (maintByCat[m.type] || 0) + (parseFloat(m.cost) || 0);
-            });
-            const sortedMaint = Object.keys(maintByCat).sort((a,b) => maintByCat[b] - maintByCat[a]);
-            
-            let maintHtml = '';
-            sortedMaint.forEach(cat => {
-                const pct = totalMaint > 0 ? (maintByCat[cat] / totalMaint) * 100 : 0;
-                maintHtml += `
-                    <div style="margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
-                            <span>${cat}</span><strong>€ ${maintByCat[cat].toFixed(2)}</strong>
-                        </div>
-                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:var(--danger)"></div></div>
-                    </div>
-                `;
-            });
-            if(!maintHtml) maintHtml = '<p style="color:var(--text-light); font-size:0.85rem;">Nessuna spesa nel periodo.</p>';
-            document.getElementById('stats-maint').innerHTML = maintHtml;
-
-            const fuelByType = {};
-            fuelData.forEach(f => {
-                fuelByType[f.type] = (fuelByType[f.type] || 0) + (parseFloat(f.total) || 0);
-            });
-            
-            let fuelHtml = '';
-            Object.keys(fuelByType).forEach(type => {
-                const pct = totalFuel > 0 ? (fuelByType[type] / totalFuel) * 100 : 0;
-                const color = type === 'GPL' ? 'var(--success)' : 'var(--warning)';
-                fuelHtml += `
-                    <div style="margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
-                            <span>${type}</span><strong>€ ${fuelByType[type].toFixed(2)}</strong>
-                        </div>
-                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:${color}"></div></div>
-                    </div>
-                `;
-            });
-            if(!fuelHtml) fuelHtml = '<p style="color:var(--text-light); font-size:0.85rem;">Nessun rifornimento nel periodo.</p>';
-            document.getElementById('stats-fuel').innerHTML = fuelHtml;
         }
 
-        // --- BACKUP CLASSICO FILE JSON ---
-        function exportData() {
-            const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `budget_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+        // ================= ESPORTAZIONE EXCEL / FOGLI GOOGLE (CSV BOM) =================
+        function exportToExcelCSV() {
+            let csv = "\uFEFF"; // Byte Order Mark per apertura corretta caratteri accentati in Excel
+
+            // SEZIONE 1: BUDGET
+            csv += "PIANIFICAZIONE BUDGET\n";
+            csv += "Stipendio Mensile (€);" + store.salary + "\n";
+            csv += "Percentuali;" + store.ratios.r50 + "% Bisogni;" + store.ratios.r30 + "% Svago;" + store.ratios.r20 + "% Risparmio\n\n";
+
+            csv += "QUOTE FISSE & ACCANTONAMENTI\n";
+            csv += "Nome;Importo Totale (€);Frequenza;Regola;Quota Mensile (€)\n";
+            store.quotas.forEach(q => {
+                let monthly = q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount/6 : q.amount/12;
+                csv += `"${q.name}";${q.amount};"${q.freq}";"${q.macro}%";${monthly.toFixed(2)}\n`;
+            });
+            csv += "\n";
+
+            // SEZIONE 2: MANUTENZIONI AUTO
+            csv += "REGISTRO MANUTENZIONI AUTO\n";
+            csv += "Data;Intervento;Chilometri;Costo (€);Officina/Note\n";
+            store.car.maintenance.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
+                csv += `"${m.date}";"${m.type}";${m.km || 0};${m.cost || 0};"${(m.notes || '').replace(/"/g, '""')}"\n`;
+            });
+            csv += "\n";
+
+            // SEZIONE 3: RIFORNIMENTI CARBURANTE
+            csv += "REGISTRO RIFORNIMENTI CARBURANTE\n";
+            csv += "Data;Carburante;Distributore;Prezzo/L (€);Litri;Totale Speso (€)\n";
+            store.car.fuel.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(f => {
+                csv += `"${f.date}";"${f.type}";"${(f.station || '').replace(/"/g, '""')}";${f.price || 0};${f.liters || 0};${f.total || 0}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Report_Finanze_Auto_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
-        function importData(event) {
-            const file = event.target.files && event.target.files[0];
+        // ================= BACKUP & RIPRISTINO JSON =================
+        function exportLocalJson() {
+            const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `FinanceStudio_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        function importLocalJson(e) {
+            const file = e.target.files && e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(evt) {
                 try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported && (imported.salary !== undefined || imported.quotas !== undefined)) { 
-                        appData = Object.assign({}, defaultData, imported); 
-                        if (!appData.car.categories) appData.car.categories = initialCategories;
-                        saveData(); 
-                        alert("✅ Backup ripristinato con successo!");
-                        location.reload(); 
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed && (parsed.salary !== undefined || parsed.car !== undefined)) {
+                        store = Object.assign({}, schemaModel, parsed);
+                        commitLocalStore();
+                        alert("✅ Dati ripristinati con successo!");
+                        location.reload();
                     } else {
-                        alert("Il file selezionato non sembra un backup valido.");
+                        alert("File JSON non valido.");
                     }
-                } catch (err) {
-                    alert("Errore nella lettura del file. Verifica che sia un backup JSON valido.");
+                } catch(err) {
+                    alert("Errore lettura file JSON.");
                 }
-            };
-            reader.onerror = function() {
-                alert("Impossibile aprire il file su questo dispositivo.");
             };
             reader.readAsText(file);
         }
 
-        function getMacroLabel(val) {
-            if(val == '50') return '<span class="tag-macro-50">Bisogni</span>';
-            if(val == '30') return '<span class="tag-macro-30">Svago</span>';
-            return '<span class="tag-macro-20">Risparmio</span>';
+        // ================= LOGICA SEZIONE BUDGET =================
+        function initMonthSelector() {
+            const sel = document.getElementById('budget-month-select');
+            sel.innerHTML = '';
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth();
+
+            for (let i = -2; i <= 6; i++) {
+                const d = new Date(y, m + i, 1);
+                const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const name = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.innerText = name.charAt(0).toUpperCase() + name.slice(1);
+                sel.appendChild(opt);
+            }
+
+            if (store.targetMonth) sel.value = store.targetMonth;
+            else {
+                const defOffset = (now.getDate() >= 20) ? 1 : 0;
+                const defD = new Date(y, m + defOffset, 1);
+                const defK = `${defD.getFullYear()}-${String(defD.getMonth() + 1).padStart(2, '0')}`;
+                sel.value = defK;
+                store.targetMonth = defK;
+            }
         }
 
-        function getMonthlyValue(amount, freq) {
-            if (freq === 'monthly') return amount;
-            if (freq === 'semiannual') return amount / 6;
-            return amount / 12;
-        }
-
-        function calculateBudget() {
-            const salary = parseFloat(document.getElementById('dash-salary').value) || 0;
+        function calculateBudgetMetrics() {
+            const salary = parseFloat(document.getElementById('budget-salary').value) || 0;
             const r50 = parseFloat(document.getElementById('ratio-50').value) || 0;
             const r30 = parseFloat(document.getElementById('ratio-30').value) || 0;
             const r20 = parseFloat(document.getElementById('ratio-20').value) || 0;
-            const targetMonth = document.getElementById('budget-target-month').value;
 
-            appData.salary = salary;
-            appData.ratios = { r50, r30, r20 };
-            appData.targetMonth = targetMonth;
-            saveData();
+            store.salary = salary;
+            store.ratios = { r50, r30, r20 };
+            store.targetMonth = document.getElementById('budget-month-select').value;
+            commitLocalStore();
 
             document.getElementById('lbl-r50').innerText = r50;
             document.getElementById('lbl-r30').innerText = r30;
             document.getElementById('lbl-r20').innerText = r20;
 
-            const target50 = salary * (r50 / 100);
-            const target30 = salary * (r30 / 100);
-            const target20 = salary * (r20 / 100);
+            const t50 = salary * (r50 / 100);
+            const t30 = salary * (r30 / 100);
+            const t20 = salary * (r20 / 100);
 
-            let actual50 = 0, actual30 = 0, actual20 = 0;
+            let act50 = 0, act30 = 0, act20 = 0;
+            let totalMonthlyQuotas = 0;
 
-            const selectEl = document.getElementById('budget-target-month');
-            const selectedText = selectEl.options[selectEl.selectedIndex] ? selectEl.options[selectEl.selectedIndex].text : '';
-            if(document.getElementById('current-month-label')) {
-                document.getElementById('current-month-label').innerText = 'Mese: ' + selectedText.toUpperCase();
-            }
+            const container = document.getElementById('quotas-list-container');
+            container.innerHTML = '';
 
-            const qList = document.getElementById('quotas-list');
-            qList.innerHTML = '';
-            let totalQuotas = 0;
+            store.quotas.forEach(q => {
+                const monthlyVal = q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount / 6 : q.amount / 12;
+                totalMonthlyQuotas += monthlyVal;
 
-            appData.quotas.forEach(quota => {
-                const monthlyValue = getMonthlyValue(quota.amount, quota.freq);
-                totalQuotas += monthlyValue;
-                
-                if (quota.macro == '50') actual50 += monthlyValue;
-                else if (quota.macro == '30') actual30 += monthlyValue;
-                else if (quota.macro == '20') actual20 += monthlyValue;
+                if (q.macro == '50') act50 += monthlyVal;
+                else if (q.macro == '30') act30 += monthlyVal;
+                else act20 += monthlyVal;
 
-                qList.innerHTML += `
-                    <div class="row">
-                        <div class="info-col">
-                            <div style="font-weight:500;">${quota.name} ${getMacroLabel(quota.macro)}</div>
-                            <div style="font-size:0.8rem; color:var(--text-light)">Impostato: ${quota.amount}€</div>
-                        </div>
-                        <div class="amount-col">${monthlyValue.toFixed(2)} € <span style="font-size:0.8rem; color:var(--text-light)">/mese</span></div>
+                container.innerHTML += `
+                    <div class="list-row">
                         <div>
-                            <button class="action-btn edit-btn" onclick="openQuotaModal(${quota.id})">✏️</button>
-                            <button class="action-btn delete-btn" onclick="deleteQuota(${quota.id})">🗑️</button>
+                            <div class="list-row-title">${q.name}</div>
+                            <div class="list-row-desc">€${parseFloat(q.amount).toFixed(2)} (${q.freq}) • ${q.macro}%</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="list-row-amount">€${monthlyVal.toFixed(2)}<span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/m</span></div>
+                            <button class="action-icon-btn" onclick="openQuotaModal(${q.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </button>
+                            <button class="action-icon-btn delete" onclick="deleteQuotaItem(${q.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('quotas-total').innerText = totalQuotas.toFixed(2) + ' €';
 
-            renderMacroProgress('50', actual50, target50, false);
-            renderMacroProgress('30', actual30, target30, false);
-            renderMacroProgress('20', actual20, target20, true);
+            document.getElementById('quotas-total-amount').innerText = `€ ${totalMonthlyQuotas.toFixed(2)}`;
+
+            updatePillarCard('50', act50, t50, false);
+            updatePillarCard('30', act30, t30, false);
+            updatePillarCard('20', act20, t20, true);
+            renderHistoryView();
         }
 
-        function renderMacroProgress(id, actual, target, isSavings) {
+        function updatePillarCard(id, actual, target, isSavings) {
             const bar = document.getElementById(`bar-${id}`);
-            const remainEl = document.getElementById(`remain-${id}`);
-            const spentEl = document.getElementById(`spent-${id}`);
-            const budgetEl = document.getElementById(`budget-${id}`);
+            const remain = document.getElementById(`remain-${id}`);
+            const spent = document.getElementById(`spent-${id}`);
+            const maxEl = document.getElementById(`max-${id}`);
 
-            spentEl.innerText = `${actual.toFixed(2)} €`;
-            budgetEl.innerText = `${target.toFixed(2)} €`;
+            spent.innerText = `€${actual.toFixed(2)}`;
+            maxEl.innerText = `€${target.toFixed(2)}`;
 
             const diff = target - actual;
             const pct = target > 0 ? (actual / target) * 100 : 0;
@@ -1065,391 +1472,547 @@
 
             if (!isSavings) {
                 if (diff >= 0) {
-                    remainEl.innerHTML = `<span style="color:var(--success)">Disponibili: ${diff.toFixed(2)} €</span>`;
-                    bar.style.background = id == '50' ? 'var(--primary)' : 'var(--warning)';
+                    remain.style.color = 'var(--text-primary)';
+                    remain.innerText = `€ ${diff.toFixed(2)} rimasti`;
                 } else {
-                    remainEl.innerHTML = `<span style="color:var(--danger)">⚠️ Sforato: ${Math.abs(diff).toFixed(2)} €</span>`;
-                    bar.style.background = 'var(--danger)';
+                    remain.style.color = 'var(--rose)';
+                    remain.innerText = `€ ${Math.abs(diff).toFixed(2)} sforato`;
                 }
             } else {
                 if (diff <= 0) {
-                    remainEl.innerHTML = `<span style="color:var(--success)">🎯 Raggiunto (+${Math.abs(diff).toFixed(2)} €)</span>`;
-                    bar.style.background = 'var(--success)';
+                    remain.style.color = 'var(--emerald)';
+                    remain.innerText = `🎯 Raggiunto (+€${Math.abs(diff).toFixed(2)})`;
                 } else {
-                    remainEl.innerHTML = `<span style="color:var(--text-light)">Mancano: ${diff.toFixed(2)} €</span>`;
-                    bar.style.background = 'var(--success)';
+                    remain.style.color = 'var(--text-secondary)';
+                    remain.innerText = `Mancano €${diff.toFixed(2)}`;
                 }
             }
         }
 
-        function saveMonth() {
-            const selectEl = document.getElementById('budget-target-month');
-            const dateKey = selectEl.value;
-            const monthName = selectEl.options[selectEl.selectedIndex].text;
-            
-            const salary = parseFloat(document.getElementById('dash-salary').value) || 0;
-            let totalFixed = appData.quotas.reduce((acc, curr) => acc + getMonthlyValue(curr.amount, curr.freq), 0);
-            const savings = salary - totalFixed;
-
-            const exists = appData.history.find(h => h.dateKey === dateKey);
-            if(exists) {
-                if(!confirm(`Hai già salvato il resoconto per ${monthName}. Vuoi aggiornarlo?`)) return;
-                appData.history = appData.history.filter(h => h.dateKey !== dateKey);
+        function openQuotaModal(id = null) {
+            if (id !== null) {
+                const q = store.quotas.find(x => x.id === id);
+                document.getElementById('quota-id').value = q.id;
+                document.getElementById('quota-name').value = q.name;
+                document.getElementById('quota-amount').value = q.amount;
+                document.getElementById('quota-freq').value = q.freq;
+                document.getElementById('quota-macro').value = q.macro;
+                document.getElementById('quota-modal-title').innerText = "Modifica Quota";
+            } else {
+                document.getElementById('quota-id').value = '';
+                document.getElementById('quota-name').value = '';
+                document.getElementById('quota-amount').value = '';
+                document.getElementById('quota-freq').value = 'annual';
+                document.getElementById('quota-macro').value = '50';
+                document.getElementById('quota-modal-title').innerText = "Nuova Quota";
             }
-
-            const parts = dateKey.split('-');
-            const timestamp = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1).getTime();
-
-            appData.history.push({
-                dateKey, monthName, salary, fixed: totalFixed, savings, timestamp
-            });
-
-            appData.history.sort((a, b) => b.timestamp - a.timestamp);
-            saveData();
-            
-            const btn = document.getElementById('save-month-btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `✅ ${monthName} Salvato!`;
-            btn.style.background = 'var(--success)';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = 'var(--primary)';
-            }, 2500);
+            openModal('modal-quota');
         }
 
-        function renderHistory() {
-            const hList = document.getElementById('history-list');
-            hList.innerHTML = '';
-            
-            if (!appData.history || appData.history.length === 0) {
-                hList.innerHTML = '<p style="text-align:center; color: var(--text-light); padding: 20px;">Nessun mese salvato finora.</p>';
+        function saveQuotaItem() {
+            const id = document.getElementById('quota-id').value;
+            const name = document.getElementById('quota-name').value.trim();
+            const amount = parseFloat(document.getElementById('quota-amount').value) || 0;
+            const freq = document.getElementById('quota-freq').value;
+            const macro = document.getElementById('quota-macro').value;
+
+            if (!name || amount <= 0) return alert("Inserisci nome e importo validi.");
+
+            if (id) {
+                const idx = store.quotas.findIndex(x => x.id == id);
+                store.quotas[idx] = { id: parseInt(id), name, amount, freq, macro };
+            } else {
+                const newId = store.quotas.length ? Math.max(...store.quotas.map(x => x.id)) + 1 : 1;
+                store.quotas.push({ id: newId, name, amount, freq, macro });
+            }
+
+            closeModal('modal-quota');
+            calculateBudgetMetrics();
+        }
+
+        function deleteQuotaItem(id) {
+            if (confirm("Vuoi eliminare questa quota?")) {
+                store.quotas = store.quotas.filter(x => x.id !== id);
+                calculateBudgetMetrics();
+            }
+        }
+
+        function archiveMonthSummary() {
+            const sel = document.getElementById('budget-month-select');
+            const dateKey = sel.value;
+            const monthName = sel.options[sel.selectedIndex].text;
+            const salary = parseFloat(document.getElementById('budget-salary').value) || 0;
+
+            let totalMonthly = store.quotas.reduce((acc, q) => acc + (q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount/6 : q.amount/12), 0);
+            const savings = salary - totalMonthly;
+
+            store.history = store.history.filter(h => h.dateKey !== dateKey);
+            store.history.push({
+                dateKey, monthName, salary, fixed: totalMonthly, savings, timestamp: Date.now()
+            });
+
+            store.history.sort((a,b) => b.dateKey.localeCompare(a.dateKey));
+            commitLocalStore();
+            renderHistoryView();
+
+            const btn = document.getElementById('btn-save-month-record');
+            const orig = btn.innerText;
+            btn.innerText = `✅ ${monthName} Archiviato!`;
+            btn.style.background = 'var(--emerald)';
+            setTimeout(() => {
+                btn.innerText = orig;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        function renderHistoryView() {
+            const c = document.getElementById('history-records-container');
+            c.innerHTML = '';
+            if (store.history.length === 0) {
+                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun mese archiviato finora.</p>`;
                 return;
             }
 
-            appData.history.forEach(item => {
-                const isPositive = item.savings >= 0;
-                hList.innerHTML += `
-                    <div class="list-item" style="padding: 16px; margin-bottom: 14px;">
-                        <div class="list-header" style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
-                            <strong style="font-size: 1.05rem; color: var(--primary); text-transform: capitalize;">📅 ${item.monthName}</strong>
-                            <span style="font-size: 0.88rem; font-weight: bold; color: ${isPositive ? 'var(--success)' : 'var(--danger)'};">
-                                ${isPositive ? '+' : ''}${item.savings.toFixed(2)} € Risparmio
-                            </span>
+            store.history.forEach(item => {
+                const isPos = item.savings >= 0;
+                c.innerHTML += `
+                    <div class="list-row">
+                        <div>
+                            <div class="list-row-title">${item.monthName}</div>
+                            <div class="list-row-desc">Stipendio: €${item.salary.toFixed(2)} • Uscite: €${item.fixed.toFixed(2)}</div>
                         </div>
-                        <div style="font-size: 0.88rem; line-height: 1.6;">
-                            <div style="display:flex; justify-content: space-between;">
-                                <span>Stipendio:</span>
-                                <strong>${item.salary.toFixed(2)} €</strong>
-                            </div>
-                            <div style="display:flex; justify-content: space-between; color: var(--text-light);">
-                                <span>Quote Fisse:</span>
-                                <span>- ${item.fixed.toFixed(2)} €</span>
-                            </div>
+                        <div class="list-row-amount" style="color: ${isPos ? 'var(--emerald)' : 'var(--rose)'};">
+                            ${isPos ? '+' : ''}€ ${item.savings.toFixed(2)}
                         </div>
                     </div>
                 `;
             });
         }
 
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.add('active');
-            overlay.style.display = 'block';
-            overlay.style.zIndex = '1002';
-            modal.style.zIndex = '1003';
-        }
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            overlay.style.display = 'none';
-            overlay.style.zIndex = '1001';
+        // ================= GESTIONE AUTO (COLLAPSE MENSILI & CRUD) =================
+        function groupFleetItemsByMonth(items, amountField) {
+            const map = {};
+            items.forEach(item => {
+                if (!item.date) return;
+                const d = new Date(item.date);
+                const sortKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const label = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+
+                if (!map[sortKey]) map[sortKey] = { label, total: 0, list: [] };
+                map[sortKey].list.push(item);
+                map[sortKey].total += parseFloat(item[amountField]) || 0;
+            });
+            return Object.keys(map).sort((a,b) => b.localeCompare(a)).map(k => map[k]);
         }
 
-        function openQuotaModal(id = null) {
-            if (id !== null) {
-                const q = appData.quotas.find(x => x.id === id);
-                document.getElementById('modal-id').value = q.id;
-                document.getElementById('modal-name').value = q.name;
-                document.getElementById('modal-amount').value = q.amount;
-                document.getElementById('modal-freq').value = q.freq || 'annual';
-                document.getElementById('modal-q-macro').value = q.macro || '50';
-                document.getElementById('modal-title').innerText = 'Modifica Spesa';
-            } else {
-                document.getElementById('modal-id').value = '';
-                document.getElementById('modal-name').value = '';
-                document.getElementById('modal-amount').value = '';
-                document.getElementById('modal-freq').value = 'annual';
-                document.getElementById('modal-q-macro').value = '50';
-                document.getElementById('modal-title').innerText = 'Nuova Spesa';
+        function renderFuelView() {
+            const c = document.getElementById('fuel-accordion-container');
+            c.innerHTML = '';
+
+            if (store.car.fuel.length === 0) {
+                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun rifornimento registrato.</p>`;
+                return;
             }
-            openModal('quota-modal');
+
+            const groups = groupFleetItemsByMonth(store.car.fuel, 'total');
+            groups.forEach(g => {
+                let innerRows = g.list.sort((a,b) => new Date(b.date) - new Date(a.date)).map(f => `
+                    <div class="list-row">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span class="tag-badge ${f.type === 'GPL' ? 'tag-gpl' : 'tag-benzina'}">${f.type}</span>
+                                <span class="list-row-title">${f.station || 'Distributore'}</span>
+                            </div>
+                            <div class="list-row-desc">
+                                ${new Date(f.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                ${f.price > 0 ? `• €${parseFloat(f.price).toFixed(3)}/L • ${f.liters} L` : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="list-row-amount" style="color:var(--rose);">€ ${parseFloat(f.total).toFixed(2)}</div>
+                            <button class="action-icon-btn" onclick="openFuelModal(${f.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </button>
+                            <button class="action-icon-btn delete" onclick="deleteFuelItem(${f.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                c.innerHTML += `
+                    <div class="accordion-group">
+                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                            <div class="accordion-header-title">
+                                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                <span>${g.label}</span>
+                            </div>
+                            <div class="accordion-header-badge">€ ${g.total.toFixed(2)}</div>
+                        </div>
+                        <div class="accordion-body">${innerRows}</div>
+                    </div>
+                `;
+            });
         }
 
-        function saveQuota() {
-            const id = document.getElementById('modal-id').value;
-            const name = document.getElementById('modal-name').value;
-            const amount = parseFloat(document.getElementById('modal-amount').value) || 0;
-            const freq = document.getElementById('modal-freq').value;
-            const macro = document.getElementById('modal-q-macro').value;
+        function renderMaintView() {
+            const c = document.getElementById('maint-accordion-container');
+            c.innerHTML = '';
 
-            if (!name || amount <= 0) return alert("Inserisci dati validi.");
-
-            if (id) {
-                const idx = appData.quotas.findIndex(q => q.id == id);
-                appData.quotas[idx] = { id: parseInt(id), name, amount, freq, macro };
-            } else {
-                const newId = appData.quotas.length ? Math.max(...appData.quotas.map(q => q.id)) + 1 : 1;
-                appData.quotas.push({ id: newId, name, amount, freq, macro });
+            if (store.car.maintenance.length === 0) {
+                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun intervento registrato.</p>`;
+                return;
             }
-            saveData(); closeModal('quota-modal'); calculateBudget();
+
+            const groups = groupFleetItemsByMonth(store.car.maintenance, 'cost');
+            groups.forEach(g => {
+                let innerRows = g.list.sort((a,b) => new Date(b.date) - new Date(a.date)).map(m => `
+                    <div class="list-row">
+                        <div>
+                            <div class="list-row-title">${m.type}</div>
+                            <div class="list-row-desc">
+                                ${new Date(m.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                ${m.km > 0 ? `• ${parseInt(m.km).toLocaleString('it-IT')} km` : ''}
+                                ${m.notes ? `• ${m.notes}` : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="list-row-amount" style="color:var(--rose);">€ ${parseFloat(m.cost).toFixed(2)}</div>
+                            <button class="action-icon-btn" onclick="openMaintModal(${m.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </button>
+                            <button class="action-icon-btn delete" onclick="deleteMaintItem(${m.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                c.innerHTML += `
+                    <div class="accordion-group">
+                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                            <div class="accordion-header-title">
+                                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                <span>${g.label}</span>
+                            </div>
+                            <div class="accordion-header-badge">€ ${g.total.toFixed(2)}</div>
+                        </div>
+                        <div class="accordion-body">${innerRows}</div>
+                    </div>
+                `;
+            });
         }
 
-        function deleteQuota(id) {
-            if (confirm("Vuoi eliminare questa spesa fissa?")) {
-                appData.quotas = appData.quotas.filter(q => q.id !== id);
-                saveData(); calculateBudget();
-            }
-        }
-
+        // Modals Auto
         function openFuelModal(id = null) {
             document.getElementById('fuel-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
-                const f = appData.car.fuel.find(x => x.id === id);
+                const f = store.car.fuel.find(x => x.id === id);
                 document.getElementById('fuel-id').value = f.id;
                 document.getElementById('fuel-date').value = f.date;
                 document.getElementById('fuel-type').value = f.type;
-                document.getElementById('fuel-station').value = f.station;
-                document.getElementById('fuel-price').value = f.price;
+                document.getElementById('fuel-station').value = f.station || '';
+                document.getElementById('fuel-price').value = f.price || '';
                 document.getElementById('fuel-total').value = f.total;
-                document.getElementById('fuel-modal-title').innerText = 'Modifica Rifornimento';
+                document.getElementById('fuel-modal-title').innerText = "Modifica Rifornimento";
             } else {
                 document.getElementById('fuel-id').value = '';
                 document.getElementById('fuel-station').value = '';
                 document.getElementById('fuel-price').value = '';
                 document.getElementById('fuel-total').value = '';
-                document.getElementById('fuel-modal-title').innerText = 'Aggiungi Rifornimento';
+                document.getElementById('fuel-modal-title').innerText = "Nuovo Rifornimento";
             }
-            openModal('fuel-modal');
+            openModal('modal-fuel');
         }
 
-        function saveFuel() {
+        function saveFuelItem() {
             const id = document.getElementById('fuel-id').value;
             const date = document.getElementById('fuel-date').value;
             const type = document.getElementById('fuel-type').value;
-            const station = document.getElementById('fuel-station').value || 'N/D';
+            const station = document.getElementById('fuel-station').value.trim() || 'Distributore';
             const price = parseFloat(document.getElementById('fuel-price').value) || 0;
             const total = parseFloat(document.getElementById('fuel-total').value) || 0;
 
-            if (!date || total <= 0) return alert("Inserisci data e totale.");
-            let liters = price > 0 ? (total / price).toFixed(2) : 0;
+            if (!date || total <= 0) return alert("Inserisci data e importo totale.");
+            const liters = price > 0 ? (total / price).toFixed(2) : 0;
 
             if (id) {
-                const idx = appData.car.fuel.findIndex(f => f.id == id);
-                appData.car.fuel[idx] = { id: parseInt(id), date, type, station, price, total, liters };
+                const idx = store.car.fuel.findIndex(x => x.id == id);
+                store.car.fuel[idx] = { id: parseInt(id), date, type, station, price, total, liters };
             } else {
-                const newId = appData.car.fuel.length ? Math.max(...appData.car.fuel.map(f => f.id)) + 1 : 1;
-                appData.car.fuel.push({ id: newId, date, type, station, price, total, liters });
+                const newId = store.car.fuel.length ? Math.max(...store.car.fuel.map(x => x.id)) + 1 : 1;
+                store.car.fuel.push({ id: newId, date, type, station, price, total, liters });
             }
-            saveData(); closeModal('fuel-modal'); renderFuel();
+
+            closeModal('modal-fuel');
+            commitLocalStore();
+            renderFuelView();
         }
 
-        function deleteFuel(id) {
+        function deleteFuelItem(id) {
             if (confirm("Eliminare questo rifornimento?")) {
-                appData.car.fuel = appData.car.fuel.filter(f => f.id !== id);
-                saveData(); renderFuel();
+                store.car.fuel = store.car.fuel.filter(x => x.id !== id);
+                commitLocalStore();
+                renderFuelView();
             }
         }
 
-        function groupByMonth(items, amountKey) {
-            const groups = {};
-            items.forEach(item => {
-                if (!item.date) return;
-                const d = new Date(item.date);
-                const monthYear = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
-                const sortKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                
-                if (!groups[sortKey]) {
-                    groups[sortKey] = { label: monthYear, total: 0, items: [] };
+        function populateMaintCategories(selected = '') {
+            const sel = document.getElementById('maint-type');
+            sel.innerHTML = '';
+            store.car.categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.innerText = c;
+                sel.appendChild(opt);
+            });
+            const customOpt = document.createElement('option');
+            customOpt.value = '__custom__';
+            customOpt.innerText = '➕ Nuova categoria...';
+            sel.appendChild(customOpt);
+
+            if (selected && store.car.categories.includes(selected)) {
+                sel.value = selected;
+                document.getElementById('maint-custom-group').style.display = 'none';
+            } else if (selected) {
+                sel.value = '__custom__';
+                document.getElementById('maint-custom-group').style.display = 'block';
+                document.getElementById('maint-custom-name').value = selected;
+            } else {
+                document.getElementById('maint-custom-group').style.display = 'none';
+            }
+        }
+
+        function checkCustomMaintCat(val) {
+            document.getElementById('maint-custom-group').style.display = (val === '__custom__') ? 'block' : 'none';
+        }
+
+        function addNewMaintCategory() {
+            const n = prompt("Nome nuova categoria di manutenzione:");
+            if (n && n.trim()) {
+                const name = n.trim();
+                if (!store.car.categories.includes(name)) {
+                    store.car.categories.push(name);
+                    commitLocalStore();
                 }
-                groups[sortKey].items.push(item);
-                groups[sortKey].total += parseFloat(item[amountKey]) || 0;
-            });
-            return Object.keys(groups).sort((a,b) => b.localeCompare(a)).map(k => groups[k]);
-        }
-
-        function renderFuel() {
-            const list = document.getElementById('fuel-list');
-            list.innerHTML = '';
-            if (appData.car.fuel.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color: var(--text-light); font-size: 0.9rem;">Nessun rifornimento registrato.</p>';
-                return;
+                populateMaintCategories(name);
             }
-
-            const grouped = groupByMonth(appData.car.fuel, 'total');
-            grouped.forEach(g => {
-                list.innerHTML += `
-                    <div class="month-group">
-                        <div class="month-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                            <span style="text-transform: capitalize;"><span class="toggle-icon">▼</span> 📅 ${g.label}</span>
-                            <span>€ ${g.total.toFixed(2)}</span>
-                        </div>
-                        ${g.items.sort((a,b) => new Date(b.date) - new Date(a.date)).map(f => {
-                            const tagClass = f.type === 'GPL' ? 'tag-gpl' : 'tag-benzina';
-                            return `
-                                <div class="list-item">
-                                    <div class="list-header">
-                                        <span>${new Date(f.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })}</span>
-                                        <span class="${tagClass}">${f.type}</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <div>
-                                            <div style="font-weight: 500;">⛽ ${f.station}</div>
-                                            <div style="font-size: 0.8rem; color: var(--text-light);">
-                                                ${f.price > 0 ? `€${parseFloat(f.price).toFixed(3)}/L • ${f.liters} L` : ''}
-                                            </div>
-                                        </div>
-                                        <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
-                                            - €${f.total.toFixed(2)}
-                                        </div>
-                                        <div style="display:flex; gap:4px;">
-                                            <button class="action-btn edit-btn" onclick="openFuelModal(${f.id})">✏️</button>
-                                            <button class="action-btn delete-btn" onclick="deleteFuel(${f.id})">🗑️</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                `;
-            });
         }
 
         function openMaintModal(id = null) {
             document.getElementById('maint-date').value = new Date().toISOString().split('T')[0];
             if (id !== null) {
-                const m = appData.car.maintenance.find(x => x.id === id);
+                const m = store.car.maintenance.find(x => x.id === id);
                 document.getElementById('maint-id').value = m.id;
                 document.getElementById('maint-date').value = m.date;
                 populateMaintCategories(m.type);
-                document.getElementById('maint-km').value = m.km;
+                document.getElementById('maint-km').value = m.km || '';
                 document.getElementById('maint-cost').value = m.cost;
-                document.getElementById('maint-notes').value = m.notes;
-                document.getElementById('maint-modal-title').innerText = 'Modifica Intervento';
+                document.getElementById('maint-notes').value = m.notes || '';
+                document.getElementById('maint-modal-title').innerText = "Modifica Intervento";
             } else {
                 document.getElementById('maint-id').value = '';
                 document.getElementById('maint-km').value = '';
                 document.getElementById('maint-cost').value = '';
                 document.getElementById('maint-notes').value = '';
                 populateMaintCategories();
-                document.getElementById('maint-modal-title').innerText = 'Aggiungi Intervento';
+                document.getElementById('maint-modal-title').innerText = "Nuovo Intervento";
             }
-            openModal('maint-modal');
+            openModal('modal-maint');
         }
 
-        function saveMaint() {
+        function saveMaintItem() {
             const id = document.getElementById('maint-id').value;
             const date = document.getElementById('maint-date').value;
             let type = document.getElementById('maint-type').value;
             const km = parseInt(document.getElementById('maint-km').value) || 0;
             const cost = parseFloat(document.getElementById('maint-cost').value) || 0;
-            const notes = document.getElementById('maint-notes').value || '';
+            const notes = document.getElementById('maint-notes').value.trim();
 
             if (type === '__custom__') {
-                const customVal = document.getElementById('maint-custom-type').value.trim();
-                if (!customVal) return alert("Inserisci il nome della nuova categoria.");
+                const customVal = document.getElementById('maint-custom-name').value.trim();
+                if (!customVal) return alert("Inserisci il nome della categoria.");
                 type = customVal;
-                // Salviamo la categoria nella lista permanente per riusarla
-                if (!appData.car.categories.includes(type)) {
-                    appData.car.categories.push(type);
+                if (!store.car.categories.includes(type)) store.car.categories.push(type);
+            }
+
+            if (!date || cost <= 0) return alert("Inserisci data e costo valido.");
+
+            if (id) {
+                const idx = store.car.maintenance.findIndex(x => x.id == id);
+                store.car.maintenance[idx] = { id: parseInt(id), date, type, km, cost, notes };
+            } else {
+                const newId = store.car.maintenance.length ? Math.max(...store.car.maintenance.map(x => x.id)) + 1 : 1;
+                store.car.maintenance.push({ id: newId, date, type, km, cost, notes });
+            }
+
+            closeModal('modal-maint');
+            commitLocalStore();
+            renderMaintView();
+        }
+
+        function deleteMaintItem(id) {
+            if (confirm("Eliminare questa operazione?")) {
+                store.car.maintenance = store.car.maintenance.filter(x => x.id !== id);
+                commitLocalStore();
+                renderMaintView();
+            }
+        }
+
+        // ================= STATISTICHE AVANZATE FLOTTA (ANNO & MESE) =================
+        function initStatsFilters() {
+            const yearSel = document.getElementById('stats-filter-year');
+            yearSel.innerHTML = '<option value="all">Tutti gli anni</option>';
+
+            const years = new Set();
+            store.car.fuel.forEach(f => { if(f.date) years.add(f.date.substring(0,4)); });
+            store.car.maintenance.forEach(m => { if(m.date) years.add(m.date.substring(0,4)); });
+
+            Array.from(years).sort().reverse().forEach(y => {
+                yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+            });
+
+            onStatsYearChange();
+        }
+
+        function onStatsYearChange() {
+            const year = document.getElementById('stats-filter-year').value;
+            const monthSel = document.getElementById('stats-filter-month');
+            monthSel.innerHTML = '<option value="all">Tutto l\'anno</option>';
+
+            if (year !== 'all') {
+                const months = new Set();
+                const checkDate = d => {
+                    if (d && d.startsWith(year)) months.add(d.substring(5,7));
+                };
+                store.car.fuel.forEach(f => checkDate(f.date));
+                store.car.maintenance.forEach(m => checkDate(m.date));
+
+                Array.from(months).sort().forEach(mNum => {
+                    const d = new Date(parseInt(year), parseInt(mNum) - 1, 1);
+                    const name = d.toLocaleString('it-IT', { month: 'long' });
+                    monthSel.innerHTML += `<option value="${mNum}">${name.charAt(0).toUpperCase() + name.slice(1)}</option>`;
+                });
+            }
+
+            renderFleetAnalytics();
+        }
+
+        function renderFleetAnalytics() {
+            const year = document.getElementById('stats-filter-year').value;
+            const month = document.getElementById('stats-filter-month').value;
+
+            let fuel = store.car.fuel || [];
+            let maint = store.car.maintenance || [];
+
+            if (year !== 'all') {
+                fuel = fuel.filter(f => f.date && f.date.startsWith(year));
+                maint = maint.filter(m => m.date && m.date.startsWith(year));
+
+                if (month !== 'all') {
+                    fuel = fuel.filter(f => f.date && f.date.substring(5,7) === month);
+                    maint = maint.filter(m => m.date && m.date.substring(5,7) === month);
                 }
             }
 
-            if (!date) return alert("Inserisci la data.");
+            const totalFuel = fuel.reduce((acc, f) => acc + (parseFloat(f.total) || 0), 0);
+            const totalMaint = maint.reduce((acc, m) => acc + (parseFloat(m.cost) || 0), 0);
+            const grandTotal = totalFuel + totalMaint;
 
-            if (id) {
-                const idx = appData.car.maintenance.findIndex(m => m.id == id);
-                appData.car.maintenance[idx] = { id: parseInt(id), date, type, km, cost, notes };
-            } else {
-                const newId = appData.car.maintenance.length ? Math.max(...appData.car.maintenance.map(m => m.id)) + 1 : 1;
-                appData.car.maintenance.push({ id: newId, date, type, km, cost, notes });
-            }
-            saveData(); closeModal('maint-modal'); renderMaint();
-        }
+            // KPI Card
+            document.getElementById('stats-kpi-summary').innerHTML = `
+                <div class="list-row"><div class="list-row-title">Totale Carburante</div><div class="list-row-amount" style="color:var(--amber);">€ ${totalFuel.toFixed(2)}</div></div>
+                <div class="list-row"><div class="list-row-title">Totale Manutenzione</div><div class="list-row-amount" style="color:var(--rose);">€ ${totalMaint.toFixed(2)}</div></div>
+                <div class="list-row" style="border-top:1px solid var(--border); padding-top:10px;"><div class="list-row-title" style="font-weight:700;">Spesa Flotta Periodo</div><div class="list-row-amount" style="color:var(--text-primary); font-size:1.1rem;">€ ${grandTotal.toFixed(2)}</div></div>
+            `;
 
-        function deleteMaint(id) {
-            if (confirm("Eliminare questo intervento?")) {
-                appData.car.maintenance = appData.car.maintenance.filter(m => m.id !== id);
-                saveData(); renderMaint();
-            }
-        }
+            // Ripartizione Categorie Manutenzione
+            const catMap = {};
+            maint.forEach(m => {
+                catMap[m.type] = (catMap[m.type] || 0) + (parseFloat(m.cost) || 0);
+            });
+            const sortedCats = Object.keys(catMap).sort((a,b) => catMap[b] - catMap[a]);
 
-        function renderMaint() {
-            const list = document.getElementById('maint-list');
-            list.innerHTML = '';
-            if (appData.car.maintenance.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color: var(--text-light); font-size: 0.9rem;">Nessun intervento registrato.</p>';
-                return;
-            }
-
-            const grouped = groupByMonth(appData.car.maintenance, 'cost');
-            grouped.forEach(g => {
-                list.innerHTML += `
-                    <div class="month-group">
-                        <div class="month-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                            <span style="text-transform: capitalize;"><span class="toggle-icon">▼</span> 📅 ${g.label}</span>
-                            <span>€ ${g.total.toFixed(2)}</span>
+            let maintHtml = '';
+            sortedCats.forEach(c => {
+                const pct = totalMaint > 0 ? (catMap[c] / totalMaint) * 100 : 0;
+                maintHtml += `
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:500;">
+                            <span>${c}</span>
+                            <span class="hero-metric-value" style="font-size:0.88rem;">€ ${catMap[c].toFixed(2)}</span>
                         </div>
-                        ${g.items.sort((a,b) => new Date(b.date) - new Date(a.date)).map(m => `
-                            <div class="list-item">
-                                <div class="list-header">
-                                    <span>${new Date(m.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })}</span>
-                                    <span>⏱️ ${m.km > 0 ? m.km.toLocaleString('it-IT') + ' km' : 'Km non inseriti'}</span>
-                                </div>
-                                <div class="list-body">
-                                    <div style="flex:1;">
-                                        <div style="font-weight: 500; color: var(--primary);">${m.type}</div>${m.notes ? `<div style="font-size: 0.8rem; color: var(--text-light); margin-top:2px;">📝 ${m.notes}</div>` : ''}
-                                    </div>
-                                    <div style="font-weight: bold; font-size: 1.05rem; color: var(--danger); margin-right: 8px;">
-                                        - €${m.cost.toFixed(2)}
-                                    </div>
-                                    <div style="display:flex; gap:4px;">
-                                        <button class="action-btn edit-btn" onclick="openMaintModal(${m.id})">✏️</button>
-                                        <button class="action-btn delete-btn" onclick="deleteMaint(${m.id})">🗑️</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
+                        <div class="hero-progress"><div class="hero-progress-fill" style="width:${pct}%; background:var(--rose);"></div></div>
                     </div>
                 `;
             });
+            document.getElementById('stats-maint-breakdown').innerHTML = maintHtml || `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">Nessuna manutenzione nel periodo.</p>`;
+
+            // Ripartizione Tipologia Carburante
+            const fuelMap = {};
+            fuel.forEach(f => {
+                fuelMap[f.type] = (fuelMap[f.type] || 0) + (parseFloat(f.total) || 0);
+            });
+
+            let fuelHtml = '';
+            Object.keys(fuelMap).forEach(type => {
+                const pct = totalFuel > 0 ? (fuelMap[type] / totalFuel) * 100 : 0;
+                const color = type === 'GPL' ? 'var(--emerald)' : 'var(--amber)';
+                fuelHtml += `
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:500;">
+                            <span>${type}</span>
+                            <span class="hero-metric-value" style="font-size:0.88rem;">€ ${fuelMap[type].toFixed(2)}</span>
+                        </div>
+                        <div class="hero-progress"><div class="hero-progress-fill" style="width:${pct}%; background:${color};"></div></div>
+                    </div>
+                `;
+            });
+            document.getElementById('stats-fuel-breakdown').innerHTML = fuelHtml || `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">Nessun rifornimento nel periodo.</p>`;
         }
 
-        function clearData() {
-            if(confirm("Sei sicuro di voler resettare l'intera app? Eliminerà quote, auto e storico.")) {
-                localStorage.clear();
-                appData = JSON.parse(JSON.stringify(defaultData));
-                document.getElementById('dash-salary').value = appData.salary;
-                document.getElementById('ratio-50').value = 50;
-                document.getElementById('ratio-30').value = 30;
-                document.getElementById('ratio-20').value = 20;
-                initMonthSelector();
-                calculateBudget(); alert("Dati resettati."); 
-                navigate('dashboard', document.querySelectorAll('.nav-link')[0]);
-            }
+        // ================= MODAL SHEET HELPERS =================
+        function openModal(id) {
+            document.getElementById('modal-overlay').classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
+        function closeModal(id) {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function closeAllModals() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.querySelectorAll('.modal-sheet').forEach(m => m.classList.remove('active'));
+        }
+
+        // ================= BOOTSTRAP APPLICAZIONE =================
+        applyDesignPreferences();
         initMonthSelector();
-        document.getElementById('dash-salary').value = appData.salary;
-        document.getElementById('ratio-50').value = appData.ratios.r50;
-        document.getElementById('ratio-30').value = appData.ratios.r30;
-        document.getElementById('ratio-20').value = appData.ratios.r20;
-        calculateBudget();
+        calculateBudgetMetrics();
+        manualCloudSync();
 
-        // Connessione e allineamento automatico all'avvio via API REST
-        if (getFirebaseRestUrl()) {
-            downloadBackupFromFirebase(false);
-            // Salva/Sincronizza in automatico in background ogni 30 secondi per mantenere gli schermi allineati
-            setInterval(() => { downloadBackupFromFirebase(false); }, 30000);
-        }
+        // Polling silenzioso ogni 45 secondi
+        setInterval(() => {
+            fetch(getEndpointUrl())
+                .then(r => r.json())
+                .then(data => {
+                    if (data && (data.salary !== undefined || data.car !== undefined)) {
+                        isWritingRemote = true;
+                        store = Object.assign({}, schemaModel, data);
+                        if (!store.quotas) store.quotas = [];
+                        if (!store.history) store.history = [];
+                        if (!store.car) store.car = { fuel: [], maintenance: [], categories: standardFleetCategories };
+                        if (!store.car.fuel) store.car.fuel = [];
+                        if (!store.car.maintenance) store.car.maintenance = [];
+                        if (!store.car.categories) store.car.categories = standardFleetCategories;
+                        localStorage.setItem('financeStudioStoreV1', JSON.stringify(store));
+                        isWritingRemote = false;
+                        updateCloudPill('online', 'Cloud Sincronizzato');
+                    }
+                })
+                .catch(() => {});
+        }, 45000);
     </script>
 </body>
 </html>
