@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget & Auto - Web App Realtime Cloud</title>
-    <!-- Firebase SDK Compatibile -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --primary: #2563eb;
@@ -463,14 +461,14 @@
         <!-- SEZIONE BACKUP & RIPRISTINO COMPLETO -->
         <div id="backup" class="page">
             <div class="card" style="border: 2px solid var(--primary);">
-                <h2><span>☁️ Backup & Ripristino Cloud (Firebase)</span></h2>
+                <h2><span>☁️ Backup & Ripristino Cloud Diretto</span></h2>
                 <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
-                    Sincronizzazione istantanea tra dispositivi senza dover inviare o caricare file manualmente.
+                    Usa questi pulsanti per scambiare i dati tra Cellulare e PC senza scaricare file a mano.
                 </p>
                 <button class="btn" style="background: var(--primary);" onclick="uploadBackupToFirebase()">
-                    ⬆️ 1. Salva Dati Attuali sul Cloud
+                    ⬆️ 1. Salva Dati Attuali sul Cloud (Invia)
                 </button>
-                <button class="btn" style="background: var(--success); margin-top: 10px;" onclick="downloadBackupFromFirebase()">
+                <button class="btn" style="background: var(--success); margin-top: 10px;" onclick="downloadBackupFromFirebase(true)">
                     ⬇️ 2. Scarica e Importa Dati dal Cloud
                 </button>
             </div>
@@ -506,6 +504,12 @@
     </main>
 
     <script>
+        // ==========================================
+        // CONFIGURAZIONE DATABASE FISSO CLOUD
+        const DEFAULT_FIREBASE_URL = "https://gestione-finanza-be6ee-default-rtdb.europe-west1.firebasedatabase.app";
+        const DEFAULT_FIREBASE_KEY = "mie_finanze";
+        // ==========================================
+
         const initialCategories = [
             'Tagliando completo',
             'Cambio olio e filtro',
@@ -638,51 +642,89 @@
             el.innerHTML = `<span>${text}</span>`;
         }
 
+        
+        function getFirebaseRestUrl() {
+            let url = DEFAULT_FIREBASE_URL || appData.firebaseUrl;
+            let key = DEFAULT_FIREBASE_KEY || appData.firebaseKey || 'mie_finanze';
+            if (!url) return null;
+            if (!url.startsWith('https://')) url = 'https://' + url;
+            if (url.endsWith('/')) url = url.slice(0, -1);
+            return `${url}/${key}.json`;
+        }
+
         function saveData() {
             localStorage.setItem('budgetAppV14', JSON.stringify(appData));
             
-            if (firebaseDbRef && !isRemoteUpdate) {
-                updateStatusBadge('loading', '⏳ Sincronizzazione Realtime...');
-                firebaseDbRef.set(appData)
-                    .then(() => updateStatusBadge('online', '⚡ Realtime Cloud Connesso'))
-                    .catch(() => updateStatusBadge('offline', '⚠️ Errore Connessione Cloud'));
-            } else if (!firebaseDbRef) {
+            const endpoint = getFirebaseRestUrl();
+            if (endpoint && !isRemoteUpdate) {
+                updateStatusBadge('loading', '⏳ Salvataggio Cloud in corso...');
+                fetch(endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appData)
+                })
+                .then(res => {
+                    if (res.ok) {
+                        updateStatusBadge('online', '⚡ Cloud Sincronizzato');
+                    } else if (res.status === 401 || res.status === 403) {
+                        updateStatusBadge('offline', '⚠️ Permessi Firebase Negati (Regole)');
+                    } else {
+                        updateStatusBadge('offline', '⚠️ Errore Cloud HTTP ' + res.status);
+                    }
+                })
+                .catch(err => {
+                    updateStatusBadge('offline', '⚠️ Errore Rete / Connessione');
+                });
+            } else if (!endpoint) {
                 updateStatusBadge('offline', '📱 Memoria Locale');
             }
         }
 
-        function setupFirebaseRealtime() {
-            let url = document.getElementById('firebase-db-url').value.trim();
-            const key = document.getElementById('firebase-sync-key').value.trim() || 'mie_finanze';
+        function uploadBackupToFirebase() {
+            const endpoint = getFirebaseRestUrl();
+            if (!endpoint) return alert("URL Cloud non configurato.");
+            
+            updateStatusBadge('loading', '⏳ Invio dati al Cloud...');
+            fetch(endpoint, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(appData)
+            })
+            .then(res => {
+                if (res.ok) {
+                    updateStatusBadge('online', '⚡ Cloud Sincronizzato');
+                    alert("✅ Dati caricati sul Cloud con successo! Ora puoi aprire l'app da PC e cliccare su 'Scarica e Importa Dati dal Cloud'.");
+                } else if (res.status === 401 || res.status === 403) {
+                    alert("⚠️ Accesso Negato da Firebase!
+Vai nella scheda 'Regole' del Realtime Database e imposta sia .read che .write su true.");
+                    updateStatusBadge('offline', '⚠️ Regole Firebase Bloccate');
+                } else {
+                    alert("Errore HTTP: " + res.status);
+                }
+            })
+            .catch(err => {
+                alert("Errore di rete: " + err.message);
+            });
+        }
 
-            if (!url) {
-                appData.firebaseUrl = '';
-                appData.firebaseKey = '';
-                saveData();
-                firebaseDbRef = null;
-                updateStatusBadge('offline', '📱 Memoria Locale');
-                alert("Sincronizzazione Cloud disattivata.");
+        function downloadBackupFromFirebase(showAlert = false) {
+            const endpoint = getFirebaseRestUrl();
+            if (!endpoint) {
+                if (showAlert) alert("URL Cloud non configurato.");
                 return;
             }
 
-            if (!url.startsWith('https://')) url = 'https://' + url;
-            if (url.endsWith('/')) url = url.slice(0, -1);
-
-            appData.firebaseUrl = url;
-            appData.firebaseKey = key;
-            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
-
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp({ databaseURL: url });
-                }
-                
-                updateStatusBadge('loading', '⏳ Connessione a Firebase...');
-                firebaseDbRef = firebase.database().ref(key);
-
-                firebaseDbRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data && (data.salary !== undefined || data.quotas !== undefined)) {
+            updateStatusBadge('loading', '⏳ Scaricamento dal Cloud...');
+            fetch(endpoint)
+                .then(res => {
+                    if (res.ok) return res.json();
+                    if (res.status === 401 || res.status === 403) {
+                        throw new Error("Permesso negato: controlla le Regole (.read e .write) su Firebase Console!");
+                    }
+                    throw new Error("Errore HTTP " + res.status);
+                })
+                .then(data => {
+                    if (data && (data.salary !== undefined || data.quotas !== undefined || data.car !== undefined)) {
                         isRemoteUpdate = true;
                         appData = Object.assign({}, defaultData, data);
                         if (!appData.car.categories) appData.car.categories = initialCategories;
@@ -696,131 +738,39 @@
                         renderMaint();
                         renderHistory();
                         isRemoteUpdate = false;
-                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
+                        updateStatusBadge('online', '⚡ Cloud Sincronizzato');
+                        if (showAlert) alert("✅ Dati scaricati e sincronizzati dal Cloud!");
                     } else {
-                        firebaseDbRef.set(appData);
-                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
+                        updateStatusBadge('online', '⚡ Cloud Connesso (Vuoto)');
+                        if (showAlert) alert("⚠️ Il database Cloud è ancora vuoto. Premi prima 'Salva Dati Attuali sul Cloud' dal dispositivo con i dati!");
                     }
-                }, (error) => {
-                    updateStatusBadge('offline', '⚠️ Permessi Database Non Validi');
-                    alert("Errore connessione Firebase: controlla che le 'Regole' del Realtime Database siano (.read: true, .write: true).");
+                })
+                .catch(err => {
+                    updateStatusBadge('offline', '⚠️ Errore: ' + err.message);
+                    if (showAlert) alert("Errore Cloud: " + err.message);
                 });
-
-                alert("✅ Connessione Realtime riuscita!");
-                navigate('dashboard', document.querySelectorAll('.nav-link')[0]);
-            } catch(e) {
-                alert("Errore inizializzazione: " + e.message);
-                updateStatusBadge('offline', '⚠️ Errore Configurazione');
-            }
         }
 
-        // --- GESTIONE CATEGORIE DINAMICHE MANUTENZIONE ---
-        function populateMaintCategories(selectedCategory = '') {
-            const select = document.getElementById('maint-type');
-            select.innerHTML = '';
-            
-            const cats = appData.car.categories || initialCategories;
-            cats.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.innerText = c;
-                select.appendChild(opt);
-            });
+        function setupFirebaseRealtime() {
+            let url = document.getElementById('firebase-db-url').value.trim();
+            const key = document.getElementById('firebase-sync-key').value.trim() || 'mie_finanze';
 
-            // Opzione speciale per digitare al volo
-            const customOpt = document.createElement('option');
-            customOpt.value = '__custom__';
-            customOpt.innerText = '➕ Crea Nuova Categoria...';
-            select.appendChild(customOpt);
-
-            if (selectedCategory && cats.includes(selectedCategory)) {
-                select.value = selectedCategory;
-                document.getElementById('custom-category-group').style.display = 'none';
-            } else if (selectedCategory) {
-                // Se non è nell'elenco predefinito, mostriamo la casella
-                select.value = '__custom__';
-                document.getElementById('custom-category-group').style.display = 'block';
-                document.getElementById('maint-custom-type').value = selectedCategory;
-            } else {
-                document.getElementById('custom-category-group').style.display = 'none';
+            if (!url) {
+                appData.firebaseUrl = '';
+                appData.firebaseKey = '';
+                saveData();
+                updateStatusBadge('offline', '📱 Memoria Locale');
+                alert("Sincronizzazione Cloud disattivata.");
+                return;
             }
-        }
 
-        function checkCustomCategory(val) {
-            const group = document.getElementById('custom-category-group');
-            if (val === '__custom__') {
-                group.style.display = 'block';
-                document.getElementById('maint-custom-type').focus();
-            } else {
-                group.style.display = 'none';
-            }
-        }
+            if (!url.startsWith('https://')) url = 'https://' + url;
+            if (url.endsWith('/')) url = url.slice(0, -1);
 
-        function openNewCategoryPrompt() {
-            const newCat = prompt("Inserisci il nome della nuova categoria di manutenzione:");
-            if (newCat && newCat.trim()) {
-                const name = newCat.trim();
-                if (!appData.car.categories.includes(name)) {
-                    appData.car.categories.push(name);
-                    saveData();
-                }
-                populateMaintCategories(name);
-            }
-        }
-
-        
-        // --- FUNZIONI BACKUP & RIPRISTINO CLOUD DIRETTO ---
-        function uploadBackupToFirebase() {
-            const url = DEFAULT_FIREBASE_URL || appData.firebaseUrl;
-            const key = DEFAULT_FIREBASE_KEY || appData.firebaseKey || 'mie_finanze';
-            if (!url) return alert("URL Firebase non configurato.");
-            
-            try {
-                if (!firebase.apps.length) firebase.initializeApp({ databaseURL: url });
-                const ref = firebase.database().ref(key);
-                updateStatusBadge('loading', '⏳ Caricamento su Firebase in corso...');
-                ref.set(appData)
-                    .then(() => {
-                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
-                        alert("✅ Dati inviati a Firebase! Ora apri l'app dal PC e clicca su 'Scarica e Importa Dati dal Cloud'.");
-                    })
-                    .catch((err) => {
-                        alert("Errore caricamento su Firebase: " + err.message + "\nVerifica che le Regole del database siano impostate su .read: true e .write: true.");
-                    });
-            } catch(e) {
-                alert("Errore: " + e.message);
-            }
-        }
-
-        function downloadBackupFromFirebase() {
-            const url = DEFAULT_FIREBASE_URL || appData.firebaseUrl;
-            const key = DEFAULT_FIREBASE_KEY || appData.firebaseKey || 'mie_finanze';
-            if (!url) return alert("URL Firebase non configurato.");
-
-            try {
-                if (!firebase.apps.length) firebase.initializeApp({ databaseURL: url });
-                const ref = firebase.database().ref(key);
-                updateStatusBadge('loading', '⏳ Download dal Cloud in corso...');
-                ref.once('value')
-                    .then((snapshot) => {
-                        const data = snapshot.val();
-                        if (data && (data.salary !== undefined || data.quotas !== undefined || data.car !== undefined)) {
-                            appData = Object.assign({}, defaultData, data);
-                            if (!appData.car.categories) appData.car.categories = initialCategories;
-                            saveData();
-                            updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
-                            alert("✅ Dati importati dal Cloud con successo!");
-                            location.reload();
-                        } else {
-                            alert("⚠️ Nessun dato trovato sul Cloud. Assicurati di aver prima premuto 'Salva Dati Attuali sul Cloud' dal telefono.");
-                        }
-                    })
-                    .catch((err) => {
-                        alert("Errore durante il download da Firebase: " + err.message);
-                    });
-            } catch(e) {
-                alert("Errore: " + e.message);
-            }
+            appData.firebaseUrl = url;
+            appData.firebaseKey = key;
+            localStorage.setItem('budgetAppV14', JSON.stringify(appData));
+            downloadBackupFromFirebase(true);
         }
 
         // --- BACKUP CLASSICO FILE JSON ---
@@ -1356,26 +1306,11 @@
         document.getElementById('ratio-20').value = appData.ratios.r20;
         calculateBudget();
 
-        if (appData.firebaseUrl) {
-            try {
-                if (!firebase.apps.length) firebase.initializeApp({ databaseURL: appData.firebaseUrl });
-                firebaseDbRef = firebase.database().ref(appData.firebaseKey || 'mie_finanze');
-                firebaseDbRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data && (data.salary !== undefined || data.quotas !== undefined)) {
-                        isRemoteUpdate = true;
-                        appData = Object.assign({}, defaultData, data);
-                        if (!appData.car.categories) appData.car.categories = initialCategories;
-                        localStorage.setItem('budgetAppV14', JSON.stringify(appData));
-                        calculateBudget();
-                        renderFuel();
-                        renderMaint();
-                        renderHistory();
-                        isRemoteUpdate = false;
-                        updateStatusBadge('online', '⚡ Realtime Cloud Connesso');
-                    }
-                });
-            } catch(e) {}
+        // Connessione e allineamento automatico all'avvio via REST API
+        if (getFirebaseRestUrl()) {
+            downloadBackupFromFirebase(false);
+            // Sincronizzazione periodica leggera ogni 30 secondi
+            setInterval(() => { downloadBackupFromFirebase(false); }, 30000);
         }
     </script>
 </body>
