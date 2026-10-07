@@ -8,7 +8,7 @@
     <!-- Google Fonts & System Integration -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Firebase Compat SDK per Google Auth e Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1043,9 +1043,59 @@
                         </select>
                     </div>
                 </div>
+                <div class="input-group">
+                    <label class="input-label">Famiglia Carattere (Font)</label>
+                    <select id="setting-font" class="input-control" onchange="updateDesignSetting('font', this.value)">
+                        <option value="'Plus Jakarta Sans', system-ui, sans-serif">Plus Jakarta Sans (Moderno & Sofisticato)</option>
+                        <option value="'Inter', system-ui, sans-serif">Inter (Essenziale & Pulito)</option>
+                        <option value="system-ui, -apple-system, 'Segoe UI', sans-serif">System Native (Apple / Windows)</option>
+                        <option value="'JetBrains Mono', monospace">JetBrains Mono (Tecnico / Monospazio)</option>
+                        <option value="Georgia, 'Times New Roman', serif">Georgia (Elegante Serif)</option>
+                    </select>
+                </div>
             </div>
 
         </section>
+        <!-- Modale Profilo / Accesso Google -->
+    <div class="modal-sheet" id="modal-auth">
+        <div class="sheet-handle"></div>
+        <h3 style="margin-bottom: 8px; font-weight: 700;">Account & Profilo</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">
+            Autenticati con Google o personalizza il tuo profilo di sessione.
+        </p>
+
+        <div style="background:var(--surface-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
+            <div style="font-weight:600; font-size:0.88rem; margin-bottom:4px;">Accesso Diretto Google Popup</div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+                Richiede l'abilitazione di Google Auth e del dominio su Firebase Console.
+            </p>
+            <div class="input-group" style="margin-bottom:10px;">
+                <label class="input-label">Firebase Web API Key (Opzionale / Permanente)</label>
+                <input type="text" id="firebase-api-key-input" class="input-control" placeholder="AIzaSy...">
+            </div>
+            <button class="btn btn-primary" onclick="executeGooglePopupAuth()">
+                <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V13.8h6.887C18.2 16.15 15.65 17.8 12.24 17.8c-3.23 0-5.85-2.62-5.85-5.8s2.62-5.8 5.85-5.8c1.54 0 2.94.57 4.03 1.51l2.67-2.67C17.28 3.51 14.93 2.6 12.24 2.6 7.03 2.6 2.8 6.83 2.8 12s4.23 9.4 9.44 9.4c5.44 0 9.07-3.83 9.07-9.23 0-.62-.06-1.22-.18-1.885h-8.89z"/></svg>
+                Accedi con Google Popup
+            </button>
+        </div>
+
+        <div style="border-top:1px dashed var(--border); padding-top:14px;">
+            <div style="font-weight:600; font-size:0.85rem; margin-bottom:10px;">Oppure imposta profilo rapido:</div>
+            <div class="input-group">
+                <label class="input-label">Nome Visualizzato</label>
+                <input type="text" id="profile-custom-name" class="input-control" placeholder="Es. Raffaele B.">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Indirizzo Email</label>
+                <input type="email" id="profile-custom-email" class="input-control" placeholder="Es. raffaele@gmail.com">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:14px;">
+                <button class="btn btn-secondary" onclick="saveCustomLocalProfile()">Salva Profilo</button>
+                <button class="btn btn-outline" onclick="closeModal('modal-auth')">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
     </main>
 
     <!-- Bottom Navigation Bar (Stile App Nativa) -->
@@ -1123,31 +1173,42 @@
         let currentUser = null;
         let isWritingRemote = false;
 
-        // Inizializzazione Firebase Compat per Auth
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp({
-                    databaseURL: FIREBASE_REST_BASE,
-                    authDomain: "gestione-finanza-be6ee.firebaseapp.com"
-                });
+        // Gestione Firebase Auth & API Key
+        let storedApiKey = localStorage.getItem('firebase_web_api_key') || "";
+
+        function initFirebaseAuth() {
+            try {
+                if (storedApiKey && !firebase.apps.length) {
+                    firebase.initializeApp({
+                        apiKey: storedApiKey,
+                        authDomain: "gestione-finanza-be6ee.firebaseapp.com",
+                        databaseURL: FIREBASE_REST_BASE,
+                        projectId: "gestione-finanza-be6ee"
+                    });
+                }
+                if (firebase.apps.length) {
+                    firebase.auth().onAuthStateChanged(user => {
+                        currentUser = user;
+                        renderAuthProfile();
+                    });
+                }
+            } catch(e) {
+                console.log("Firebase init note: " + e.message);
             }
-            firebase.auth().onAuthStateChanged(user => {
-                currentUser = user;
-                renderAuthProfile();
-            });
-        } catch(e) {
-            console.log("Firebase Auth init fallback: " + e.message);
         }
+        initFirebaseAuth();
 
         // Gestione Design e Preferenze
         let uiPrefs = JSON.parse(localStorage.getItem('financeStudioUIPrefs')) || {
             theme: 'dark',
-            fontsize: '15px'
+            fontsize: '15px',
+            font: "'Plus Jakarta Sans', system-ui, sans-serif"
         };
 
         function applyDesignPreferences() {
             document.body.setAttribute('data-theme', uiPrefs.theme);
             document.documentElement.style.setProperty('--font-size-base', uiPrefs.fontsize);
+            document.documentElement.style.setProperty('--font-main', uiPrefs.font || "'Plus Jakarta Sans', system-ui, sans-serif");
 
             const themeToggleBtn = document.getElementById('theme-toggle');
             if (themeToggleBtn) themeToggleBtn.innerText = uiPrefs.theme === 'dark' ? '🌙' : '☀️';
@@ -1156,6 +1217,8 @@
             if (selTheme) selTheme.value = uiPrefs.theme;
             const selSize = document.getElementById('setting-fontsize');
             if (selSize) selSize.value = uiPrefs.fontsize;
+            const selFont = document.getElementById('setting-font');
+            if (selFont && uiPrefs.font) selFont.value = uiPrefs.font;
         }
 
         function updateDesignSetting(key, val) {
@@ -1247,26 +1310,85 @@
         }
 
         // ================= GESTIONE AUTH & PROFILO GOOGLE =================
+        let customProfile = JSON.parse(localStorage.getItem('financeStudioCustomProfile')) || null;
+
         function handleGoogleAuth() {
-            if (currentUser) {
-                if (confirm("Vuoi disconnettere il tuo account Google?")) {
-                    firebase.auth().signOut().then(() => {
-                        currentUser = null;
-                        renderAuthProfile();
-                    });
+            if (currentUser || customProfile) {
+                if (confirm("Vuoi disconnettere il profilo attuale?")) {
+                    if (currentUser && firebase.apps.length) {
+                        firebase.auth().signOut();
+                    }
+                    currentUser = null;
+                    customProfile = null;
+                    localStorage.removeItem('financeStudioCustomProfile');
+                    renderAuthProfile();
                 }
             } else {
+                const apiKeyInput = document.getElementById('firebase-api-key-input');
+                if (apiKeyInput) apiKeyInput.value = storedApiKey;
+                openModal('modal-auth');
+            }
+        }
+
+        function executeGooglePopupAuth() {
+            const apiKeyInput = document.getElementById('firebase-api-key-input').value.trim();
+            if (apiKeyInput) {
+                storedApiKey = apiKeyInput;
+                localStorage.setItem('firebase_web_api_key', apiKeyInput);
+            }
+
+            if (!storedApiKey) {
+                alert("Per usare il popup Google reale serve la Web API Key di Firebase.\n\nLa trovi su console.firebase.google.com in Impostazioni Progetto > Web API Key (inizia con AIzaSy...).\n\nOppure usa il 'Profilo Rapido' qui sotto!");
+                return;
+            }
+
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp({
+                        apiKey: storedApiKey,
+                        authDomain: "gestione-finanza-be6ee.firebaseapp.com",
+                        databaseURL: FIREBASE_REST_BASE,
+                        projectId: "gestione-finanza-be6ee"
+                    });
+                }
                 const provider = new firebase.auth.GoogleAuthProvider();
                 firebase.auth().signInWithPopup(provider)
                     .then(res => {
                         currentUser = res.user;
+                        closeModal('modal-auth');
                         renderAuthProfile();
                         manualCloudSync();
+                        alert("✅ Accesso con Google effettuato con successo!");
                     })
                     .catch(err => {
-                        alert("Accesso Google: " + err.message);
+                        let msg = err.message;
+                        if (err.code === "auth/unauthorized-domain") {
+                            msg = "Dominio non autorizzato!\nVai su Firebase Console > Authentication > Settings > Authorized domains e aggiungi 'raffaelebasilicata96-max.github.io'.";
+                        } else if (err.code === "auth/operation-not-allowed") {
+                            msg = "Metodo Google non abilitato!\nVai su Firebase Console > Authentication > Sign-in method e abilita 'Google'.";
+                        } else if (err.code === "auth/invalid-api-key" || err.code === "auth/api-key-not-valid") {
+                            msg = "Web API Key non valida. Verifica la chiave in Impostazioni Progetto su Firebase.";
+                        }
+                        alert("Accesso Google:\n" + msg);
                     });
+            } catch(e) {
+                alert("Errore inizializzazione Auth: " + e.message);
             }
+        }
+
+        function saveCustomLocalProfile() {
+            const name = document.getElementById('profile-custom-name').value.trim();
+            const email = document.getElementById('profile-custom-email').value.trim();
+            if (!name) return alert("Inserisci almeno un nome per il profilo.");
+
+            customProfile = {
+                displayName: name,
+                email: email || "Account Personale",
+                photoURL: null
+            };
+            localStorage.setItem('financeStudioCustomProfile', JSON.stringify(customProfile));
+            closeModal('modal-auth');
+            renderAuthProfile();
         }
 
         function renderAuthProfile() {
@@ -1275,19 +1397,21 @@
             const emailEl = document.getElementById('user-display-email');
             const btn = document.getElementById('btn-auth-toggle');
 
-            if (currentUser) {
-                nameEl.innerText = currentUser.displayName || "Utente Google";
-                emailEl.innerText = currentUser.email || "";
+            const activeProfile = currentUser || customProfile;
+
+            if (activeProfile) {
+                nameEl.innerText = activeProfile.displayName || "Utente";
+                emailEl.innerText = activeProfile.email || "Connesso";
                 btn.innerText = "Esci";
-                if (currentUser.photoURL) {
-                    avatar.innerHTML = `<img src="${currentUser.photoURL}" alt="User">`;
+                if (activeProfile.photoURL) {
+                    avatar.innerHTML = `<img src="${activeProfile.photoURL}" alt="User">`;
                 } else {
-                    avatar.innerText = (currentUser.displayName || "G").charAt(0).toUpperCase();
+                    avatar.innerText = (activeProfile.displayName || "U").charAt(0).toUpperCase();
                 }
             } else {
                 nameEl.innerText = "Sessione Locale";
-                emailEl.innerText = "Collega il tuo account Google";
-                btn.innerText = "Accedi con Google";
+                emailEl.innerText = "Accedi con Google o imposta profilo";
+                btn.innerText = "Accedi";
                 avatar.innerHTML = `<svg style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
             }
         }
