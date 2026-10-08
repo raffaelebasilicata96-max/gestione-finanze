@@ -15,61 +15,61 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <meta name="theme-color" content="#090d16">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="FinanceStudio">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Finanze">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z'/></svg>">
 
     <style>
         :root {
             --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --font-mono: var(--font-main);
             --font-size-base: 15px;
 
-            /* Light Luxury Slate Theme */
+            /* Light Elegant Modern Theme (Default: chiaro, arioso, pulito) */
             --bg: #f8fafc;
             --surface: #ffffff;
-            --surface-elevated: #ffffff;
+            --surface-elevated: #f1f5f9;
             --border: #e2e8f0;
-            --border-subtle: #edf2f7;
+            --border-subtle: #f1f5f9;
             --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
 
-            --brand-primary: #1e293b;
+            --brand-primary: #0f172a;
             --brand-accent: #2563eb;
             --brand-accent-soft: rgba(37, 99, 235, 0.08);
 
             --emerald: #059669;
-            --emerald-soft: rgba(5, 150, 105, 0.1);
+            --emerald-soft: rgba(5, 150, 105, 0.08);
             --amber: #d97706;
-            --amber-soft: rgba(217, 119, 6, 0.1);
+            --amber-soft: rgba(217, 119, 6, 0.08);
             --rose: #e11d48;
-            --rose-soft: rgba(225, 29, 72, 0.1);
+            --rose-soft: rgba(225, 29, 72, 0.08);
 
-            --nav-bg: rgba(255, 255, 255, 0.85);
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
-            --shadow-card: 0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+            --nav-bg: rgba(255, 255, 255, 0.94);
+            --header-bg: rgba(255, 255, 255, 0.94);
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-card: 0 2px 8px -1px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
         }
 
         [data-theme="dark"] {
-            --bg: #090d16;
-            --surface: #111726;
-            --surface-elevated: #161e31;
-            --border: #1e293b;
-            --border-subtle: #172033;
+            --bg: #0b0f19;
+            --surface: #131b2e;
+            --surface-elevated: #1a233a;
+            --border: #232f48;
+            --border-subtle: #19243b;
             --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --text-secondary: #cbd5e1;
+            --text-muted: #7e8ea7;
 
             --brand-primary: #f8fafc;
             --brand-accent: #3b82f6;
-            --brand-accent-soft: rgba(59, 130, 246, 0.12);
+            --brand-accent-soft: rgba(59, 130, 246, 0.15);
 
             --emerald: #10b981;
             --emerald-soft: rgba(16, 185, 129, 0.12);
@@ -78,10 +78,10 @@
             --rose: #f43f5e;
             --rose-soft: rgba(244, 63, 94, 0.12);
 
-            --nav-bg: rgba(17, 23, 38, 0.85);
-            --header-bg: rgba(9, 13, 22, 0.85);
+            --nav-bg: rgba(19, 27, 46, 0.94);
+            --header-bg: rgba(11, 15, 25, 0.94);
             --shadow-subtle: 0 1px 2px rgba(0,0,0,0.3);
-            --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+            --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
         }
 
         * {
@@ -103,11 +103,11 @@
             min-height: 100%;
             padding-top: calc(env(safe-area-inset-top, 0px) + 64px);
             padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
-            transition: background-color 0.25s ease, color 0.25s ease;
+            transition: background-color 0.2s ease, color 0.2s ease;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Brand Bar */
+        /* Top Navigation Header */
         .topbar {
             position: fixed;
             top: 0;
@@ -141,42 +141,42 @@
             width: 32px;
             height: 32px;
             border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--brand-accent) 0%, #1e1b4b 100%);
+            background: linear-gradient(135deg, var(--brand-accent) 0%, #1e40af 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.2);
         }
-
         .brand-icon svg { width: 18px; height: 18px; fill: currentColor; }
 
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .sync-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 10px;
+            padding: 5px 11px;
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 600;
             border: 1px solid transparent;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
         .sync-pill.online {
             background: var(--emerald-soft);
             color: var(--emerald);
-            border-color: rgba(16, 185, 129, 0.2);
+            border-color: rgba(5, 150, 105, 0.2);
         }
         .sync-pill.loading {
             background: var(--amber-soft);
             color: var(--amber);
-            border-color: rgba(245, 158, 11, 0.2);
+            border-color: rgba(217, 119, 6, 0.2);
         }
         .sync-pill.offline {
             background: var(--surface-elevated);
@@ -191,45 +191,56 @@
             background-color: currentColor;
         }
 
-        /* Container Layout */
+        .theme-btn-top {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /* Container & Panels */
         .container {
             max-width: 640px;
             margin: 0 auto;
-            padding: 20px 16px;
+            padding: 16px 16px;
         }
 
         .tab-panel {
             display: none;
-            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .tab-panel.active {
-            display: block;
-        }
+        .tab-panel.active { display: block; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Sophisticated Card System */
+        /* Card System (Design chiaro, arioso, pulito) */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
             box-shadow: var(--shadow-card);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .card-title {
-            font-size: 0.95rem;
+            font-size: 0.96rem;
             font-weight: 700;
             letter-spacing: -0.01em;
             color: var(--text-primary);
@@ -244,40 +255,93 @@
             margin-top: 2px;
         }
 
-        /* Minimal Luxury Form Inputs */
+        /* Sub-Segmented Navigation Control (Tasti Switcher Schede a 3 posizioni) */
+        .segmented-control {
+            display: flex;
+            background: var(--surface-elevated);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            margin-bottom: 18px;
+            gap: 4px;
+        }
+        .segmented-btn {
+            flex: 1;
+            padding: 9px 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-radius: calc(var(--radius-md) - 3px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .segmented-btn.active {
+            background: var(--surface);
+            color: var(--brand-accent);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        /* Inputs & Form Elements */
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
-        .input-group:last-child {
-            margin-bottom: 0;
-        }
+        .input-group:last-child { margin-bottom: 0; }
 
         .input-label {
             display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
+            font-size: 0.74rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             margin-bottom: 6px;
         }
 
         .input-control {
             width: 100%;
-            padding: 12px 14px;
-            background: var(--bg);
+            padding: 11px 13px;
+            background: var(--surface-elevated);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             color: var(--text-primary);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 500;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            transition: border-color 0.15s, background-color 0.15s;
         }
         .input-control:focus {
             border-color: var(--brand-accent);
             background: var(--surface);
-            box-shadow: 0 0 0 3px var(--brand-accent-soft);
+        }
+
+        /* Hero Highlights & Banner Riepilogo */
+        .summary-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+        }
+        .summary-banner-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .summary-banner-val {
+            
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
         }
 
         /* Buttons */
@@ -287,41 +351,29 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 13px 18px;
+            padding: 12px 16px;
             border-radius: var(--radius-md);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
             border: 1px solid transparent;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.15s ease;
         }
-        .btn:active {
-            transform: scale(0.98);
-        }
+        .btn:active { transform: scale(0.98); }
         .btn-primary {
             background: var(--brand-accent);
             color: #ffffff;
-            box-shadow: 0 2px 8px rgba(37,99,235,0.25);
         }
-        .btn-primary:hover {
-            filter: brightness(1.08);
-        }
+        .btn-primary:hover { filter: brightness(1.06); }
         .btn-secondary {
             background: var(--surface-elevated);
             color: var(--text-primary);
             border-color: var(--border);
         }
-        .btn-secondary:hover {
-            background: var(--border-subtle);
-        }
         .btn-outline {
             background: transparent;
             color: var(--text-secondary);
             border-color: var(--border);
-        }
-        .btn-outline:hover {
-            color: var(--text-primary);
-            border-color: var(--text-secondary);
         }
         .btn-success {
             background: var(--emerald);
@@ -334,11 +386,12 @@
             border-radius: 50%;
             background: var(--brand-accent-soft);
             color: var(--brand-accent);
-            border: 1px solid rgba(37,99,235,0.2);
+            border: 1px solid rgba(37,99,235,0.18);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            font-weight: 700;
             transition: all 0.15s ease;
         }
         .icon-btn-add:hover {
@@ -346,9 +399,9 @@
             color: #ffffff;
         }
 
-        /* Metric Hero Cards */
+        /* Metric Hero Cards (Budget) */
         .hero-metric {
-            padding: 16px;
+            padding: 14px 16px;
             border-radius: var(--radius-md);
             background: var(--surface-elevated);
             border: 1px solid var(--border);
@@ -358,22 +411,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.78rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .hero-metric-value {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            font-family: var(--font-mono);
-            letter-spacing: -0.02em;
+            
         }
         .hero-metric-sub {
             display: flex;
             justify-content: space-between;
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             margin-top: 4px;
             margin-bottom: 8px;
@@ -387,54 +439,53 @@
         .hero-progress-fill {
             height: 100%;
             border-radius: 999px;
-            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: width 0.3s ease;
         }
 
-        /* Ratio split grid */
+        /* Ratios grid */
         .ratios-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .ratio-tile {
             background: var(--surface-elevated);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 10px;
+            padding: 9px;
             text-align: center;
         }
         .ratio-tile-label {
-            font-size: 0.72rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             margin-bottom: 4px;
             text-transform: uppercase;
         }
         .ratio-tile input {
             width: 100%;
             text-align: center;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
-            font-family: var(--font-mono);
+            
             background: transparent;
             border: none;
             color: var(--text-primary);
             outline: none;
         }
 
-        /* Transaction List Items */
+        /* Clean List Rows */
         .list-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 0;
+            padding: 13px 0;
             border-bottom: 1px solid var(--border-subtle);
         }
         .list-row:last-child { border-bottom: none; }
-
-        .list-row-title { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
-        .list-row-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
-        .list-row-amount { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; text-align: right; }
+        .list-row-title { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); }
+        .list-row-desc { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+        .list-row-amount {  font-weight: 700; font-size: 0.92rem; text-align: right; }
 
         .action-icon-btn {
             background: none;
@@ -450,64 +501,11 @@
         }
         .action-icon-btn:hover {
             color: var(--text-primary);
-            background: var(--border-subtle);
+            background: var(--surface-elevated);
         }
         .action-icon-btn.delete:hover {
             color: var(--rose);
             background: var(--rose-soft);
-        }
-
-        /* Collapsible Month Accordions for Fleet */
-        .accordion-group {
-            margin-bottom: 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            background: var(--surface);
-            overflow: hidden;
-            box-shadow: var(--shadow-subtle);
-        }
-        .accordion-header {
-            padding: 12px 16px;
-            background: var(--surface-elevated);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            border-bottom: 1px solid transparent;
-            transition: background-color 0.15s;
-        }
-        .accordion-group:not(.collapsed) .accordion-header {
-            border-bottom-color: var(--border);
-        }
-        .accordion-header-title {
-            font-weight: 600;
-            font-size: 0.88rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-transform: capitalize;
-        }
-        .accordion-header-badge {
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--brand-accent);
-        }
-        .chevron {
-            transition: transform 0.25s ease;
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-        }
-        .accordion-group.collapsed .chevron {
-            transform: rotate(-90deg);
-        }
-        .accordion-body {
-            padding: 0 16px;
-        }
-        .accordion-group.collapsed .accordion-body {
-            display: none;
         }
 
         /* Native-Feel Fixed Bottom Navigation Bar */
@@ -526,7 +524,7 @@
             justify-content: space-around;
             align-items: center;
             z-index: 950;
-            box-shadow: 0 -4px 16px rgba(0,0,0,0.03);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
         }
 
         .nav-item {
@@ -537,28 +535,24 @@
             justify-content: center;
             text-decoration: none;
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 600;
             gap: 4px;
             padding: 6px 0;
             cursor: pointer;
-            transition: color 0.2s ease, transform 0.15s ease;
+            transition: color 0.15s ease;
         }
         .nav-item svg {
-            width: 20px;
-            height: 20px;
+            width: 21px;
+            height: 21px;
             stroke: currentColor;
             stroke-width: 2;
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
-            transition: transform 0.2s ease;
         }
         .nav-item.active {
             color: var(--brand-accent);
-        }
-        .nav-item.active svg {
-            transform: translateY(-2px);
         }
 
         /* Modal Sheets */
@@ -566,10 +560,9 @@
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 23, 42, 0.45);
             backdrop-filter: blur(4px);
             z-index: 1000;
-            animation: fadeIn 0.2s ease;
         }
         .modal-sheet {
             display: none;
@@ -583,14 +576,8 @@
             max-height: 90vh;
             overflow-y: auto;
             z-index: 1001;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
         }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
         .modal-sheet.active, .modal-overlay.active { display: block; }
         .sheet-handle {
             width: 36px;
@@ -600,55 +587,211 @@
             margin: -10px auto 18px auto;
         }
 
-        /* Account Status Bar */
-        .account-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            border-radius: var(--radius-md);
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            margin-bottom: 16px;
-        }
-        .account-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--brand-accent-soft);
-            color: var(--brand-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1rem;
-            overflow: hidden;
-        }
-        .account-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .account-meta { flex: 1; margin-left: 12px; }
-        .account-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
-        .account-email { font-size: 0.78rem; color: var(--text-muted); }
-
-        /* Chips & Badges */
+        /* Chips & Tag Badges */
         .tag-badge {
             display: inline-block;
             font-size: 0.68rem;
             font-weight: 700;
             padding: 2px 7px;
             border-radius: 4px;
-            letter-spacing: 0.03em;
             text-transform: uppercase;
         }
         .tag-badge.tag-gpl { background: var(--emerald-soft); color: var(--emerald); }
         .tag-badge.tag-benzina { background: var(--amber-soft); color: var(--amber); }
 
-        /* Stats Filters */
         .stats-grid-filters {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
+    
+        /* Area Chart Styles */
+        .chart-container {
+            width: 100%;
+            height: 180px;
+            margin: 14px 0 6px 0;
+            position: relative;
+        }
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .chart-grid-line {
+            stroke: var(--border);
+            stroke-width: 1;
+            stroke-dasharray: 3 3;
+        }
+        .chart-label {
+            font-size: 10px;
+            fill: var(--text-muted);
+            text-anchor: middle;
+            font-weight: 500;
+        }
+        .chart-point-interactive {
+            cursor: pointer;
+            transition: r 0.2s ease, filter 0.2s ease;
+        }
+        .chart-point-interactive:hover {
+            r: 6;
+            filter: drop-shadow(0 0 4px currentColor);
+        }
+        .chart-tooltip-badge {
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            margin-top: 6px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Sinking Funds / Salvadanai */
+        .fund-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .fund-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .fund-card-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .fund-card-amounts {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .fund-card-amounts strong {
+            color: var(--emerald);
+            font-size: 0.95rem;
+        }
+        .fund-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .fund-btn-action {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-primary);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* Cash Flow Map */
+        .cashflow-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        @media (min-width: 480px) {
+            .cashflow-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        .cashflow-month-tile {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.15s ease;
+        }
+        .cashflow-month-tile.peak-high {
+            border-color: rgba(225, 29, 72, 0.4);
+            background: var(--rose-soft);
+        }
+        .cashflow-month-tile.peak-mid {
+            border-color: rgba(217, 119, 6, 0.4);
+            background: var(--amber-soft);
+        }
+        .cashflow-month-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .cashflow-month-val {
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-top: 4px;
+            color: var(--text-primary);
+        }
+        .cashflow-month-items {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    
+        /* Fix overflow inside cards & grid */
+        .card {
+            overflow: hidden;
+            word-break: break-word;
+        }
+        .stats-grid-filters > * {
+            min-width: 0;
+        }
+        .summary-banner {
+            min-width: 0;
+            overflow: hidden;
+        }
+        .input-control {
+            max-width: 100%;
+        }
+        .pac-table-row {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr 1fr 1fr;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.78rem;
+            align-items: center;
+            text-align: right;
+        }
+        .pac-table-row:first-child {
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+        .pac-table-row > div:first-child {
+            text-align: left;
+        }
+
     </style>
 </head>
 <body>
@@ -657,7 +800,7 @@
     <header class="topbar">
         <div class="brand-title">
             <div class="brand-icon">
-                <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4zm8-17l7 14H5zm0 3.8L7.9 14h8.2z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
             </div>
             <span>Finanze Studio</span>
         </div>
@@ -666,20 +809,21 @@
                 <div class="pulse-dot"></div>
                 <span id="cloud-pill-text">Cloud Sincronizzato</span>
             </div>
+            <button class="theme-btn-top" id="theme-toggle" onclick="toggleTheme()" title="Cambia tema">☀️</button>
         </div>
     </header>
 
     <!-- Overlay & Modals -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeAllModals()"></div>
 
-    <!-- Modale Spesa Fissa Budget -->
+    <!-- Modale Quota Fissa Budget -->
     <div class="modal-sheet" id="modal-quota">
         <div class="sheet-handle"></div>
         <h3 id="quota-modal-title" style="margin-bottom: 16px; font-weight: 700;">Quota Fissa Budget</h3>
         <input type="hidden" id="quota-id">
         <div class="input-group">
             <label class="input-label">Nome Spesa / Accantonamento</label>
-            <input type="text" id="quota-name" class="input-control" placeholder="Es. Assicurazione Casa, Fondo Emergenza">
+            <input type="text" id="quota-name" class="input-control" placeholder="Es. Assicurazione Casa, Bollo, Fondo Emergenza">
         </div>
         <div class="input-group">
             <label class="input-label">Importo Totale (€)</label>
@@ -746,7 +890,7 @@
     <!-- Modale Manutenzione Auto -->
     <div class="modal-sheet" id="modal-maint">
         <div class="sheet-handle"></div>
-        <h3 id="maint-modal-title" style="margin-bottom: 16px; font-weight: 700;">Intervento Officina & Manutenzione</h3>
+        <h3 id="maint-modal-title" style="margin-bottom: 16px; font-weight: 700;">Intervento Manutenzione</h3>
         <input type="hidden" id="maint-id">
         <div class="input-group">
             <label class="input-label">Data Intervento</label>
@@ -784,193 +928,468 @@
         </div>
     </div>
 
+    <!-- Modale Profilo / Accesso Google -->
+    <div class="modal-sheet" id="modal-auth">
+        <div class="sheet-handle"></div>
+        <h3 style="margin-bottom: 8px; font-weight: 700;">Account & Profilo</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">
+            Autenticati con Google o imposta il tuo profilo di sessione.
+        </p>
+
+        <div style="background:var(--surface-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
+            <div style="font-weight:600; font-size:0.88rem; margin-bottom:4px;">Accesso con Google Popup</div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+                Richiede la Web API Key del tuo progetto Firebase (la trovi in Impostazioni Progetto su Firebase).
+            </p>
+            <div class="input-group" style="margin-bottom:10px;">
+                <label class="input-label">Firebase Web API Key</label>
+                <input type="text" id="firebase-api-key-input" class="input-control" placeholder="AIzaSy...">
+            </div>
+            <button class="btn btn-primary" onclick="executeGooglePopupAuth()">
+                <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V13.8h6.887C18.2 16.15 15.65 17.8 12.24 17.8c-3.23 0-5.85-2.62-5.85-5.8s2.62-5.8 5.85-5.8c1.54 0 2.94.57 4.03 1.51l2.67-2.67C17.28 3.51 14.93 2.6 12.24 2.6 7.03 2.6 2.8 6.83 2.8 12s4.23 9.4 9.44 9.4c5.44 0 9.07-3.83 9.07-9.23 0-.62-.06-1.22-.18-1.885h-8.89z"/></svg>
+                Accedi con Google Popup
+            </button>
+        </div>
+
+        <div style="border-top:1px dashed var(--border); padding-top:14px;">
+            <div style="font-weight:600; font-size:0.85rem; margin-bottom:10px;">Oppure imposta profilo rapido:</div>
+            <div class="input-group">
+                <label class="input-label">Nome Visualizzato</label>
+                <input type="text" id="profile-custom-name" class="input-control" placeholder="Es. Raffaele B.">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Indirizzo Email</label>
+                <input type="email" id="profile-custom-email" class="input-control" placeholder="Es. raffaele@gmail.com">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:14px;">
+                <button class="btn btn-secondary" onclick="saveCustomLocalProfile()">Salva Profilo</button>
+                <button class="btn btn-outline" onclick="closeModal('modal-auth')">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN APP CONTENT PANELS -->
     <main class="container">
 
-        <!-- ================= TAB 1: BUDGET & FINANZE ================= -->
+        <!-- ================= TAB 1: BUDGET (CON 3 SCHEDE SEPARATE) ================= -->
         <section id="tab-budget" class="tab-panel active">
             
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Stipendio e Obiettivi Budget</div>
-                        <div class="card-subtitle">Pianificazione finanziaria mensile</div>
-                    </div>
-                </div>
-
-                <div class="stats-grid-filters">
-                    <div class="input-group">
-                        <label class="input-label">Mese Competenza</label>
-                        <select id="budget-month-select" class="input-control" onchange="calculateBudgetMetrics()"></select>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Entrata Netta (€)</label>
-                        <input type="number" id="budget-salary" class="input-control" value="1900" oninput="calculateBudgetMetrics()">
-                    </div>
-                </div>
-
-                <div style="margin-top:10px; margin-bottom:12px;">
-                    <label class="input-label">Ripartizione Regola</label>
-                    <div class="ratios-grid">
-                        <div class="ratio-tile">
-                            <div class="ratio-tile-label" style="color:var(--brand-accent);">🔴 Bisogni</div>
-                            <input type="number" id="ratio-50" value="50" oninput="calculateBudgetMetrics()">
-                        </div>
-                        <div class="ratio-tile">
-                            <div class="ratio-tile-label" style="color:var(--amber);">🟡 Svago</div>
-                            <input type="number" id="ratio-30" value="30" oninput="calculateBudgetMetrics()">
-                        </div>
-                        <div class="ratio-tile">
-                            <div class="ratio-tile-label" style="color:var(--emerald);">🟢 Risparmio</div>
-                            <input type="number" id="ratio-20" value="20" oninput="calculateBudgetMetrics()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Schede Pillar -->
-                <div class="hero-metric">
-                    <div class="hero-metric-header">
-                        <span style="color:var(--brand-accent);">Bisogni & Spese Fisse (<span id="lbl-r50">50</span>%)</span>
-                        <span id="remain-50" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
-                    </div>
-                    <div class="hero-metric-sub">
-                        <span>Quote: <b id="spent-50">0 €</b></span>
-                        <span>Massimo consentito: <span id="max-50">0 €</span></span>
-                    </div>
-                    <div class="hero-progress"><div id="bar-50" class="hero-progress-fill" style="width:0%; background:var(--brand-accent);"></div></div>
-                </div>
-
-                <div class="hero-metric">
-                    <div class="hero-metric-header">
-                        <span style="color:var(--amber);">Svago & Personale (<span id="lbl-r30">30</span>%)</span>
-                        <span id="remain-30" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
-                    </div>
-                    <div class="hero-metric-sub">
-                        <span>Quote: <b id="spent-30">0 €</b></span>
-                        <span>Massimo consentito: <span id="max-30">0 €</span></span>
-                    </div>
-                    <div class="hero-progress"><div id="bar-30" class="hero-progress-fill" style="width:0%; background:var(--amber);"></div></div>
-                </div>
-
-                <div class="hero-metric">
-                    <div class="hero-metric-header">
-                        <span style="color:var(--emerald);">Risparmio & Investimenti (<span id="lbl-r20">20</span>%)</span>
-                        <span id="remain-20" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
-                    </div>
-                    <div class="hero-metric-sub">
-                        <span>Quote: <b id="spent-20">0 €</b></span>
-                        <span>Target mensile: <span id="max-20">0 €</span></span>
-                    </div>
-                    <div class="hero-progress"><div id="bar-20" class="hero-progress-fill" style="width:0%; background:var(--emerald);"></div></div>
-                </div>
-            </div>
-
-            <!-- Fisse & Quote -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Fisse & Accantonamenti</div>
-                        <div class="card-subtitle">Quote ricorrenti rateizzate mensilmente</div>
-                    </div>
-                    <button class="icon-btn-add" onclick="openQuotaModal()">+</button>
-                </div>
-                <div id="quotas-list-container"></div>
-                <div class="list-row" style="margin-top:10px; border-top:1px solid var(--border); padding-top:12px;">
-                    <div class="list-row-title" style="font-weight:700;">Totale Accantonamenti Mensili</div>
-                    <div id="quotas-total-amount" class="list-row-amount" style="color:var(--brand-accent); font-size:1.05rem;">0.00 €</div>
-                </div>
-                <button id="btn-save-month-record" class="btn btn-primary" style="margin-top: 14px;" onclick="archiveMonthSummary()">
-                    💾 Archivia e Salva Mese Selezionato
+            <!-- Switcher Schede Budget -->
+            <div class="segmented-control">
+                <button class="segmented-btn active" id="btn-subtab-budget-expenses" onclick="switchBudgetSubTab('expenses')">
+                    💳 Spese & Quote
+                </button>
+                <button class="segmented-btn" id="btn-subtab-budget-ratios" onclick="switchBudgetSubTab('ratios')">
+                    ⚖️ Ripartizioni
+                </button>
+                <button class="segmented-btn" id="btn-subtab-budget-stats" onclick="switchBudgetSubTab('stats')">
+                    📈 Statistiche
                 </button>
             </div>
 
-            <!-- Storico Mesi Chiusi -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Storico Mesi Archiviati</div>
-                        <div class="card-subtitle">Bilancio storico entrate e risparmio netto</div>
+            <!-- SCHEDA BUDGET 1: SPESE PERSONALI / QUOTE FISSE -->
+            <div id="subtab-budget-expenses-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Fisse & Accantonamenti</div>
+                            <div class="card-subtitle">Quote personali rateizzate mensilmente</div>
+                        </div>
+                        <button class="icon-btn-add" onclick="openQuotaModal()">+</button>
+                    </div>
+
+                    <!-- Riepilogo Rapido Quote -->
+                    <div class="summary-banner">
+                        <div>
+                            <div class="summary-banner-label">Totale Quote Mensili</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);" id="quotas-count-label">0 quote attive</div>
+                        </div>
+                        <div class="summary-banner-val" id="quotas-banner-total" style="color:var(--brand-accent);">€ 0.00</div>
+                    </div>
+
+                    <div id="quotas-list-container"></div>
+                </div>
+
+                <!-- Card Salvadanai & Sinking Funds -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">🎯 Salvadanaio Dinamico</div>
+                            <div class="card-subtitle">Fondi e traguardi di risparmio mirati</div>
+                        </div>
+                        <button class="icon-btn-add" onclick="openFundModal()">+</button>
+                    </div>
+                    <div id="funds-list-container"></div>
+                </div>
+            </div>
+
+            <!-- SCHEDA BUDGET 2: RIPARTIZIONI & PIANIFICAZIONE -->
+            <div id="subtab-budget-ratios-panel" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Stipendio e Regola 50/30/20</div>
+                            <div class="card-subtitle">Calcolo rimanenze e bilancio mese</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid-filters">
+                        <div class="input-group">
+                            <label class="input-label">Mese Competenza</label>
+                            <select id="budget-month-select" class="input-control" onchange="calculateBudgetMetrics()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Entrata Netta (€)</label>
+                            <input type="number" id="budget-salary" class="input-control" value="1900" oninput="calculateBudgetMetrics()">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:8px; margin-bottom:12px;">
+                        <label class="input-label">Percentuali Regola</label>
+                        <div class="ratios-grid">
+                            <div class="ratio-tile">
+                                <div class="ratio-tile-label" style="color:var(--brand-accent);">🔴 Bisogni</div>
+                                <input type="number" id="ratio-50" value="50" oninput="calculateBudgetMetrics()">
+                            </div>
+                            <div class="ratio-tile">
+                                <div class="ratio-tile-label" style="color:var(--amber);">🟡 Svago</div>
+                                <input type="number" id="ratio-30" value="30" oninput="calculateBudgetMetrics()">
+                            </div>
+                            <div class="ratio-tile">
+                                <div class="ratio-tile-label" style="color:var(--emerald);">🟢 Risparmio</div>
+                                <input type="number" id="ratio-20" value="20" oninput="calculateBudgetMetrics()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schede Pillar -->
+                    <div class="hero-metric">
+                        <div class="hero-metric-header">
+                            <span style="color:var(--brand-accent);">Bisogni & Spese Fisse (<span id="lbl-r50">50</span>%)</span>
+                            <span id="remain-50" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                        </div>
+                        <div class="hero-metric-sub">
+                            <span>Quote fisse: <b id="spent-50">0 €</b></span>
+                            <span>Massimo: <span id="max-50">0 €</span></span>
+                        </div>
+                        <div class="hero-progress"><div id="bar-50" class="hero-progress-fill" style="width:0%; background:var(--brand-accent);"></div></div>
+                    </div>
+
+                    <div class="hero-metric">
+                        <div class="hero-metric-header">
+                            <span style="color:var(--amber);">Svago & Personale (<span id="lbl-r30">30</span>%)</span>
+                            <span id="remain-30" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                        </div>
+                        <div class="hero-metric-sub">
+                            <span>Quote fisse: <b id="spent-30">0 €</b></span>
+                            <span>Massimo: <span id="max-30">0 €</span></span>
+                        </div>
+                        <div class="hero-progress"><div id="bar-30" class="hero-progress-fill" style="width:0%; background:var(--amber);"></div></div>
+                    </div>
+
+                    <div class="hero-metric">
+                        <div class="hero-metric-header">
+                            <span style="color:var(--emerald);">Risparmio & Investimenti (<span id="lbl-r20">20</span>%)</span>
+                            <span id="remain-20" class="hero-metric-value" style="font-size:0.95rem;">0.00 €</span>
+                        </div>
+                        <div class="hero-metric-sub">
+                            <span>Quote fisse: <b id="spent-20">0 €</b></span>
+                            <span>Obiettivo: <span id="max-20">0 €</span></span>
+                        </div>
+                        <div class="hero-progress"><div id="bar-20" class="hero-progress-fill" style="width:0%; background:var(--emerald);"></div></div>
+                    </div>
+
+                    <button id="btn-save-month-record" class="btn btn-primary" style="margin-top: 14px;" onclick="archiveMonthSummary()">
+                        💾 Archivia e Salva Mese Selezionato
+                    </button>
+                </div>
+
+                <!-- Storico Mesi Chiusi -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Storico Mesi Archiviati</div>
+                            <div class="card-subtitle">Bilancio storico entrate e risparmio netto</div>
+                        </div>
+                    </div>
+                    <div id="history-records-container"></div>
+                </div>
+            </div>
+
+                        <!-- SCHEDA BUDGET 3: STATISTICHE BUDGET -->
+            <div id="subtab-budget-stats-panel" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Analisi Finanziaria & Risparmio</div>
+                            <div class="card-subtitle">Andamento storico e bilancio archiviato</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid-filters">
+                        <div class="input-group">
+                            <label class="input-label">Anno</label>
+                            <select id="budget-stats-filter-year" class="input-control" onchange="onBudgetStatsYearChange()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Mese</label>
+                            <select id="budget-stats-filter-month" class="input-control" onchange="renderBudgetAnalytics()"></select>
+                        </div>
+                    </div>
+
+                    <div id="budget-stats-kpi"></div>
+                </div>
+
+                <!-- Grafico ad Area Risparmio Netto Annuale -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">📈 Andamento Risparmio Netto</div>
+                            <div class="card-subtitle">Evoluzione mensile nel corso dell'anno</div>
+                        </div>
+                    </div>
+                    <div id="budget-area-chart-box" class="chart-container"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Ripartizione Quote Fisse per Pillar</div>
+                            <div class="card-subtitle">Incidenza percentuale delle spese fisse</div>
+                        </div>
+                    </div>
+                    <div id="budget-stats-macro-breakdown"></div>
+                </div>
+
+                <!-- Mappa Cash Flow & Picchi di Spesa -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">🌊 Mappa Cash Flow & Picchi di Spesa</div>
+                            <div class="card-subtitle">Distribuzione uscite reali lungo i 12 mesi</div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+                        Evidenzia i mesi in cui si concentrano pagamenti pesanti (bollo, assicurazioni, quote annuali).
+                    </p>
+                    <div id="cashflow-heatmap-container"></div>
+                </div>
+
+                                <!-- PAC ETF VANGUARD FTSE ALL-WORLD (IE00BK5BQT80) -->
+                <div class="card" style="border: 1px solid var(--brand-accent);">
+                    <div class="card-header" style="flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <div class="card-title">🌍 PAC Vanguard FTSE All-World</div>
+                            <div class="card-subtitle">IE00BK5BQT80 (VWCE) • TER 0,14% • Accumulazione</div>
+                        </div>
+                        <button class="btn btn-primary" style="width:auto; padding:6px 12px; font-size:0.78rem;" onclick="addPacMonthlyDeposit()">
+                            + Versa 100 €
+                        </button>
+                    </div>
+
+                    <!-- Metriche Portafoglio Modificabili -->
+                    <div class="stats-grid-filters" style="margin-bottom:12px;">
+                        <div class="summary-banner" style="margin-bottom:0; flex-direction:column; align-items:flex-start;">
+                            <label class="summary-banner-label" style="font-size:0.75rem;">Capitale Versato (€)</label>
+                            <input type="number" step="0.01" id="pac-total-invested" class="input-control" style="padding:7px; font-weight:700; margin-top:4px;" placeholder="0.00" oninput="updatePacInvested()">
+                        </div>
+                        <div class="summary-banner" style="margin-bottom:0; flex-direction:column; align-items:flex-start;">
+                            <label class="summary-banner-label" style="font-size:0.75rem;">Valore Attuale Broker (€)</label>
+                            <input type="number" step="0.01" id="pac-current-value" class="input-control" style="padding:7px; font-weight:700; margin-top:4px;" placeholder="0.00" oninput="updatePacPerformance()">
+                        </div>
+                    </div>
+
+                    <!-- Badge Plusvalenza -->
+                    <div id="pac-profit-badge" class="list-row" style="padding:10px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+                        <div class="list-row-title">Guadagno / Perdita Netto:</div>
+                        <div class="list-row-amount" id="pac-profit-amount" style="color:var(--text-muted);">-</div>
+                    </div>
+
+                    <!-- Proiezione di Accumulo con Costi & Tassazione Italia -->
+                    <div style="margin-top:16px;">
+                        <div style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:4px; text-transform:uppercase;">
+                            📊 Proiezione PAC (100 €/m al 7% lordo con Tasse & Bollo)
+                        </div>
+                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">
+                            Include: TER 0,14% • Imposta di Bollo Dossier Titoli (0,20%/anno) • Tassazione Capital Gain (26% alla vendita).
+                        </p>
+
+                        <div class="pac-table-row">
+                            <div>Orizzonte</div>
+                            <div>Versati</div>
+                            <div>Bollo (0,2%)</div>
+                            <div>Netto Reale</div>
+                        </div>
+                        <div class="pac-table-row">
+                            <div><b>5 Anni</b></div>
+                            <div>€ 6.000</div>
+                            <div style="color:var(--rose);">-€ 41</div>
+                            <div style="color:var(--emerald); font-weight:700;">€ 6.817</div>
+                        </div>
+                        <div class="pac-table-row">
+                            <div><b>10 Anni</b></div>
+                            <div>€ 12.000</div>
+                            <div style="color:var(--rose);">-€ 170</div>
+                            <div style="color:var(--emerald); font-weight:700;">€ 15.679</div>
+                        </div>
+                        <div class="pac-table-row">
+                            <div><b>15 Anni</b></div>
+                            <div>€ 18.000</div>
+                            <div style="color:var(--rose);">-€ 423</div>
+                            <div style="color:var(--emerald); font-weight:700;">€ 27.409</div>
+                        </div>
+                        <div class="pac-table-row" style="border-bottom:none;">
+                            <div><b>20 Anni</b></div>
+                            <div>€ 24.000</div>
+                            <div style="color:var(--rose);">-€ 849</div>
+                            <div style="color:var(--emerald); font-weight:700;">€ 43.161</div>
+                        </div>
+                        <div style="margin-top:8px; font-size:0.7rem; color:var(--text-muted); line-height:1.3;">
+                            *Netto Reale: calcolato al netto del bollo annuale e della trattenuta fiscale del 26% sulle plusvalenze.
+                        </div>
                     </div>
                 </div>
-                <div id="history-records-container"></div>
+            </div>
             </div>
         </section>
 
-        <!-- ================= TAB 2: GESTIONE AUTO (SEPARATA) ================= -->
+        <!-- ================= TAB 2: GESTIONE AUTO (CON 3 SCHEDE SEPARATE) ================= -->
         <section id="tab-auto" class="tab-panel">
             
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Rifornimenti Carburante</div>
-                        <div class="card-subtitle">Log GPL e Benzina raggruppati per mese</div>
-                    </div>
-                    <button class="icon-btn-add" onclick="openFuelModal()">+</button>
-                </div>
-                <div id="fuel-accordion-container"></div>
+            <!-- Switcher Schede Auto -->
+            <div class="segmented-control">
+                <button class="segmented-btn active" id="btn-subtab-auto-fuel" onclick="switchFleetSubTab('fuel')">
+                    ⛽ Rifornimenti
+                </button>
+                <button class="segmented-btn" id="btn-subtab-auto-maint" onclick="switchFleetSubTab('maint')">
+                    🔧 Manutenzione
+                </button>
+                <button class="segmented-btn" id="btn-subtab-auto-stats" onclick="switchFleetSubTab('stats')">
+                    📈 Statistiche
+                </button>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Manutenzioni & Officina</div>
-                        <div class="card-subtitle">Interventi, tagliandi, olio e ruote</div>
+            <!-- SCHEDA AUTO 1: RIFORNIMENTI -->
+            <div id="subtab-auto-fuel-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Filtro Rifornimenti</div>
+                            <div class="card-subtitle">Visualizza per mese o periodo</div>
+                        </div>
+                        <button class="icon-btn-add" onclick="openFuelModal()">+</button>
                     </div>
-                    <button class="icon-btn-add" onclick="openMaintModal()">+</button>
+
+                    <!-- Filtri Rifornimenti (Default: Mese in corso) -->
+                    <div class="stats-grid-filters">
+                        <div class="input-group">
+                            <label class="input-label">Anno</label>
+                            <select id="fuel-filter-year" class="input-control" onchange="onFuelFilterChange()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Mese</label>
+                            <select id="fuel-filter-month" class="input-control" onchange="renderFuelFilteredView()"></select>
+                        </div>
+                    </div>
+
+                    <!-- Riepilogo Spesa Periodo Selezionato -->
+                    <div class="summary-banner">
+                        <div>
+                            <div class="summary-banner-label" id="fuel-summary-label">Spesa Carburante Mese Corrente</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);" id="fuel-summary-liters">0 Litri</div>
+                        </div>
+                        <div class="summary-banner-val" id="fuel-summary-total" style="color:var(--amber);">€ 0.00</div>
+                    </div>
+
+                    <!-- Lista Rifornimenti Filtrati -->
+                    <div id="fuel-filtered-list-container"></div>
                 </div>
-                <div id="maint-accordion-container"></div>
+            </div>
+
+            <!-- SCHEDA AUTO 2: MANUTENZIONE -->
+            <div id="subtab-auto-maint-panel" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Filtro Manutenzioni</div>
+                            <div class="card-subtitle">Visualizza per anno o categoria</div>
+                        </div>
+                        <button class="icon-btn-add" onclick="openMaintModal()">+</button>
+                    </div>
+
+                    <!-- Filtri Manutenzione (Default: Anno in corso) -->
+                    <div class="stats-grid-filters">
+                        <div class="input-group">
+                            <label class="input-label">Anno</label>
+                            <select id="maint-filter-year" class="input-control" onchange="renderMaintFilteredView()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Categoria</label>
+                            <select id="maint-filter-cat" class="input-control" onchange="renderMaintFilteredView()"></select>
+                        </div>
+                    </div>
+
+                    <!-- Riepilogo Spesa Manutenzione Anno Selezionato -->
+                    <div class="summary-banner">
+                        <div>
+                            <div class="summary-banner-label" id="maint-summary-label">Manutenzione Anno in Corso</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);" id="maint-summary-count">0 Interventi</div>
+                        </div>
+                        <div class="summary-banner-val" id="maint-summary-total" style="color:var(--rose);">€ 0.00</div>
+                    </div>
+
+                    <!-- Lista Manutenzioni Filtrate -->
+                    <div id="maint-filtered-list-container"></div>
+                </div>
+            </div>
+
+            <!-- SCHEDA AUTO 3: STATISTICHE AUTO -->
+            <div id="subtab-auto-stats-panel" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Riepilogo Spese Auto</div>
+                            <div class="card-subtitle">Dettaglio spese per periodo e categoria</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid-filters">
+                        <div class="input-group">
+                            <label class="input-label">Filtro Anno</label>
+                            <select id="stats-filter-year" class="input-control" onchange="onStatsYearChange()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Filtro Mese</label>
+                            <select id="stats-filter-month" class="input-control" onchange="renderFleetAnalytics()"></select>
+                        </div>
+                    </div>
+
+                    <div id="stats-kpi-summary"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Manutenzione per Categoria</div>
+                            <div class="card-subtitle">Incidenza percentuale delle operazioni</div>
+                        </div>
+                    </div>
+                    <div id="stats-maint-breakdown"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Carburante per Tipologia</div>
+                            <div class="card-subtitle">GPL vs Benzina</div>
+                        </div>
+                    </div>
+                    <div id="stats-fuel-breakdown"></div>
+                </div>
             </div>
         </section>
 
-        <!-- ================= TAB 3: STATISTICHE AUTO (ANNO & MESE) ================= -->
-        <section id="tab-stats" class="tab-panel">
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Monitoraggio Spese Flotta</div>
-                        <div class="card-subtitle">Analisi granulare per periodo e categoria</div>
-                    </div>
-                </div>
-
-                <div class="stats-grid-filters">
-                    <div class="input-group">
-                        <label class="input-label">Filtro Anno</label>
-                        <select id="stats-filter-year" class="input-control" onchange="onStatsYearChange()"></select>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Filtro Mese</label>
-                        <select id="stats-filter-month" class="input-control" onchange="renderFleetAnalytics()"></select>
-                    </div>
-                </div>
-
-                <!-- Indicatori Generali -->
-                <div id="stats-kpi-summary"></div>
-            </div>
-
-            <!-- Ripartizione Manutenzione per Categoria -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Manutenzione per Categoria</div>
-                        <div class="card-subtitle">Incidenza percentuale delle operazioni</div>
-                    </div>
-                </div>
-                <div id="stats-maint-breakdown"></div>
-            </div>
-
-            <!-- Ripartizione Carburante -->
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Carburante per Tipologia</div>
-                        <div class="card-subtitle">GPL vs Benzina</div>
-                    </div>
-                </div>
-                <div id="stats-fuel-breakdown"></div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 4: ACCOUNT, EXPORT EXCEL & IMPOSTAZIONI ================= -->
+        <!-- ================= TAB 3: IMPOSTAZIONI & ACCOUNT ================= -->
         <section id="tab-settings" class="tab-panel">
             
             <!-- Profilo e Accesso Google -->
@@ -982,13 +1401,15 @@
                     </div>
                 </div>
 
-                <div id="auth-box-content" class="account-card">
-                    <div class="account-avatar" id="user-avatar-initial">U</div>
-                    <div class="account-meta">
-                        <div class="account-name" id="user-display-name">Sessione Locale</div>
-                        <div class="account-email" id="user-display-email">Collega il tuo account Google</div>
+                <div id="auth-box-content" class="summary-banner" style="margin-bottom:0;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:var(--brand-accent-soft); color:var(--brand-accent); display:flex; align-items:center; justify-content:center; font-weight:700;" id="user-avatar-initial">U</div>
+                        <div>
+                            <div style="font-weight:600; font-size:0.88rem;" id="user-display-name">Sessione Locale</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);" id="user-display-email">Collega il tuo account Google</div>
+                        </div>
                     </div>
-                    <button class="btn btn-outline" id="btn-auth-toggle" style="width:auto; padding:8px 14px;" onclick="handleGoogleAuth()">Accedi</button>
+                    <button class="btn btn-outline" id="btn-auth-toggle" style="width:auto; padding:7px 14px;" onclick="handleGoogleAuth()">Accedi</button>
                 </div>
             </div>
 
@@ -1017,12 +1438,12 @@
                 </div>
             </div>
 
-            <!-- Personalizzazione Visiva Sofisticata -->
+            <!-- Personalizzazione Visiva & Font -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Aspetto & Tipografia</div>
-                        <div class="card-subtitle">Personalizzazione tema e leggibilità</div>
+                        <div class="card-subtitle">Personalizzazione tema e font di sistema</div>
                     </div>
                 </div>
 
@@ -1030,8 +1451,8 @@
                     <div class="input-group">
                         <label class="input-label">Tema Interfaccia</label>
                         <select id="setting-theme" class="input-control" onchange="updateDesignSetting('theme', this.value)">
+                            <option value="light">☀️ Chiaro (Consigliato)</option>
                             <option value="dark">🌙 Dark Slate</option>
-                            <option value="light">☀️ Light Pure</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -1044,61 +1465,62 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Famiglia Carattere (Font)</label>
+                    <label class="input-label">Stile Carattere (Font)</label>
                     <select id="setting-font" class="input-control" onchange="updateDesignSetting('font', this.value)">
-                        <option value="'Plus Jakarta Sans', system-ui, sans-serif">Plus Jakarta Sans (Moderno & Sofisticato)</option>
-                        <option value="'Inter', system-ui, sans-serif">Inter (Essenziale & Pulito)</option>
+                        <option value="'Plus Jakarta Sans', system-ui, sans-serif">Plus Jakarta Sans (Moderno & Leggibile)</option>
+                        <option value="'Inter', system-ui, sans-serif">Inter (Essenziale & Neutro)</option>
                         <option value="system-ui, -apple-system, 'Segoe UI', sans-serif">System Native (Apple / Windows)</option>
-                        <option value="'JetBrains Mono', monospace">JetBrains Mono (Tecnico / Monospazio)</option>
-                        <option value="Georgia, 'Times New Roman', serif">Georgia (Elegante Serif)</option>
+                        <option value="'JetBrains Mono', monospace">JetBrains Mono (Tecnico / Monospace)</option>
+                        <option value="Georgia, 'Times New Roman', serif">Georgia (Classico Elegante)</option>
                     </select>
                 </div>
             </div>
 
         </section>
-        <!-- Modale Profilo / Accesso Google -->
-    <div class="modal-sheet" id="modal-auth">
+        <!-- Modale Obiettivo Salvadanaio (Sinking Funds) -->
+    <div class="modal-sheet" id="modal-fund">
         <div class="sheet-handle"></div>
-        <h3 style="margin-bottom: 8px; font-weight: 700;">Account & Profilo</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">
-            Autenticati con Google o personalizza il tuo profilo di sessione.
-        </p>
-
-        <div style="background:var(--surface-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
-            <div style="font-weight:600; font-size:0.88rem; margin-bottom:4px;">Accesso Diretto Google Popup</div>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
-                Richiede l'abilitazione di Google Auth e del dominio su Firebase Console.
-            </p>
-            <div class="input-group" style="margin-bottom:10px;">
-                <label class="input-label">Firebase Web API Key (Opzionale / Permanente)</label>
-                <input type="text" id="firebase-api-key-input" class="input-control" placeholder="AIzaSy...">
-            </div>
-            <button class="btn btn-primary" onclick="executeGooglePopupAuth()">
-                <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V13.8h6.887C18.2 16.15 15.65 17.8 12.24 17.8c-3.23 0-5.85-2.62-5.85-5.8s2.62-5.8 5.85-5.8c1.54 0 2.94.57 4.03 1.51l2.67-2.67C17.28 3.51 14.93 2.6 12.24 2.6 7.03 2.6 2.8 6.83 2.8 12s4.23 9.4 9.44 9.4c5.44 0 9.07-3.83 9.07-9.23 0-.62-.06-1.22-.18-1.885h-8.89z"/></svg>
-                Accedi con Google Popup
-            </button>
+        <h3 id="fund-modal-title" style="margin-bottom: 16px; font-weight: 700;">Obiettivo Salvadanaio</h3>
+        <input type="hidden" id="fund-id">
+        <div class="input-group">
+            <label class="input-label">Nome Obiettivo</label>
+            <input type="text" id="fund-name" class="input-control" placeholder="Es. Fondo Emergenza 6 Mesi, Vacanze Estive">
         </div>
+        <div class="stats-grid-filters">
+            <div class="input-group">
+                <label class="input-label">Traguardo Finale (€)</label>
+                <input type="number" step="0.01" id="fund-target" class="input-control" placeholder="Es. 3000.00">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Già Accantonato (€)</label>
+                <input type="number" step="0.01" id="fund-current" class="input-control" placeholder="Es. 450.00">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveFundItem()">Salva Obiettivo</button>
+            <button class="btn btn-outline" onclick="closeModal('modal-fund')">Annulla</button>
+        </div>
+    </div>
 
-        <div style="border-top:1px dashed var(--border); padding-top:14px;">
-            <div style="font-weight:600; font-size:0.85rem; margin-bottom:10px;">Oppure imposta profilo rapido:</div>
-            <div class="input-group">
-                <label class="input-label">Nome Visualizzato</label>
-                <input type="text" id="profile-custom-name" class="input-control" placeholder="Es. Raffaele B.">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Indirizzo Email</label>
-                <input type="email" id="profile-custom-email" class="input-control" placeholder="Es. raffaele@gmail.com">
-            </div>
-            <div style="display:flex; gap:10px; margin-top:14px;">
-                <button class="btn btn-secondary" onclick="saveCustomLocalProfile()">Salva Profilo</button>
-                <button class="btn btn-outline" onclick="closeModal('modal-auth')">Chiudi</button>
-            </div>
+    <!-- Modale Versamento Rapido Salvadanaio -->
+    <div class="modal-sheet" id="modal-fund-deposit">
+        <div class="sheet-handle"></div>
+        <h3 style="margin-bottom: 8px; font-weight: 700;">Versamento Salvadanaio</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;" id="deposit-fund-name">Aggiungi quota al fondo</p>
+        <input type="hidden" id="deposit-fund-id">
+        <div class="input-group">
+            <label class="input-label">Importo da Aggiungere (€)</label>
+            <input type="number" step="0.01" id="deposit-amount" class="input-control" placeholder="Es. 100.00">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-success" onclick="applyFundDeposit()">Conferma Versamento</button>
+            <button class="btn btn-outline" onclick="closeModal('modal-fund-deposit')">Annulla</button>
         </div>
     </div>
 
     </main>
 
-    <!-- Bottom Navigation Bar (Stile App Nativa) -->
+    <!-- Bottom Navigation Bar (Pulita con 3 Macro-Sezioni) -->
     <nav class="bottom-nav">
         <a class="nav-item active" onclick="switchNavTab('budget', this)">
             <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -1108,17 +1530,13 @@
             <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
             <span>Auto</span>
         </a>
-        <a class="nav-item" onclick="switchNavTab('stats', this)">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>Statistiche</span>
-        </a>
         <a class="nav-item" onclick="switchNavTab('settings', this)">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span>Impostazioni</span>
         </a>
     </nav>
 
-    <!-- CORE LOGIC ENGINE SCRIPT -->
+    <!-- CORE JAVASCRIPT ENGINE -->
     <script>
         // Configurazione permanente Firebase Realtime Database
         const FIREBASE_REST_BASE = "https://gestione-finanza-be6ee-default-rtdb.europe-west1.firebasedatabase.app";
@@ -1127,7 +1545,8 @@
         const standardFleetCategories = [
             'Tagliando completo',
             'Cambio olio e filtro',
-            'Aggiunta olio',
+            'Aggiunta 1LT olio',
+            'Aggiunta 0.5LT olio',
             'Sostituzione filtro GPL Landi',
             'Controllo gioco valvole',
             'Sostituzione candele',
@@ -1198,9 +1617,9 @@
         }
         initFirebaseAuth();
 
-        // Gestione Design e Preferenze
+        // Preferenze visive (Default: Chiaro/Light moderno)
         let uiPrefs = JSON.parse(localStorage.getItem('financeStudioUIPrefs')) || {
-            theme: 'dark',
+            theme: 'light',
             fontsize: '15px',
             font: "'Plus Jakarta Sans', system-ui, sans-serif"
         };
@@ -1231,7 +1650,7 @@
             updateDesignSetting('theme', uiPrefs.theme === 'dark' ? 'light' : 'dark');
         }
 
-        // Navigation Engine
+        // Navigazione Principale (Bottom Bar: 3 Macro-Aree)
         function switchNavTab(tabName, element) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -1242,13 +1661,95 @@
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            if (tabName === 'budget') calculateBudgetMetrics();
-            if (tabName === 'auto') { renderFuelView(); renderMaintView(); }
-            if (tabName === 'stats') { initStatsFilters(); renderFleetAnalytics(); }
+            if (tabName === 'budget') initBudgetViews();
+            if (tabName === 'auto') initFleetViews();
             if (tabName === 'settings') renderAuthProfile();
         }
 
-        // Sincronizzazione Cloud REST
+        // ================= GESTIONE SOTTOSCHEDE BUDGET =================
+        let activeBudgetSubTab = 'expenses';
+        function switchBudgetSubTab(subTab) {
+            activeBudgetSubTab = subTab;
+            const btnExpenses = document.getElementById('btn-subtab-budget-expenses');
+            const btnRatios = document.getElementById('btn-subtab-budget-ratios');
+            const btnStats = document.getElementById('btn-subtab-budget-stats');
+            
+            const pExpenses = document.getElementById('subtab-budget-expenses-panel');
+            const pRatios = document.getElementById('subtab-budget-ratios-panel');
+            const pStats = document.getElementById('subtab-budget-stats-panel');
+
+            [btnExpenses, btnRatios, btnStats].forEach(b => b.classList.remove('active'));
+            [pExpenses, pRatios, pStats].forEach(p => p.style.display = 'none');
+
+            if (subTab === 'expenses') {
+                btnExpenses.classList.add('active');
+                pExpenses.style.display = 'block';
+                renderQuotasView();
+            } else if (subTab === 'ratios') {
+                btnRatios.classList.add('active');
+                pRatios.style.display = 'block';
+                calculateBudgetMetrics();
+            } else if (subTab === 'stats') {
+                btnStats.classList.add('active');
+                pStats.style.display = 'block';
+                initBudgetStatsFilters();
+            }
+        }
+
+        function initBudgetViews() {
+            renderPacView();
+            if (activeBudgetSubTab === 'expenses') renderQuotasView();
+            else if (activeBudgetSubTab === 'ratios') calculateBudgetMetrics();
+            else renderBudgetAnalytics();
+        }
+
+        // ================= GESTIONE SOTTOSCHEDE AUTO =================
+        let activeFleetSubTab = 'fuel';
+        function switchFleetSubTab(subTab) {
+            activeFleetSubTab = subTab;
+            const btnFuel = document.getElementById('btn-subtab-auto-fuel');
+            const btnMaint = document.getElementById('btn-subtab-auto-maint');
+            const btnStats = document.getElementById('btn-subtab-auto-stats');
+            
+            const panelFuel = document.getElementById('subtab-auto-fuel-panel');
+            const panelMaint = document.getElementById('subtab-auto-maint-panel');
+            const panelStats = document.getElementById('subtab-auto-stats-panel');
+
+            [btnFuel, btnMaint, btnStats].forEach(b => b.classList.remove('active'));
+            [panelFuel, panelMaint, panelStats].forEach(p => p.style.display = 'none');
+
+            if (subTab === 'fuel') {
+                btnFuel.classList.add('active');
+                panelFuel.style.display = 'block';
+                initFuelFilters();
+                renderFuelFilteredView();
+            } else if (subTab === 'maint') {
+                btnMaint.classList.add('active');
+                panelMaint.style.display = 'block';
+                initMaintFilters();
+                renderMaintFilteredView();
+            } else if (subTab === 'stats') {
+                btnStats.classList.add('active');
+                panelStats.style.display = 'block';
+                initStatsFilters();
+                renderFleetAnalytics();
+            }
+        }
+
+        function initFleetViews() {
+            if (activeFleetSubTab === 'fuel') {
+                initFuelFilters();
+                renderFuelFilteredView();
+            } else if (activeFleetSubTab === 'maint') {
+                initMaintFilters();
+                renderMaintFilteredView();
+            } else {
+                initStatsFilters();
+                renderFleetAnalytics();
+            }
+        }
+
+        // Endpoint REST & Sync
         function getEndpointUrl() {
             return `${FIREBASE_REST_BASE}/${FIREBASE_SYNC_KEY}.json`;
         }
@@ -1266,7 +1767,7 @@
             localStorage.setItem('financeStudioStoreV1', JSON.stringify(store));
 
             if (!isWritingRemote) {
-                updateCloudPill('loading', 'Sincronizzazione...');
+                updateCloudPill('loading', 'Salvataggio...');
                 fetch(getEndpointUrl(), {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -1298,9 +1799,8 @@
                         localStorage.setItem('financeStudioStoreV1', JSON.stringify(store));
                         isWritingRemote = false;
 
-                        calculateBudgetMetrics();
-                        renderFuelView();
-                        renderMaintView();
+                        initBudgetViews();
+                        initFleetViews();
                         updateCloudPill('online', 'Cloud Sincronizzato');
                     } else {
                         commitLocalStore();
@@ -1338,7 +1838,7 @@
             }
 
             if (!storedApiKey) {
-                alert("Per usare il popup Google reale serve la Web API Key di Firebase.\n\nLa trovi su console.firebase.google.com in Impostazioni Progetto > Web API Key (inizia con AIzaSy...).\n\nOppure usa il 'Profilo Rapido' qui sotto!");
+                alert("Per usare il popup Google reale serve la Web API Key di Firebase.\n\nLa trovi su console.firebase.google.com in Impostazioni Progetto > Web API Key (inizia con AIzaSy...).");
                 return;
             }
 
@@ -1410,17 +1910,16 @@
                 }
             } else {
                 nameEl.innerText = "Sessione Locale";
-                emailEl.innerText = "Accedi con Google o imposta profilo";
+                emailEl.innerText = "Collega il tuo account Google";
                 btn.innerText = "Accedi";
-                avatar.innerHTML = `<svg style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+                avatar.innerHTML = `<svg style="width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
             }
         }
 
         // ================= ESPORTAZIONE EXCEL / FOGLI GOOGLE (CSV BOM) =================
         function exportToExcelCSV() {
-            let csv = "\uFEFF"; // Byte Order Mark per apertura corretta caratteri accentati in Excel
+            let csv = "\uFEFF"; // UTF-8 BOM
 
-            // SEZIONE 1: BUDGET
             csv += "PIANIFICAZIONE BUDGET\n";
             csv += "Stipendio Mensile (€);" + store.salary + "\n";
             csv += "Percentuali;" + store.ratios.r50 + "% Bisogni;" + store.ratios.r30 + "% Svago;" + store.ratios.r20 + "% Risparmio\n\n";
@@ -1433,7 +1932,6 @@
             });
             csv += "\n";
 
-            // SEZIONE 2: MANUTENZIONI AUTO
             csv += "REGISTRO MANUTENZIONI AUTO\n";
             csv += "Data;Intervento;Chilometri;Costo (€);Officina/Note\n";
             store.car.maintenance.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
@@ -1441,7 +1939,6 @@
             });
             csv += "\n";
 
-            // SEZIONE 3: RIFORNIMENTI CARBURANTE
             csv += "REGISTRO RIFORNIMENTI CARBURANTE\n";
             csv += "Data;Carburante;Distributore;Prezzo/L (€);Litri;Totale Speso (€)\n";
             store.car.fuel.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(f => {
@@ -1493,7 +1990,7 @@
             reader.readAsText(file);
         }
 
-        // ================= LOGICA SEZIONE BUDGET =================
+        // ================= SEZIONE BUDGET: RENDERING & CALCOLI =================
         function initMonthSelector() {
             const sel = document.getElementById('budget-month-select');
             sel.innerHTML = '';
@@ -1521,6 +2018,42 @@
             }
         }
 
+        function renderQuotasView() {
+            const container = document.getElementById('quotas-list-container');
+            container.innerHTML = '';
+
+            let totalMonthlyQuotas = 0;
+            store.quotas.forEach(q => {
+                const monthlyVal = q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount / 6 : q.amount / 12;
+                totalMonthlyQuotas += monthlyVal;
+
+                container.innerHTML += `
+                    <div class="list-row">
+                        <div>
+                            <div class="list-row-title">${q.name}</div>
+                            <div class="list-row-desc">€${parseFloat(q.amount).toFixed(2)} (${q.freq}) • ${q.macro}%</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="list-row-amount">€${monthlyVal.toFixed(2)}<span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/m</span></div>
+                            <button class="action-icon-btn" onclick="openQuotaModal(${q.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </button>
+                            <button class="action-icon-btn delete" onclick="deleteQuotaItem(${q.id})">
+                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('quotas-banner-total').innerText = `€ ${totalMonthlyQuotas.toFixed(2)}`;
+            document.getElementById('quotas-count-label').innerText = `${store.quotas.length} quote programmate`;
+
+            if (store.quotas.length === 0) {
+                container.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:16px;">Nessuna quota fissa configurata.</p>`;
+            }
+        }
+
         function calculateBudgetMetrics() {
             const salary = parseFloat(document.getElementById('budget-salary').value) || 0;
             const r50 = parseFloat(document.getElementById('ratio-50').value) || 0;
@@ -1541,39 +2074,13 @@
             const t20 = salary * (r20 / 100);
 
             let act50 = 0, act30 = 0, act20 = 0;
-            let totalMonthlyQuotas = 0;
-
-            const container = document.getElementById('quotas-list-container');
-            container.innerHTML = '';
 
             store.quotas.forEach(q => {
                 const monthlyVal = q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount / 6 : q.amount / 12;
-                totalMonthlyQuotas += monthlyVal;
-
                 if (q.macro == '50') act50 += monthlyVal;
                 else if (q.macro == '30') act30 += monthlyVal;
                 else act20 += monthlyVal;
-
-                container.innerHTML += `
-                    <div class="list-row">
-                        <div>
-                            <div class="list-row-title">${q.name}</div>
-                            <div class="list-row-desc">€${parseFloat(q.amount).toFixed(2)} (${q.freq}) • ${q.macro}%</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div class="list-row-amount">€${monthlyVal.toFixed(2)}<span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/m</span></div>
-                            <button class="action-icon-btn" onclick="openQuotaModal(${q.id})">
-                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                            </button>
-                            <button class="action-icon-btn delete" onclick="deleteQuotaItem(${q.id})">
-                                <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
             });
-
-            document.getElementById('quotas-total-amount').innerText = `€ ${totalMonthlyQuotas.toFixed(2)}`;
 
             updatePillarCard('50', act50, t50, false);
             updatePillarCard('30', act30, t30, false);
@@ -1651,12 +2158,16 @@
             }
 
             closeModal('modal-quota');
+            commitLocalStore();
+            renderQuotasView();
             calculateBudgetMetrics();
         }
 
         function deleteQuotaItem(id) {
             if (confirm("Vuoi eliminare questa quota?")) {
                 store.quotas = store.quotas.filter(x => x.id !== id);
+                commitLocalStore();
+                renderQuotasView();
                 calculateBudgetMetrics();
             }
         }
@@ -1693,7 +2204,7 @@
             const c = document.getElementById('history-records-container');
             c.innerHTML = '';
             if (store.history.length === 0) {
-                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun mese archiviato finora.</p>`;
+                c.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun mese archiviato finora.</p>`;
                 return;
             }
 
@@ -1713,34 +2224,518 @@
             });
         }
 
-        // ================= GESTIONE AUTO (COLLAPSE MENSILI & CRUD) =================
-        function groupFleetItemsByMonth(items, amountField) {
-            const map = {};
-            items.forEach(item => {
-                if (!item.date) return;
-                const d = new Date(item.date);
-                const sortKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                const label = d.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+                // ================= GENERATORE GRAFICO AD AREA SVG INTERATTIVO =================
+        function generateSvgAreaChart(chartUid, labels, values, strokeColor, fillColorId, fillColorHex, unitSuffix = '€') {
+            if (!values || values.length === 0 || Math.max(...values) === 0) {
+                return `<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.8rem;">Dati insufficienti per il grafico in questo periodo.</div>`;
+            }
 
-                if (!map[sortKey]) map[sortKey] = { label, total: 0, list: [] };
-                map[sortKey].list.push(item);
-                map[sortKey].total += parseFloat(item[amountField]) || 0;
+            const width = 480;
+            const height = 150;
+            const padTop = 20;
+            const padBottom = 25;
+            const padLeft = 14;
+            const padRight = 14;
+
+            const chartHeight = height - padTop - padBottom;
+            const chartWidth = width - padLeft - padRight;
+
+            const maxVal = Math.max(...values, 10);
+            const minVal = 0;
+
+            const points = values.map((val, idx) => {
+                const x = padLeft + (idx / (values.length - 1)) * chartWidth;
+                const y = padTop + chartHeight - ((val - minVal) / (maxVal - minVal)) * chartHeight;
+                return { x, y, val, label: labels[idx] || '' };
             });
-            return Object.keys(map).sort((a,b) => b.localeCompare(a)).map(k => map[k]);
+
+            const pathD = points.reduce((acc, pt, idx, arr) => {
+                if (idx === 0) return `M ${pt.x} ${pt.y}`;
+                const prev = arr[idx - 1];
+                const cpX = (prev.x + pt.x) / 2;
+                return `${acc} C ${cpX} ${prev.y}, ${cpX} ${pt.y}, ${pt.x} ${pt.y}`;
+            }, "");
+
+            const areaD = `${pathD} L ${points[points.length - 1].x} ${padTop + chartHeight} L ${points[0].x} ${padTop + chartHeight} Z`;
+
+            const gridLines = [0.25, 0.5, 0.75, 1.0].map(ratio => {
+                const y = padTop + chartHeight - ratio * chartHeight;
+                return `<line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}" class="chart-grid-line" />`;
+            }).join('');
+
+            const labelsSvg = points.map(pt => `
+                <text x="${pt.x}" y="${height - 6}" class="chart-label">${pt.label}</text>
+            `).join('');
+
+            const dotsSvg = points.map((pt, idx) => `
+                <g class="chart-point-group" onclick="onChartPointClick('${chartUid}', '${pt.label}', ${pt.val}, '${unitSuffix}')" style="cursor:pointer;">
+                    <circle cx="${pt.x}" cy="${pt.y}" r="12" fill="transparent" />
+                    <circle cx="${pt.x}" cy="${pt.y}" r="4" fill="${strokeColor}" stroke="var(--surface)" stroke-width="2" class="chart-point-interactive" />
+                </g>
+            `).join('');
+
+            const peakIdx = values.indexOf(Math.max(...values));
+            const peakPoint = points[peakIdx];
+            const peakBadge = peakPoint ? `
+                <text x="${peakPoint.x}" y="${peakPoint.y - 8}" text-anchor="middle" font-size="9" font-weight="700" fill="${strokeColor}">
+                    Max €${peakPoint.val.toFixed(0)}
+                </text>
+            ` : '';
+
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="chart-svg" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="${fillColorId}" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="${fillColorHex}" stop-opacity="0.32" />
+                            <stop offset="100%" stop-color="${fillColorHex}" stop-opacity="0.0" />
+                        </linearGradient>
+                    </defs>
+                    ${gridLines}
+                    <path d="${areaD}" fill="url(#${fillColorId})" />
+                    <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    ${dotsSvg}
+                    ${labelsSvg}
+                    ${peakBadge}
+                </svg>
+                <div id="${chartUid}-tooltip-badge" class="chart-tooltip-badge">
+                    <span>💡 Tocca o clicca un picco per vedere il valore esatto</span>
+                </div>
+            `;
         }
 
-        function renderFuelView() {
-            const c = document.getElementById('fuel-accordion-container');
-            c.innerHTML = '';
+        function onChartPointClick(chartUid, monthLabel, val, unitSuffix) {
+            const el = document.getElementById(`${chartUid}-tooltip-badge`);
+            if (el) {
+                el.innerHTML = `<span>📍 Mese: <b>${monthLabel}</b></span> • <span style="color:var(--brand-accent);">Valore: <b>€ ${parseFloat(val).toFixed(2)}</b></span>`;
+                el.style.borderColor = 'var(--brand-accent)';
+            }
+        }
 
-            if (store.car.fuel.length === 0) {
-                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun rifornimento registrato.</p>`;
+        // ================= GESTIONE OBIETTIVI SALVADANAIO (SINKING FUNDS) =================
+        function renderFundsView() {
+            const container = document.getElementById('funds-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const funds = store.funds || [];
+            if (funds.length === 0) {
+                container.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun obiettivo salvadanaio creato.</p>`;
                 return;
             }
 
-            const groups = groupFleetItemsByMonth(store.car.fuel, 'total');
-            groups.forEach(g => {
-                let innerRows = g.list.sort((a,b) => new Date(b.date) - new Date(a.date)).map(f => `
+            funds.forEach(f => {
+                const target = parseFloat(f.target) || 1;
+                const current = parseFloat(f.current) || 0;
+                const pct = Math.min(Math.round((current / target) * 100), 100);
+
+                container.innerHTML += `
+                    <div class="fund-card">
+                        <div class="fund-card-header">
+                            <span class="fund-card-title">${f.name}</span>
+                            <span style="font-size:0.8rem; font-weight:700; color:var(--brand-accent);">${pct}%</span>
+                        </div>
+                        <div class="fund-card-amounts">
+                            <span>Accantonato: <strong>€ ${current.toFixed(2)}</strong></span>
+                            <span>Traguardo: <b>€ ${target.toFixed(2)}</b></span>
+                        </div>
+                        <div class="hero-progress">
+                            <div class="hero-progress-fill" style="width:${pct}%; background:${pct >= 100 ? 'var(--emerald)' : 'var(--brand-accent)'};"></div>
+                        </div>
+                        <div class="fund-actions">
+                            <button class="fund-btn-action" style="color:var(--emerald);" onclick="openDepositModal(${f.id})">➕ Versa Quota</button>
+                            <button class="fund-btn-action" onclick="openFundModal(${f.id})">✏️ Modifica</button>
+                            <button class="fund-btn-action" style="color:var(--rose);" onclick="deleteFundItem(${f.id})">🗑️ Elimina</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openFundModal(id = null) {
+            if (id !== null) {
+                const f = (store.funds || []).find(x => x.id === id);
+                document.getElementById('fund-id').value = f.id;
+                document.getElementById('fund-name').value = f.name;
+                document.getElementById('fund-target').value = f.target;
+                document.getElementById('fund-current').value = f.current;
+                document.getElementById('fund-modal-title').innerText = "Modifica Obiettivo";
+            } else {
+                document.getElementById('fund-id').value = '';
+                document.getElementById('fund-name').value = '';
+                document.getElementById('fund-target').value = '';
+                document.getElementById('fund-current').value = '0';
+                document.getElementById('fund-modal-title').innerText = "Nuovo Obiettivo Salvadanaio";
+            }
+            openModal('modal-fund');
+        }
+
+        function saveFundItem() {
+            const id = document.getElementById('fund-id').value;
+            const name = document.getElementById('fund-name').value.trim();
+            const target = parseFloat(document.getElementById('fund-target').value) || 0;
+            const current = parseFloat(document.getElementById('fund-current').value) || 0;
+
+            if (!name || target <= 0) return alert("Inserisci un nome e un traguardo valido.");
+
+            if (!store.funds) store.funds = [];
+            if (id) {
+                const idx = store.funds.findIndex(x => x.id == id);
+                store.funds[idx] = { id: parseInt(id), name, target, current };
+            } else {
+                const newId = store.funds.length ? Math.max(...store.funds.map(x => x.id)) + 1 : 1;
+                store.funds.push({ id: newId, name, target, current });
+            }
+
+            closeModal('modal-fund');
+            commitLocalStore();
+            renderFundsView();
+        }
+
+        function openDepositModal(id) {
+            const f = (store.funds || []).find(x => x.id === id);
+            if (!f) return;
+            document.getElementById('deposit-fund-id').value = f.id;
+            document.getElementById('deposit-fund-name').innerText = `Versamento su: ${f.name} (Attuale: €${f.current.toFixed(2)} / Target: €${f.target.toFixed(2)})`;
+            document.getElementById('deposit-amount').value = '';
+            openModal('modal-fund-deposit');
+        }
+
+        function applyFundDeposit() {
+            const id = parseInt(document.getElementById('deposit-fund-id').value);
+            const amt = parseFloat(document.getElementById('deposit-amount').value) || 0;
+            if (amt <= 0) return alert("Inserisci un importo maggiore di zero.");
+
+            const f = (store.funds || []).find(x => x.id === id);
+            if (f) {
+                f.current = (parseFloat(f.current) || 0) + amt;
+                closeModal('modal-fund-deposit');
+                commitLocalStore();
+                renderFundsView();
+            }
+        }
+
+        function deleteFundItem(id) {
+            if (confirm("Vuoi eliminare questo obiettivo di risparmio?")) {
+                store.funds = (store.funds || []).filter(x => x.id !== id);
+                commitLocalStore();
+                renderFundsView();
+            }
+        }
+
+        // ================= SCHEDA STATISTICHE BUDGET (FILTRI ANNO & MESE) =================
+        function initBudgetStatsFilters() {
+            const yearSel = document.getElementById('budget-stats-filter-year');
+            if (!yearSel) return;
+            const now = new Date();
+            const currentYear = String(now.getFullYear());
+
+            const years = new Set([currentYear]);
+            (store.history || []).forEach(h => {
+                if (h.dateKey) years.add(h.dateKey.substring(0, 4));
+            });
+
+            yearSel.innerHTML = '<option value="all">Tutti gli anni</option>';
+            Array.from(years).sort().reverse().forEach(y => {
+                yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+            });
+
+            onBudgetStatsYearChange();
+        }
+
+        function onBudgetStatsYearChange() {
+            const yearSel = document.getElementById('budget-stats-filter-year');
+            const monthSel = document.getElementById('budget-stats-filter-month');
+            if (!yearSel || !monthSel) return;
+            const year = yearSel.value;
+
+            monthSel.innerHTML = '<option value="all">Tutto l\'anno</option>';
+            if (year !== 'all') {
+                for (let m = 1; m <= 12; m++) {
+                    const mStr = String(m).padStart(2, '0');
+                    const d = new Date(parseInt(year), m - 1, 1);
+                    const name = d.toLocaleString('it-IT', { month: 'long' });
+                    monthSel.innerHTML += `<option value="${mStr}">${name.charAt(0).toUpperCase() + name.slice(1)}</option>`;
+                }
+            }
+
+            renderBudgetAnalytics();
+        }
+
+        function renderBudgetAnalytics() {
+            const yearSel = document.getElementById('budget-stats-filter-year');
+            const monthSel = document.getElementById('budget-stats-filter-month');
+            const year = yearSel ? yearSel.value : 'all';
+            const month = monthSel ? monthSel.value : 'all';
+
+            let filteredHistory = store.history || [];
+            if (year !== 'all') {
+                filteredHistory = filteredHistory.filter(h => h.dateKey && h.dateKey.startsWith(year));
+                if (month !== 'all') {
+                    filteredHistory = filteredHistory.filter(h => h.dateKey && h.dateKey.substring(5, 7) === month);
+                }
+            }
+
+            const totalSalaryArchived = filteredHistory.reduce((acc, h) => acc + (h.salary || 0), 0);
+            const totalFixedArchived = filteredHistory.reduce((acc, h) => acc + (h.fixed || 0), 0);
+            const totalSavingsArchived = filteredHistory.reduce((acc, h) => acc + (h.savings || 0), 0);
+
+            const periodLabel = year === 'all' ? 'Tutto il periodo' : (month === 'all' ? `Anno ${year}` : `${(monthSel.options[monthSel.selectedIndex] || {}).text || ''} ${year}`);
+
+            const kpiBox = document.getElementById('budget-stats-kpi');
+            if (kpiBox) {
+                kpiBox.innerHTML = `
+                    <div class="list-row"><div class="list-row-title">Periodo Selezionato</div><div class="list-row-desc" style="font-weight:600; color:var(--text-primary); font-size:0.85rem;">${periodLabel} (${filteredHistory.length} mesi)</div></div>
+                    <div class="list-row"><div class="list-row-title">Totale Entrate</div><div class="list-row-amount">€ ${totalSalaryArchived.toFixed(2)}</div></div>
+                    <div class="list-row"><div class="list-row-title">Totale Spese Fisse</div><div class="list-row-amount" style="color:var(--rose);">€ ${totalFixedArchived.toFixed(2)}</div></div>
+                    <div class="list-row" style="border-top:1px solid var(--border); padding-top:10px;"><div class="list-row-title" style="font-weight:700;">Risparmio Netto</div><div class="list-row-amount" style="color:${totalSavingsArchived >= 0 ? 'var(--emerald)' : 'var(--rose)'}; font-size:1.1rem;">€ ${totalSavingsArchived.toFixed(2)}</div></div>
+                `;
+            }
+
+            // Render Area Chart per il Budget
+            const chartBox = document.getElementById('budget-area-chart-box');
+            if (chartBox) {
+                const monthLabels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+                const targetYearStr = (year !== 'all') ? String(year) : ((store.history && store.history.length) ? store.history[0].dateKey.substring(0,4) : String(new Date().getFullYear()));
+                
+                const monthlySavingsData = [];
+                for (let m = 1; m <= 12; m++) {
+                    const mKey = `${targetYearStr}-${String(m).padStart(2, '0')}`;
+                    const rec = (store.history || []).find(h => h.dateKey === mKey);
+                    monthlySavingsData.push(rec ? Math.max(0, rec.savings) : 0);
+                }
+                chartBox.innerHTML = generateSvgAreaChart('budget-savings-chart', monthLabels, monthlySavingsData, 'var(--emerald)', 'budgetGrad', '#10b981');
+            }
+
+            // Ripartizione quote per pillar
+            let q50 = 0, q30 = 0, q20 = 0;
+            (store.quotas || []).forEach(q => {
+                const m = q.freq === 'monthly' ? q.amount : q.freq === 'semiannual' ? q.amount / 6 : q.amount / 12;
+                if(q.macro == '50') q50 += m;
+                else if(q.macro == '30') q30 += m;
+                else q20 += m;
+            });
+            const qTot = q50 + q30 + q20;
+
+            const p50 = qTot > 0 ? (q50 / qTot) * 100 : 0;
+            const p30 = qTot > 0 ? (q30 / qTot) * 100 : 0;
+            const p20 = qTot > 0 ? (q20 / qTot) * 100 : 0;
+
+            const breakdownBox = document.getElementById('budget-stats-macro-breakdown');
+            if (breakdownBox) {
+                breakdownBox.innerHTML = `
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; margin-bottom:4px; font-weight:600;">
+                            <span>🔴 Bisogni Obbligatori</span><span>€ ${q50.toFixed(2)}/m (${p50.toFixed(1)}%)</span>
+                        </div>
+                        <div class="hero-progress"><div class="hero-progress-fill" style="width:${p50}%; background:var(--brand-accent);"></div></div>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; margin-bottom:4px; font-weight:600;">
+                            <span>🟡 Svago Programmato</span><span>€ ${q30.toFixed(2)}/m (${p30.toFixed(1)}%)</span>
+                        </div>
+                        <div class="hero-progress"><div class="hero-progress-fill" style="width:${p30}%; background:var(--amber);"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; margin-bottom:4px; font-weight:600;">
+                            <span>🟢 Risparmio & Investimenti</span><span>€ ${q20.toFixed(2)}/m (${p20.toFixed(1)}%)</span>
+                        </div>
+                        <div class="hero-progress"><div class="hero-progress-fill" style="width:${p20}%; background:var(--emerald);"></div></div>
+                    </div>
+                `;
+            }
+
+            renderCashFlowHeatmap();
+            renderPacView();
+        }
+
+        // ================= ADD-ON 1: PREVISIONE CASH FLOW ANNUALE =================
+        function renderCashFlowHeatmap() {
+            const container = document.getElementById('cashflow-heatmap-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const monthNames = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+            const monthlyOutflows = Array(12).fill(0);
+            const monthlyItems = Array(12).fill(null).map(() => []);
+
+            (store.quotas || []).forEach(q => {
+                const amt = parseFloat(q.amount) || 0;
+                if (q.freq === 'monthly') {
+                    for (let m = 0; m < 12; m++) {
+                        monthlyOutflows[m] += amt;
+                    }
+                } else if (q.freq === 'annual') {
+                    const dueM = (q.dueMonth ? parseInt(q.dueMonth) : 9) - 1;
+                    monthlyOutflows[dueM] += amt;
+                    monthlyItems[dueM].push(q.name);
+                } else if (q.freq === 'semiannual') {
+                    const dueM1 = (q.dueMonth ? parseInt(q.dueMonth) : 9) - 1;
+                    const dueM2 = (dueM1 + 6) % 12;
+                    monthlyOutflows[dueM1] += amt / 2;
+                    monthlyOutflows[dueM2] += amt / 2;
+                    monthlyItems[dueM1].push(q.name);
+                    monthlyItems[dueM2].push(q.name);
+                }
+            });
+
+            const maxMonthVal = Math.max(...monthlyOutflows, 1);
+            const avgMonthVal = monthlyOutflows.reduce((a,b)=>a+b, 0) / 12;
+
+            let gridHtml = '<div class="cashflow-grid">';
+            for (let m = 0; m < 12; m++) {
+                const val = monthlyOutflows[m];
+                let peakClass = '';
+                if (val >= avgMonthVal * 1.35 && val > 0) peakClass = 'peak-high';
+                else if (val >= avgMonthVal * 1.15 && val > 0) peakClass = 'peak-mid';
+
+                const itemsText = monthlyItems[m].length ? monthlyItems[m].join(', ') : 'Spese fisse base';
+
+                gridHtml += `
+                    <div class="cashflow-month-tile ${peakClass}">
+                        <div class="cashflow-month-name">${monthNames[m]}</div>
+                        <div class="cashflow-month-val">€ ${val.toFixed(0)}</div>
+                        <div class="cashflow-month-items" title="${itemsText}">${itemsText}</div>
+                    </div>
+                `;
+            }
+            gridHtml += '</div>';
+
+            const peakMonths = monthlyOutflows.map((v, idx) => ({ v, idx }))
+                .filter(x => x.v >= avgMonthVal * 1.25)
+                .map(x => monthNames[x.idx])
+                .join(', ');
+
+            const alertBanner = peakMonths ? `
+                <div style="margin-top:10px; font-size:0.78rem; color:var(--rose); background:var(--rose-soft); padding:8px 12px; border-radius:var(--radius-sm); font-weight:600;">
+                    ⚠️ Mesi di massimo esborso concentrato: ${peakMonths}
+                </div>
+            ` : '';
+
+            container.innerHTML = gridHtml + alertBanner;
+        }
+
+                // ================= GESTIONE PAC VANGUARD FTSE ALL-WORLD =================
+        function addPacMonthlyDeposit() {
+            if (!store.pac) store.pac = { invested: 0, currentValue: 0 };
+            store.pac.invested = (parseFloat(store.pac.invested) || 0) + 100;
+            commitLocalStore();
+            renderPacView();
+        }
+
+        function updatePacInvested() {
+            if (!store.pac) store.pac = { invested: 0, currentValue: 0 };
+            const invVal = parseFloat(document.getElementById('pac-total-invested').value) || 0;
+            store.pac.invested = invVal;
+            commitLocalStore();
+            renderPacView(false);
+        }
+
+        function updatePacPerformance() {
+            if (!store.pac) store.pac = { invested: 0, currentValue: 0 };
+            const curVal = parseFloat(document.getElementById('pac-current-value').value) || 0;
+            store.pac.currentValue = curVal;
+            commitLocalStore();
+            renderPacView(false);
+        }
+
+        function renderPacView(updateInputs = true) {
+            if (!store.pac) store.pac = { invested: 0, currentValue: 0 };
+            const investedEl = document.getElementById('pac-total-invested');
+            const inputCur = document.getElementById('pac-current-value');
+            const profitEl = document.getElementById('pac-profit-amount');
+            
+            if (updateInputs) {
+                if (investedEl && document.activeElement !== investedEl) {
+                    investedEl.value = store.pac.invested ? parseFloat(store.pac.invested) : '';
+                }
+                if (inputCur && store.pac.currentValue && document.activeElement !== inputCur) {
+                    inputCur.value = parseFloat(store.pac.currentValue);
+                }
+            }
+
+            if (profitEl) {
+                const invested = parseFloat(store.pac.invested) || 0;
+                const current = parseFloat(store.pac.currentValue) || 0;
+                if (invested > 0 && current > 0) {
+                    const diff = current - invested;
+                    const pct = (diff / invested) * 100;
+                    const isPos = diff >= 0;
+                    profitEl.innerHTML = `<b style="color:${isPos ? 'var(--emerald)' : 'var(--rose)'};">${isPos ? '+' : ''}€ ${diff.toFixed(2)} (${isPos ? '+' : ''}${pct.toFixed(2)}%)</b>`;
+                } else if (invested > 0) {
+                    profitEl.innerHTML = `<span style="color:var(--text-muted);">Inserisci valore attuale broker</span>`;
+                } else {
+                    profitEl.innerHTML = `<span style="color:var(--text-muted);">Imposta il capitale versato</span>`;
+                }
+            }
+        }
+
+        // ================= SEZIONE AUTO: FILTRI SEPARATI E LISTE =================
+
+        // --- SCHEDA 1: RIFORNIMENTI (Default: Mese in corso) ---
+        function initFuelFilters() {
+            const yearSel = document.getElementById('fuel-filter-year');
+            const now = new Date();
+            const currentYear = String(now.getFullYear());
+            const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+
+            const years = new Set([currentYear]);
+            store.car.fuel.forEach(f => { if(f.date) years.add(f.date.substring(0,4)); });
+
+            yearSel.innerHTML = '<option value="all">Tutti gli anni</option>';
+            Array.from(years).sort().reverse().forEach(y => {
+                yearSel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+            });
+
+            onFuelFilterChange(currentMonth);
+        }
+
+        function onFuelFilterChange(preferredMonth = null) {
+            const year = document.getElementById('fuel-filter-year').value;
+            const monthSel = document.getElementById('fuel-filter-month');
+            const now = new Date();
+            const currentMonth = preferredMonth || String(now.getMonth() + 1).padStart(2, '0');
+
+            monthSel.innerHTML = '<option value="all">Tutto l\'anno</option>';
+            for (let m = 1; m <= 12; m++) {
+                const mStr = String(m).padStart(2, '0');
+                const d = new Date(2026, m - 1, 1);
+                const mName = d.toLocaleString('it-IT', { month: 'long' });
+                const isSel = (year !== 'all' && mStr === currentMonth) ? 'selected' : '';
+                monthSel.innerHTML += `<option value="${mStr}" ${isSel}>${mName.charAt(0).toUpperCase() + mName.slice(1)}</option>`;
+            }
+
+            renderFuelFilteredView();
+        }
+
+        function renderFuelFilteredView() {
+            const year = document.getElementById('fuel-filter-year').value;
+            const month = document.getElementById('fuel-filter-month').value;
+            const container = document.getElementById('fuel-filtered-list-container');
+            container.innerHTML = '';
+
+            let list = store.car.fuel || [];
+            if (year !== 'all') {
+                list = list.filter(f => f.date && f.date.startsWith(year));
+                if (month !== 'all') {
+                    list = list.filter(f => f.date && f.date.substring(5,7) === month);
+                }
+            }
+
+            const totalCost = list.reduce((acc, f) => acc + (parseFloat(f.total) || 0), 0);
+            const totalLiters = list.reduce((acc, f) => acc + (parseFloat(f.liters) || 0), 0);
+            document.getElementById('fuel-summary-total').innerText = `€ ${totalCost.toFixed(2)}`;
+            document.getElementById('fuel-summary-liters').innerText = `${totalLiters.toFixed(1)} Litri erogati`;
+            
+            const monthLabel = (month !== 'all') ? document.getElementById('fuel-filter-month').options[document.getElementById('fuel-filter-month').selectedIndex].text : 'Tutto l\'anno';
+            document.getElementById('fuel-summary-label').innerText = `Spesa Carburante (${monthLabel} ${year !== 'all' ? year : ''})`;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:18px;">Nessun rifornimento registrato nel periodo selezionato.</p>`;
+                return;
+            }
+
+            list.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(f => {
+                container.innerHTML += `
                     <div class="list-row">
                         <div>
                             <div style="display:flex; align-items:center; gap:6px;">
@@ -1753,7 +2748,7 @@
                             </div>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <div class="list-row-amount" style="color:var(--rose);">€ ${parseFloat(f.total).toFixed(2)}</div>
+                            <div class="list-row-amount" style="color:var(--text-primary);">€ ${parseFloat(f.total).toFixed(2)}</div>
                             <button class="action-icon-btn" onclick="openFuelModal(${f.id})">
                                 <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                             </button>
@@ -1762,35 +2757,59 @@
                             </button>
                         </div>
                     </div>
-                `).join('');
-
-                c.innerHTML += `
-                    <div class="accordion-group">
-                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                            <div class="accordion-header-title">
-                                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                                <span>${g.label}</span>
-                            </div>
-                            <div class="accordion-header-badge">€ ${g.total.toFixed(2)}</div>
-                        </div>
-                        <div class="accordion-body">${innerRows}</div>
-                    </div>
                 `;
             });
         }
 
-        function renderMaintView() {
-            const c = document.getElementById('maint-accordion-container');
-            c.innerHTML = '';
+        // --- SCHEDA 2: MANUTENZIONE (Default: Anno in corso) ---
+        function initMaintFilters() {
+            const yearSel = document.getElementById('maint-filter-year');
+            const catSel = document.getElementById('maint-filter-cat');
+            const now = new Date();
+            const currentYear = String(now.getFullYear());
 
-            if (store.car.maintenance.length === 0) {
-                c.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center; padding:12px;">Nessun intervento registrato.</p>`;
+            const years = new Set([currentYear]);
+            store.car.maintenance.forEach(m => { if(m.date) years.add(m.date.substring(0,4)); });
+
+            yearSel.innerHTML = '<option value="all">Tutti gli anni</option>';
+            Array.from(years).sort().reverse().forEach(y => {
+                yearSel.innerHTML += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`;
+            });
+
+            catSel.innerHTML = '<option value="all">Tutte le categorie</option>';
+            store.car.categories.forEach(c => {
+                catSel.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+
+            renderMaintFilteredView();
+        }
+
+        function renderMaintFilteredView() {
+            const year = document.getElementById('maint-filter-year').value;
+            const cat = document.getElementById('maint-filter-cat').value;
+            const container = document.getElementById('maint-filtered-list-container');
+            container.innerHTML = '';
+
+            let list = store.car.maintenance || [];
+            if (year !== 'all') {
+                list = list.filter(m => m.date && m.date.startsWith(year));
+            }
+            if (cat !== 'all') {
+                list = list.filter(m => m.type === cat);
+            }
+
+            const totalCost = list.reduce((acc, m) => acc + (parseFloat(m.cost) || 0), 0);
+            document.getElementById('maint-summary-total').innerText = `€ ${totalCost.toFixed(2)}`;
+            document.getElementById('maint-summary-count').innerText = `${list.length} Interventi registrati`;
+            document.getElementById('maint-summary-label').innerText = `Manutenzione (${year !== 'all' ? 'Anno ' + year : 'Tutti gli anni'})`;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:18px;">Nessuna manutenzione registrata per questo filtro.</p>`;
                 return;
             }
 
-            const groups = groupFleetItemsByMonth(store.car.maintenance, 'cost');
-            groups.forEach(g => {
-                let innerRows = g.list.sort((a,b) => new Date(b.date) - new Date(a.date)).map(m => `
+            list.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
+                container.innerHTML += `
                     <div class="list-row">
                         <div>
                             <div class="list-row-title">${m.type}</div>
@@ -1809,19 +2828,6 @@
                                 <svg style="width:15px; height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
                         </div>
-                    </div>
-                `).join('');
-
-                c.innerHTML += `
-                    <div class="accordion-group">
-                        <div class="accordion-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                            <div class="accordion-header-title">
-                                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                                <span>${g.label}</span>
-                            </div>
-                            <div class="accordion-header-badge">€ ${g.total.toFixed(2)}</div>
-                        </div>
-                        <div class="accordion-body">${innerRows}</div>
                     </div>
                 `;
             });
@@ -1870,14 +2876,14 @@
 
             closeModal('modal-fuel');
             commitLocalStore();
-            renderFuelView();
+            renderFuelFilteredView();
         }
 
         function deleteFuelItem(id) {
             if (confirm("Eliminare questo rifornimento?")) {
                 store.car.fuel = store.car.fuel.filter(x => x.id !== id);
                 commitLocalStore();
-                renderFuelView();
+                renderFuelFilteredView();
             }
         }
 
@@ -1971,18 +2977,18 @@
 
             closeModal('modal-maint');
             commitLocalStore();
-            renderMaintView();
+            renderMaintFilteredView();
         }
 
         function deleteMaintItem(id) {
             if (confirm("Eliminare questa operazione?")) {
                 store.car.maintenance = store.car.maintenance.filter(x => x.id !== id);
                 commitLocalStore();
-                renderMaintView();
+                renderMaintFilteredView();
             }
         }
 
-        // ================= STATISTICHE AVANZATE FLOTTA (ANNO & MESE) =================
+        // ================= SCHEDA STATISTICHE AUTO (ANNO & MESE) =================
         function initStatsFilters() {
             const yearSel = document.getElementById('stats-filter-year');
             yearSel.innerHTML = '<option value="all">Tutti gli anni</option>';
@@ -2042,14 +3048,12 @@
             const totalMaint = maint.reduce((acc, m) => acc + (parseFloat(m.cost) || 0), 0);
             const grandTotal = totalFuel + totalMaint;
 
-            // KPI Card
             document.getElementById('stats-kpi-summary').innerHTML = `
                 <div class="list-row"><div class="list-row-title">Totale Carburante</div><div class="list-row-amount" style="color:var(--amber);">€ ${totalFuel.toFixed(2)}</div></div>
                 <div class="list-row"><div class="list-row-title">Totale Manutenzione</div><div class="list-row-amount" style="color:var(--rose);">€ ${totalMaint.toFixed(2)}</div></div>
-                <div class="list-row" style="border-top:1px solid var(--border); padding-top:10px;"><div class="list-row-title" style="font-weight:700;">Spesa Flotta Periodo</div><div class="list-row-amount" style="color:var(--text-primary); font-size:1.1rem;">€ ${grandTotal.toFixed(2)}</div></div>
+                <div class="list-row" style="border-top:1px solid var(--border); padding-top:10px;"><div class="list-row-title" style="font-weight:700;">Spesa Totale Auto</div><div class="list-row-amount" style="color:var(--text-primary); font-size:1.1rem;">€ ${grandTotal.toFixed(2)}</div></div>
             `;
 
-            // Ripartizione Categorie Manutenzione
             const catMap = {};
             maint.forEach(m => {
                 catMap[m.type] = (catMap[m.type] || 0) + (parseFloat(m.cost) || 0);
@@ -2061,17 +3065,16 @@
                 const pct = totalMaint > 0 ? (catMap[c] / totalMaint) * 100 : 0;
                 maintHtml += `
                     <div style="margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:500;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; margin-bottom:4px; font-weight:500;">
                             <span>${c}</span>
-                            <span class="hero-metric-value" style="font-size:0.88rem;">€ ${catMap[c].toFixed(2)}</span>
+                            <span class="hero-metric-value" style="font-size:0.86rem;">€ ${catMap[c].toFixed(2)}</span>
                         </div>
                         <div class="hero-progress"><div class="hero-progress-fill" style="width:${pct}%; background:var(--rose);"></div></div>
                     </div>
                 `;
             });
-            document.getElementById('stats-maint-breakdown').innerHTML = maintHtml || `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">Nessuna manutenzione nel periodo.</p>`;
+            document.getElementById('stats-maint-breakdown').innerHTML = maintHtml || `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px;">Nessuna manutenzione nel periodo.</p>`;
 
-            // Ripartizione Tipologia Carburante
             const fuelMap = {};
             fuel.forEach(f => {
                 fuelMap[f.type] = (fuelMap[f.type] || 0) + (parseFloat(f.total) || 0);
@@ -2083,15 +3086,15 @@
                 const color = type === 'GPL' ? 'var(--emerald)' : 'var(--amber)';
                 fuelHtml += `
                     <div style="margin-bottom:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px; font-weight:500;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.84rem; margin-bottom:4px; font-weight:500;">
                             <span>${type}</span>
-                            <span class="hero-metric-value" style="font-size:0.88rem;">€ ${fuelMap[type].toFixed(2)}</span>
+                            <span class="hero-metric-value" style="font-size:0.86rem;">€ ${fuelMap[type].toFixed(2)}</span>
                         </div>
                         <div class="hero-progress"><div class="hero-progress-fill" style="width:${pct}%; background:${color};"></div></div>
                     </div>
                 `;
             });
-            document.getElementById('stats-fuel-breakdown').innerHTML = fuelHtml || `<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">Nessun rifornimento nel periodo.</p>`;
+            document.getElementById('stats-fuel-breakdown').innerHTML = fuelHtml || `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px;">Nessun rifornimento nel periodo.</p>`;
         }
 
         // ================= MODAL SHEET HELPERS =================
@@ -2113,7 +3116,7 @@
         // ================= BOOTSTRAP APPLICAZIONE =================
         applyDesignPreferences();
         initMonthSelector();
-        calculateBudgetMetrics();
+        initBudgetViews();
         manualCloudSync();
 
         // Polling silenzioso ogni 45 secondi
