@@ -182,11 +182,16 @@
                             </div>
                             <div>
                                 <label class="block text-xs text-slate-400 mb-1">Tipo</label>
-                                <select id="txType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                                <select id="txType" onchange="onTxTypeChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
                                     <option value="expense">Uscita (-)</option>
                                     <option value="income">Entrata (+)</option>
                                 </select>
                             </div>
+                        </div>
+                        <div>
+                            <label id="txAccountLabel" class="block text-xs text-slate-400 mb-1">Addebita da</label>
+                            <select id="txAccount" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></select>
+                            <p class="text-[11px] text-slate-500 mt-1">Con "Nessun conto" il movimento resta solo nel Budget e non modifica i saldi.</p>
                         </div>
                         <button onclick="addTransaction()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus"></i> Registra
@@ -213,13 +218,14 @@
                                 <tr>
                                     <th class="py-3 px-3">Descrizione</th>
                                     <th class="py-3 px-3">Tipo</th>
+                                    <th class="py-3 px-3">Conto</th>
                                     <th class="py-3 px-3 text-right">Importo</th>
                                     <th class="py-3 px-3 text-center">Azione</th>
                                 </tr>
                             </thead>
                             <tbody id="budgetTableBody" class="divide-y divide-slate-700/50">
                                 <tr>
-                                    <td colspan="4" class="text-center py-6 text-slate-500">Caricamento movimenti...</td>
+                                    <td colspan="5" class="text-center py-6 text-slate-500">Caricamento movimenti...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1503,11 +1509,12 @@
             items.sort((a, b) => (a.type === 'income' ? 0 : 1) - (b.type === 'income' ? 0 : 1) || (parseFloat(b.amount) || 0) - (parseFloat(a.amount) || 0));
 
             let income = 0, expense = 0;
+            fillTxAccountSelect(false);
             const tbody = document.getElementById('budgetTableBody');
             tbody.innerHTML = '';
 
             if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Nessun movimento per questo mese. Aggiungi entrate e uscite, oppure usa "Copia mese precedente".</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessun movimento per questo mese. Aggiungi entrate e uscite, oppure usa "Copia mese precedente".</td></tr>`;
             } else {
                 items.forEach((item) => {
                     const amt = parseFloat(item.amount) || 0;
@@ -1518,6 +1525,7 @@
                     row.innerHTML = `
                         <td class="py-3 px-3 font-medium text-slate-200">${escHtml(item.desc)}</td>
                         <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[11px] ${isIn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">${isIn ? 'Entrata' : 'Uscita'}</span></td>
+                        <td class="py-3 px-3 text-xs text-slate-400 whitespace-nowrap">${accName(item.accountId)}</td>
                         <td class="py-3 px-3 text-right font-semibold whitespace-nowrap ${isIn ? 'text-emerald-400' : 'text-rose-400'}">
                             ${isIn ? '+' : '-'} € ${amt.toFixed(2)}
                         </td>
@@ -1549,11 +1557,47 @@
             const have = new Set(all.filter(i => i.date === month).map(i => `${i.type}|${i.desc}`));
             const toAdd = src.filter(i => !have.has(`${i.type}|${i.desc}`));
             if (!toAdd.length) { showToast('Le voci del mese precedente sono già presenti.', 'error'); return; }
-            if (!confirm(`Copiare ${toAdd.length} voci da ${prevKey} a ${month}?\nPotrai poi modificare gli importi che cambiano.`)) return;
-            toAdd.forEach((i, k) => window.appState.budget.push({ ...i, id: `${Date.now()}-${k}`, date: month }));
+            if (!confirm(`Copiare ${toAdd.length} voci da ${prevKey} a ${month}?\nI saldi dei conti non vengono modificati. Potrai poi modificare gli importi che cambiano.`)) return;
+            toAdd.forEach((i, k) => { const { accountId, ...rest } = i; window.appState.budget.push({ ...rest, id: `${Date.now()}-${k}`, date: month }); });
             renderBudgetSection();
             if (window.saveToCloud) window.saveToCloud();
             showToast(`${toAdd.length} voci copiate.`);
+        }
+
+        // ----- Collegamento Budget <-> Conti -----
+        const LAST_ACC_KEY = 'ffs_last_accounts';
+        function getLastAcc() { try { return JSON.parse(localStorage.getItem(LAST_ACC_KEY) || '{}') || {}; } catch (e) { return {}; } }
+        function setLastAcc(type, id) { try { const o = getLastAcc(); o[type] = id; localStorage.setItem(LAST_ACC_KEY, JSON.stringify(o)); } catch (e) {} }
+        function accName(id) {
+            if (!id) return '<span class="text-slate-600">—</span>';
+            const c = (window.appState.conti || []).find(x => x.id === id);
+            return c ? escHtml(c.name) : '<span class="text-slate-600" title="Conto eliminato">?</span>';
+        }
+        function fillTxAccountSelect(resetToLast) {
+            const sel = document.getElementById('txAccount');
+            if (!sel) return;
+            const type = document.getElementById('txType').value;
+            document.getElementById('txAccountLabel').textContent = type === 'income' ? 'Accredita su' : 'Addebita da';
+            const populated = sel.options.length > 0;
+            const keep = (resetToLast || !populated) ? '' : sel.value;
+            const cs = window.appState.conti || [];
+            sel.innerHTML = '<option value="">Nessun conto (es. cointestato)</option>' +
+                cs.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.name)} — ${fmtEur(c.balance)}</option>`).join('');
+            const has = v => v && [...sel.options].some(o => o.value === v);
+            const last = getLastAcc()[type];
+            if (!resetToLast && populated) sel.value = has(keep) ? keep : '';
+            else sel.value = has(last) ? last : '';
+        }
+        function onTxTypeChange() { fillTxAccountSelect(true); }
+
+        // applica (+1) o annulla (-1) l'effetto di un movimento sul saldo del conto collegato
+        function applyBudgetEffect(item, sign) {
+            if (!item || !item.accountId) return false;
+            const c = (window.appState.conti || []).find(x => x.id === item.accountId);
+            if (!c) return false;
+            const amt = parseFloat(item.amount) || 0;
+            c.balance = r2c((Number(c.balance) || 0) + (item.type === 'income' ? 1 : -1) * amt * sign);
+            return true;
         }
 
         function addTransaction() {
@@ -1561,33 +1605,42 @@
             const desc = document.getElementById('txDesc').value.trim();
             const amount = parseFloat(document.getElementById('txAmount').value);
             const type = document.getElementById('txType').value;
+            const accountId = document.getElementById('txAccount').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
                 showToast("Inserisci un'etichetta ed un importo valido.", "error");
                 return;
             }
 
-            window.appState.budget.push({
-                id: Date.now().toString(),
-                date: month,
-                desc,
-                amount,
-                type
-            });
+            const item = { id: Date.now().toString(), date: month, desc, amount, type };
+            if (accountId) item.accountId = accountId;
+            window.appState.budget.push(item);
+            setLastAcc(type, accountId);
+
+            const touched = applyBudgetEffect(item, +1);
+            if (touched) autoSnapshot();
 
             document.getElementById('txDesc').value = '';
             document.getElementById('txAmount').value = '';
             document.getElementById('txDesc').focus();
             renderBudgetSection();
+            if (touched) renderContiSection();
             if (window.saveToCloud) window.saveToCloud();
-            showToast(type === "income" ? "Entrata salvata!" : "Uscita salvata!");
+            const acc = touched ? (window.appState.conti.find(c => c.id === accountId) || {}).name : '';
+            showToast(type === "income"
+                ? (acc ? `Entrata salvata e accreditata su ${acc}.` : "Entrata salvata!")
+                : (acc ? `Uscita salvata e addebitata su ${acc}.` : "Uscita salvata!"));
         }
 
         function removeBudget(id) {
-            window.appState.budget = window.appState.budget.filter(b => b.id !== id);
+            const item = window.appState.budget.find(b => String(b.id) === String(id));
+            const touched = applyBudgetEffect(item, -1);
+            window.appState.budget = window.appState.budget.filter(b => String(b.id) !== String(id));
+            if (touched) autoSnapshot();
             renderBudgetSection();
+            if (touched) renderContiSection();
             if (window.saveToCloud) window.saveToCloud();
-            showToast("Movimento rimosso.");
+            showToast(touched ? "Movimento rimosso e saldo del conto ripristinato." : "Movimento rimosso.");
         }
 
         // PAC VANGUARD
@@ -1938,11 +1991,18 @@
         const carOptions = () => (window.appState.cars || []).map(c => [c.id, `${c.model} (${c.plate})`]);
         const EDIT_SCHEMAS = {
             budget: {
-                title: 'Modifica movimento', list: 'budget', refresh: () => renderBudgetSection(),
+                title: 'Modifica movimento', list: 'budget', refresh: () => { renderBudgetSection(); renderContiSection(); },
+                onSave: (item, old) => {
+                    const a = applyBudgetEffect(old, -1);
+                    if (!item.accountId) delete item.accountId;
+                    const b = applyBudgetEffect(item, +1);
+                    if (a || b) autoSnapshot();
+                },
                 fields: [
                     { key: 'desc', label: 'Descrizione', type: 'text', required: true },
                     { key: 'amount', label: 'Importo (€)', type: 'number', step: '0.01', required: true, positive: true },
                     { key: 'type', label: 'Tipo', type: 'select', options: () => [['income', 'Entrata (+)'], ['expense', 'Uscita (-)']] },
+                    { key: 'accountId', label: 'Conto collegato', type: 'select', options: () => [['', 'Nessun conto (non tocca i saldi)'], ...(window.appState.conti || []).map(c => [c.id, c.name])] },
                     { key: 'date', label: 'Mese', type: 'month', required: true }
                 ]
             },
@@ -2065,7 +2125,9 @@
                 }
                 values[f.key] = v;
             }
+            const oldItem = { ...item };
             Object.assign(item, values);
+            if (schema.onSave) schema.onSave(item, oldItem);
             closeEdit();
             schema.refresh();
             if (window.saveToCloud) window.saveToCloud();
@@ -2560,7 +2622,7 @@
             const toAdd = p.fixed.filter(f => !have.has(descOf(f)));
             if (!toAdd.length) { showToast(`Le spese fisse sono già nel Budget di ${monthLabel(month)}.`, 'error'); return; }
             const tot = toAdd.reduce((s, f) => s + planMonthly(f), 0);
-            if (!confirm(`Aggiungere ${toAdd.length} uscite (totale ${fmtEur(tot)}) al Budget di ${monthLabel(month)}?`)) return;
+            if (!confirm(`Aggiungere ${toAdd.length} uscite (totale ${fmtEur(tot)}) al Budget di ${monthLabel(month)}?\nI saldi dei conti non vengono modificati.`)) return;
             toAdd.forEach((f, k) => window.appState.budget.push({ id: `${Date.now()}-${k}`, date: month, desc: descOf(f), amount: r2c(planMonthly(f)), type: 'expense' }));
             renderBudgetSection();
             if (window.saveToCloud) window.saveToCloud();
@@ -2720,6 +2782,7 @@
 
             renderContiHistory();
             renderTransfers();
+            if (typeof fillTxAccountSelect === 'function') fillTxAccountSelect(false);
             document.getElementById('contiTotal').textContent = fmtEur(total);
             document.getElementById('contiTotalFoot').textContent = fmtEur(total);
             document.getElementById('contiCount').textContent = `${list.length} ${list.length === 1 ? 'conto' : 'conti'}`;
