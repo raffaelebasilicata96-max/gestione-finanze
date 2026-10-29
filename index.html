@@ -109,6 +109,9 @@
                 <button onclick="switchTab('budget')" id="tab-budget" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-indigo-400 bg-indigo-600/10 border border-indigo-500/30 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Budget & Mese
                 </button>
+                <button onclick="switchTab('pocket')" id="tab-pocket" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-wallet"></i> Pocket
+                </button>
                 <button onclick="switchTab('plan')" id="tab-plan" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 flex items-center gap-2">
                     <i class="fa-solid fa-scale-balanced"></i> 50/30/20
                 </button>
@@ -235,6 +238,97 @@
             </div>
 
 
+        </div>
+
+        <!-- SECTION: POCKET -->
+        <div id="section-pocket" class="tab-content hidden space-y-6">
+
+            <!-- INTESTAZIONE -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-indigo-400"></i> Pocket — Budget di coppia
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">Pianifica insieme le spese del mese e vedi la quota di ciascuno in base agli stipendi.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openPocketSettings()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-gear"></i> Nomi e stipendi
+                        </button>
+                        <button onclick="pocketCopyPrev()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i> Copia mese precedente
+                        </button>
+                        <button onclick="openPocketVoiceModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> Nuova voce
+                        </button>
+                    </div>
+                </div>
+                <!-- selettore mese -->
+                <div class="flex flex-wrap items-center gap-3 mt-4">
+                    <input type="month" id="pocketMonth" onchange="renderPocketSection()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100">
+                    <span id="pocketMonthLabel" class="text-xs text-slate-400"></span>
+                </div>
+            </div>
+
+            <!-- RIEPILOGO -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="text-xs text-slate-400">Totale pianificato</div>
+                    <div id="pocketTotal" class="text-xl font-bold text-slate-100">€ 0,00</div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div id="pocketP1Label" class="text-xs text-slate-400">Quota Io</div>
+                    <div id="pocketP1Share" class="text-xl font-bold text-indigo-400">€ 0,00</div>
+                    <div id="pocketP1Pct" class="text-[11px] text-slate-500"></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div id="pocketP2Label" class="text-xs text-slate-400">Quota Moglie</div>
+                    <div id="pocketP2Share" class="text-xl font-bold text-indigo-400">€ 0,00</div>
+                    <div id="pocketP2Pct" class="text-[11px] text-slate-500"></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="text-xs text-slate-400">Speso effettivo</div>
+                    <div id="pocketSpent" class="text-xl font-bold text-slate-100">€ 0,00</div>
+                    <div id="pocketBalance" class="text-[11px] text-slate-500"></div>
+                </div>
+            </div>
+
+            <!-- TABELLA VOCI -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-indigo-400"></i> Voci del mese
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                            <tr>
+                                <th class="py-3 px-3">Voce</th>
+                                <th class="py-3 px-3">Cat.</th>
+                                <th class="py-3 px-3 text-right">Pianificato</th>
+                                <th id="pocketTh1" class="py-3 px-3 text-right">Quota Io</th>
+                                <th id="pocketTh2" class="py-3 px-3 text-right">Quota Moglie</th>
+                                <th class="py-3 px-3 text-right">Speso</th>
+                                <th class="py-3 px-3 text-right">Diff.</th>
+                                <th class="py-3 px-3 text-center">Azione</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pocketTableBody" class="divide-y divide-slate-700/50"></tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-slate-700 font-bold text-slate-100">
+                                <td class="py-3 px-3 uppercase text-xs">Totale</td>
+                                <td></td>
+                                <td id="pocketTotalFoot" class="py-3 px-3 text-right text-emerald-400">€ 0,00</td>
+                                <td id="pocketP1Foot" class="py-3 px-3 text-right text-indigo-400">€ 0,00</td>
+                                <td id="pocketP2Foot" class="py-3 px-3 text-right text-indigo-400">€ 0,00</td>
+                                <td id="pocketSpentFoot" class="py-3 px-3 text-right text-rose-400">€ 0,00</td>
+                                <td id="pocketDiffFoot" class="py-3 px-3 text-right"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- SECTION: PIANO 50/30/20 -->
@@ -1000,10 +1094,14 @@
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-md border-t border-slate-700 z-50 px-2 py-2">
-        <div class="grid grid-cols-6 text-center">
+        <div class="grid grid-cols-7 text-center">
             <button onclick="switchTab('budget')" id="mob-tab-budget" class="mob-nav-btn text-indigo-400 flex flex-col items-center gap-1 py-1">
                 <i class="fa-solid fa-wallet text-base"></i>
                 <span class="text-[10px] font-medium">Budget</span>
+            </button>
+            <button onclick="switchTab('pocket')" id="mob-tab-pocket" class="mob-nav-btn text-slate-400 flex flex-col items-center gap-1 py-1">
+                <i class="fa-solid fa-wallet text-base"></i>
+                <span class="text-[10px] font-medium">Pocket</span>
             </button>
             <button onclick="switchTab('plan')" id="mob-tab-plan" class="mob-nav-btn text-slate-400 flex flex-col items-center gap-1 py-1">
                 <i class="fa-solid fa-scale-balanced text-base"></i>
@@ -1078,6 +1176,83 @@
                     <button onclick="closePacValue()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
                     <button onclick="savePacValue()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Salva</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: POCKET IMPOSTAZIONI -->
+    <div id="pocketSettingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-100 flex items-center gap-2"><i class="fa-solid fa-gear text-indigo-400"></i> Nomi e stipendi del mese</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Il tuo nome</label>
+                    <input type="text" id="pocketP1NameInp" placeholder="Io" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Nome moglie / partner</label>
+                    <input type="text" id="pocketP2NameInp" placeholder="Moglie" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label id="pocketS1Label" class="block text-xs text-slate-400 mb-1">Stipendio tuo (€)</label>
+                    <input type="number" id="pocketS1Inp" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label id="pocketS2Label" class="block text-xs text-slate-400 mb-1">Stipendio moglie (€)</label>
+                    <input type="number" id="pocketS2Inp" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-500">Gli stipendi si possono cambiare ogni mese perché variano. I nomi sono globali e valgono per tutti i mesi.</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closePocketSettings()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
+                <button onclick="savePocketSettings()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Salva</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NUOVA / MODIFICA VOCE POCKET -->
+    <div id="pocketVoiceModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4">
+            <h3 id="pocketVoiceTitle" class="text-base font-bold text-slate-100 flex items-center gap-2"><i class="fa-solid fa-wallet text-indigo-400"></i> Nuova voce</h3>
+            <input type="hidden" id="pocketVoiceId">
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Nome voce</label>
+                    <input type="text" id="pvName" placeholder="Es. Affitto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Categoria</label>
+                        <select id="pvCat" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="casa">🏠 Casa</option>
+                            <option value="trasporti">🚗 Trasporti</option>
+                            <option value="spesa">🛒 Spesa</option>
+                            <option value="bollette">💡 Bollette</option>
+                            <option value="svago">🎬 Svago</option>
+                            <option value="salute">❤️ Salute</option>
+                            <option value="risparmio">💰 Risparmio</option>
+                            <option value="altro">📦 Altro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Importo pianificato (€)</label>
+                        <input type="number" id="pvAmount" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Speso effettivo (€) — compilabile a fine mese</label>
+                    <input type="number" id="pvSpent" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Note</label>
+                    <input type="text" id="pvNote" placeholder="Opzionale" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closePocketVoiceModal()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
+                <button onclick="savePocketVoice()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Salva</button>
             </div>
         </div>
     </div>
@@ -1230,6 +1405,7 @@
             pac: [],
             pacValue: null,
             cycleDay: 1,
+            pocket: { p1name:'Io', p2name:'Moglie', months:{} },
             plan: { salary: 0, ratios: { need: 50, want: 30, save: 20 }, fixed: [] },
             contiHistory: [],
             transfers: [],
@@ -1359,6 +1535,7 @@
                         if (data.plan) window.appState.plan = data.plan;
                         if (data.pacValue !== undefined) window.appState.pacValue = data.pacValue;
                         if (data.cycleDay !== undefined) window.appState.cycleDay = data.cycleDay;
+                        if (data.pocket) window.appState.pocket = data.pocket;
                     } else {
                         saveToCloud();
                     }
@@ -1522,6 +1699,7 @@
             renderFleetSection();
             renderContiSection();
             renderPlanSection();
+            renderPocketSection();
             renderCycleInfo();
         }
 
@@ -2329,6 +2507,200 @@
         const fmtSigned = n => `${n >= 0 ? '+' : '-'}${fmtEur(Math.abs(n))}`;
         const chartTextColor = () => document.documentElement.getAttribute('data-theme') === 'light' ? '#334155' : '#cbd5e1';
         const chartGridColor = () => document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(100,116,139,0.2)' : 'rgba(148,163,184,0.15)';
+
+
+        // ===== POCKET =====
+        const POCKET_CATS = {
+            casa:'🏠 Casa', trasporti:'🚗 Trasporti', spesa:'🛒 Spesa',
+            bollette:'💡 Bollette', svago:'🎬 Svago', salute:'❤️ Salute',
+            risparmio:'💰 Risparmio', altro:'📦 Altro'
+        };
+
+        function getPocket() {
+            const st = window.appState;
+            if (!st.pocket || typeof st.pocket !== 'object') st.pocket = {};
+            const pk = st.pocket;
+            if (!pk.p1name) pk.p1name = 'Io';
+            if (!pk.p2name) pk.p2name = 'Moglie';
+            if (!pk.months || typeof pk.months !== 'object') pk.months = {};
+            return pk;
+        }
+        function getPocketMonth(key) {
+            const pk = getPocket();
+            if (!pk.months[key]) pk.months[key] = { s1: 0, s2: 0, voices: [] };
+            const m = pk.months[key];
+            if (!Array.isArray(m.voices)) m.voices = [];
+            return m;
+        }
+
+        function renderPocketSection() {
+            const pk = getPocket();
+            const el = document.getElementById('pocketMonth');
+            if (!el) return;
+            if (!el.value) el.value = getCurMonthStr();
+            const key = el.value;
+            const pm = getPocketMonth(key);
+
+            document.getElementById('pocketMonthLabel').textContent =
+                `${monthLabel(key)}${getCycleDay() > 1 ? ' ('+cycleRangeText(key)+')' : ''}`;
+
+            const s1 = parseFloat(pm.s1) || 0, s2 = parseFloat(pm.s2) || 0;
+            const stot = s1 + s2;
+            const p1pct = stot > 0 ? s1 / stot : 0.5;
+            const p2pct = stot > 0 ? s2 / stot : 0.5;
+
+            const n1 = pk.p1name || 'Io', n2 = pk.p2name || 'Moglie';
+            document.getElementById('pocketP1Label').textContent = `Quota ${n1}`;
+            document.getElementById('pocketP2Label').textContent = `Quota ${n2}`;
+            document.getElementById('pocketTh1').textContent = n1;
+            document.getElementById('pocketTh2').textContent = n2;
+
+            let tot = 0, spent = 0, p1sum = 0, p2sum = 0;
+            const rows = pm.voices;
+
+            document.getElementById('pocketTableBody').innerHTML = rows.length ? rows.map(v => {
+                const a = parseFloat(v.amount) || 0;
+                const sp = parseFloat(v.spent) || 0;
+                const q1 = r2c(a * p1pct), q2 = r2c(a * p2pct);
+                const diff = r2c(a - sp);
+                tot += a; spent += sp; p1sum += q1; p2sum += q2;
+                const cat = POCKET_CATS[v.cat] || v.cat || '📦 Altro';
+                const diffCls = diff > 0 ? 'text-emerald-400' : diff < 0 ? 'text-rose-400' : 'text-slate-500';
+                return `<tr class="hover:bg-slate-700/20 transition">
+                    <td class="py-3 px-3">
+                        <div class="font-medium text-slate-100">${escHtml(v.name)}</div>
+                        ${v.note ? `<div class="text-[11px] text-slate-500">${escHtml(v.note)}</div>` : ''}
+                    </td>
+                    <td class="py-3 px-3 text-xs text-slate-400 whitespace-nowrap">${cat}</td>
+                    <td class="py-3 px-3 text-right font-semibold text-slate-100 whitespace-nowrap">${fmtEur(a)}</td>
+                    <td class="py-3 px-3 text-right text-indigo-300 whitespace-nowrap">${fmtEur(q1)}</td>
+                    <td class="py-3 px-3 text-right text-indigo-300 whitespace-nowrap">${fmtEur(q2)}</td>
+                    <td class="py-3 px-3 text-right whitespace-nowrap ${sp > 0 ? 'text-slate-100 font-semibold' : 'text-slate-600'}">${sp > 0 ? fmtEur(sp) : '—'}</td>
+                    <td class="py-3 px-3 text-right whitespace-nowrap ${sp > 0 ? diffCls : 'text-slate-600'}">${sp > 0 ? fmtSigned(diff) : '—'}</td>
+                    <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <button onclick="openPocketVoiceModal('${key}','${v.id}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="removePocketVoice('${key}','${v.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="8" class="text-center py-8 text-slate-500">Nessuna voce. Aggiungine una o copia dal mese precedente.</td></tr>';
+
+            const diff = r2c(tot - spent);
+            const diffCls = diff >= 0 ? 'text-emerald-400' : 'text-rose-400';
+            document.getElementById('pocketTotal').textContent = fmtEur(tot);
+            document.getElementById('pocketP1Share').textContent = fmtEur(r2c(p1sum));
+            document.getElementById('pocketP2Share').textContent = fmtEur(r2c(p2sum));
+            document.getElementById('pocketP1Pct').textContent = stot > 0 ? `${(p1pct*100).toFixed(0)}% · stip. ${fmtEur(s1)}` : 'Stipendi non impostati';
+            document.getElementById('pocketP2Pct').textContent = stot > 0 ? `${(p2pct*100).toFixed(0)}% · stip. ${fmtEur(s2)}` : '';
+            document.getElementById('pocketSpent').textContent = spent > 0 ? fmtEur(spent) : '—';
+            document.getElementById('pocketBalance').textContent = spent > 0 ? (diff >= 0 ? `Avanzati ${fmtEur(diff)}` : `Sforato di ${fmtEur(Math.abs(diff))}`) : '';
+            document.getElementById('pocketTotalFoot').textContent = fmtEur(tot);
+            document.getElementById('pocketP1Foot').textContent = fmtEur(r2c(p1sum));
+            document.getElementById('pocketP2Foot').textContent = fmtEur(r2c(p2sum));
+            document.getElementById('pocketSpentFoot').textContent = spent > 0 ? fmtEur(spent) : '—';
+            const df = document.getElementById('pocketDiffFoot');
+            if (spent > 0) { df.textContent = fmtSigned(diff); df.className = `py-3 px-3 text-right font-bold ${diffCls}`; } else df.textContent = '';
+        }
+
+        // ----- Impostazioni nomi/stipendi -----
+        function openPocketSettings() {
+            const pk = getPocket();
+            const key = document.getElementById('pocketMonth').value || getCurMonthStr();
+            const pm = getPocketMonth(key);
+            document.getElementById('pocketP1NameInp').value = pk.p1name || 'Io';
+            document.getElementById('pocketP2NameInp').value = pk.p2name || 'Moglie';
+            document.getElementById('pocketS1Inp').value = pm.s1 || '';
+            document.getElementById('pocketS2Inp').value = pm.s2 || '';
+            document.getElementById('pocketS1Label').textContent = `Stipendio ${pk.p1name || 'tuo'} (€)`;
+            document.getElementById('pocketS2Label').textContent = `Stipendio ${pk.p2name || 'moglie'} (€)`;
+            document.getElementById('pocketSettingsModal').classList.remove('hidden');
+        }
+        function closePocketSettings() { document.getElementById('pocketSettingsModal').classList.add('hidden'); }
+        function savePocketSettings() {
+            const pk = getPocket();
+            const key = document.getElementById('pocketMonth').value || getCurMonthStr();
+            const pm = getPocketMonth(key);
+            pk.p1name = document.getElementById('pocketP1NameInp').value.trim() || 'Io';
+            pk.p2name = document.getElementById('pocketP2NameInp').value.trim() || 'Moglie';
+            const s1 = parseFloat(document.getElementById('pocketS1Inp').value) || 0;
+            const s2 = parseFloat(document.getElementById('pocketS2Inp').value) || 0;
+            if (s1 < 0 || s2 < 0) { showToast('Gli stipendi non possono essere negativi.', 'error'); return; }
+            pm.s1 = r2c(s1); pm.s2 = r2c(s2);
+            closePocketSettings();
+            renderPocketSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Impostazioni salvate!');
+        }
+
+        // ----- Voce -----
+        let pocketVoiceCtx = null;
+        function openPocketVoiceModal(monthKey, voiceId) {
+            const key = monthKey || document.getElementById('pocketMonth').value || getCurMonthStr();
+            const pm = getPocketMonth(key);
+            const v = voiceId ? pm.voices.find(x => x.id === voiceId) : null;
+            pocketVoiceCtx = { key };
+            document.getElementById('pocketVoiceId').value = voiceId || '';
+            document.getElementById('pocketVoiceTitle').innerHTML = `<i class="fa-solid fa-wallet text-indigo-400"></i> ${v ? 'Modifica voce' : 'Nuova voce'}`;
+            document.getElementById('pvName').value = v ? v.name : '';
+            document.getElementById('pvCat').value = v ? (v.cat || 'altro') : 'casa';
+            document.getElementById('pvAmount').value = v ? v.amount : '';
+            document.getElementById('pvSpent').value = v ? (v.spent || '') : '';
+            document.getElementById('pvNote').value = v ? (v.note || '') : '';
+            document.getElementById('pocketVoiceModal').classList.remove('hidden');
+        }
+        function closePocketVoiceModal() {
+            document.getElementById('pocketVoiceModal').classList.add('hidden');
+            pocketVoiceCtx = null;
+        }
+        function savePocketVoice() {
+            const key = pocketVoiceCtx ? pocketVoiceCtx.key : (document.getElementById('pocketMonth').value || getCurMonthStr());
+            const pm = getPocketMonth(key);
+            const name = document.getElementById('pvName').value.trim();
+            const amount = parseFloat(document.getElementById('pvAmount').value) || 0;
+            const spent = parseFloat(document.getElementById('pvSpent').value) || 0;
+            const cat = document.getElementById('pvCat').value;
+            const note = document.getElementById('pvNote').value.trim();
+            if (!name) { showToast('Inserisci il nome della voce.', 'error'); return; }
+            if (amount < 0 || spent < 0) { showToast('Gli importi non possono essere negativi.', 'error'); return; }
+            const id = document.getElementById('pocketVoiceId').value;
+            if (id) {
+                const v = pm.voices.find(x => x.id === id);
+                if (v) Object.assign(v, { name, amount: r2c(amount), spent: r2c(spent), cat, note });
+            } else {
+                pm.voices.push({ id: Date.now().toString(), name, amount: r2c(amount), spent: r2c(spent), cat, note });
+            }
+            closePocketVoiceModal();
+            renderPocketSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(id ? 'Voce aggiornata!' : 'Voce aggiunta!');
+        }
+        function removePocketVoice(monthKey, voiceId) {
+            if (!confirm('Eliminare questa voce?')) return;
+            const pm = getPocketMonth(monthKey);
+            pm.voices = pm.voices.filter(v => v.id !== voiceId);
+            renderPocketSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Voce rimossa.');
+        }
+
+        // ----- Copia mese precedente -----
+        function pocketCopyPrev() {
+            const key = document.getElementById('pocketMonth').value || getCurMonthStr();
+            const [y, m] = key.split('-').map(Number);
+            const pd = new Date(y, m - 2, 1);
+            const prevKey = `${pd.getFullYear()}-${String(pd.getMonth() + 1).padStart(2, '0')}`;
+            const pk = getPocket();
+            const src = pk.months[prevKey];
+            if (!src || !src.voices || !src.voices.length) { showToast(`Nessuna voce in ${monthLabel(prevKey)}.`, 'error'); return; }
+            const pm = getPocketMonth(key);
+            const srcNames = new Set(pm.voices.map(v => v.name));
+            const toAdd = src.voices.filter(v => !srcNames.has(v.name));
+            if (!toAdd.length) { showToast('Tutte le voci del mese precedente sono già presenti.', 'error'); return; }
+            if (!confirm(`Copiare ${toAdd.length} voci da ${monthLabel(prevKey)}?\nGli importi spesi non vengono copiati.`)) return;
+            toAdd.forEach(v => pm.voices.push({ ...v, id: Date.now().toString() + Math.random(), spent: 0, note: v.note || '' }));
+            renderPocketSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(`${toAdd.length} voci copiate da ${monthLabel(prevKey)}.`);
+        }
 
         // ===== CONTI: STORICO E GIROCONTI =====
         function ensureContiState() {
