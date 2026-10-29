@@ -109,6 +109,9 @@
                 <button onclick="switchTab('budget')" id="tab-budget" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-indigo-400 bg-indigo-600/10 border border-indigo-500/30 flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Budget & Mese
                 </button>
+                <button onclick="switchTab('plan')" id="tab-plan" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-scale-balanced"></i> 50/30/20
+                </button>
                 <button onclick="switchTab('pac')" id="tab-pac" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 flex items-center gap-2">
                     <i class="fa-solid fa-chart-line"></i> PAC Vanguard
                 </button>
@@ -154,50 +157,8 @@
                         <span id="monthExpense" class="text-base sm:text-lg font-bold text-rose-400">€ 0.00</span>
                     </div>
                     <div>
-                        <span class="text-xs text-slate-400 block">Risparmiato</span>
+                        <span class="text-xs text-slate-400 block">Rimane</span>
                         <span id="monthNet" class="text-base sm:text-lg font-bold text-indigo-400">€ 0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 50/30/20 Rule Breakdown Card -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-pie text-indigo-400"></i> Ripartizione Regola 50/30/20
-                    </h2>
-                    <span class="text-xs text-slate-400">Su entrate totali del mese</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60 space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400 font-medium">Bisogni Essenziali (50%)</span>
-                            <span id="needTarget" class="text-slate-300">Target: € 0</span>
-                        </div>
-                        <div id="needActual" class="text-lg font-bold text-slate-100">€ 0.00</div>
-                        <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                            <div id="needBar" class="bg-indigo-500 h-full w-0 transition-all"></div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60 space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400 font-medium">Svago & Desideri (30%)</span>
-                            <span id="wantTarget" class="text-slate-300">Target: € 0</span>
-                        </div>
-                        <div id="wantActual" class="text-lg font-bold text-slate-100">€ 0.00</div>
-                        <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                            <div id="wantBar" class="bg-amber-500 h-full w-0 transition-all"></div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60 space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400 font-medium">Risparmi / PAC (20%)</span>
-                            <span id="saveTarget" class="text-slate-300">Target: € 0</span>
-                        </div>
-                        <div id="saveActual" class="text-lg font-bold text-slate-100">€ 0.00</div>
-                        <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                            <div id="saveBar" class="bg-emerald-500 h-full w-0 transition-all"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -222,21 +183,13 @@
                             <div>
                                 <label class="block text-xs text-slate-400 mb-1">Tipo</label>
                                 <select id="txType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-                                    <option value="income">Entrata (+)</option>
                                     <option value="expense">Uscita (-)</option>
+                                    <option value="income">Entrata (+)</option>
                                 </select>
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Categoria 50/30/20</label>
-                            <select id="txCategory" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-                                <option value="need">Bisogno Essenziale (50%)</option>
-                                <option value="want">Svago / Desiderio (30%)</option>
-                                <option value="save">Risparmio / Accantonamento (20%)</option>
-                            </select>
-                        </div>
                         <button onclick="addTransaction()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Registra Transazione
+                            <i class="fa-solid fa-plus"></i> Registra
                         </button>
                     </div>
                 </div>
@@ -247,14 +200,19 @@
                         <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-list text-indigo-400"></i> Movimenti Mese Selezionato
                         </h3>
-                        <span id="txCount" class="text-xs text-slate-400">0 operazioni</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="copyPrevMonth()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-1.5" title="Copia le voci del mese precedente in questo mese">
+                                <i class="fa-regular fa-copy"></i> Copia mese precedente
+                            </button>
+                            <span id="txCount" class="text-xs text-slate-400">0 operazioni</span>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
                             <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
                                 <tr>
                                     <th class="py-3 px-3">Descrizione</th>
-                                    <th class="py-3 px-3">Categoria</th>
+                                    <th class="py-3 px-3">Tipo</th>
                                     <th class="py-3 px-3 text-right">Importo</th>
                                     <th class="py-3 px-3 text-center">Azione</th>
                                 </tr>
@@ -269,21 +227,144 @@
                 </div>
             </div>
 
-            <!-- Salvadanai & Sinking Funds Section -->
+
+        </div>
+
+        <!-- SECTION: PIANO 50/30/20 -->
+        <div id="section-plan" class="tab-content hidden space-y-6">
+
             <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-piggy-bank text-indigo-400"></i> Salvadanai & Obiettivi di Risparmio (Sinking Funds)
-                    </h3>
-                    <button onclick="openPiggyModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Nuovo Salvadanaio
-                    </button>
+                <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-scale-balanced text-indigo-400"></i> Stipendio e Ripartizione
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Stipendio netto mensile (€)</label>
+                        <input type="number" id="planSalary" step="0.01" placeholder="1900" onchange="savePlanSettings()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Bisogni (%)</label>
+                        <input type="number" id="planRNeed" step="1" min="0" max="100" onchange="savePlanSettings()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Svago (%)</label>
+                        <input type="number" id="planRWant" step="1" min="0" max="100" onchange="savePlanSettings()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Risparmio (%)</label>
+                        <input type="number" id="planRSave" step="1" min="0" max="100" onchange="savePlanSettings()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
                 </div>
-                <div id="piggyGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Dynamic Piggy Banks -->
+                <p id="planRatioWarn" class="hidden text-xs text-amber-400"></p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="flex justify-between text-xs"><span class="text-slate-400 font-medium">Bisogni Essenziali</span><span id="planNeedTarget" class="text-slate-300"></span></div>
+                    <div id="planNeedUsed" class="text-lg font-bold text-slate-100">€ 0,00</div>
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden"><div id="planNeedBar" class="bg-indigo-500 h-full w-0 transition-all"></div></div>
+                    <div id="planNeedStatus" class="text-[11px] text-slate-400"></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="flex justify-between text-xs"><span class="text-slate-400 font-medium">Svago & Desideri</span><span id="planWantTarget" class="text-slate-300"></span></div>
+                    <div id="planWantUsed" class="text-lg font-bold text-slate-100">€ 0,00</div>
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden"><div id="planWantBar" class="bg-amber-500 h-full w-0 transition-all"></div></div>
+                    <div id="planWantStatus" class="text-[11px] text-slate-400"></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="flex justify-between text-xs"><span class="text-slate-400 font-medium">Risparmio / Investimenti</span><span id="planSaveTarget" class="text-slate-300"></span></div>
+                    <div id="planSaveUsed" class="text-lg font-bold text-slate-100">€ 0,00</div>
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden"><div id="planSaveBar" class="bg-emerald-500 h-full w-0 transition-all"></div></div>
+                    <div id="planSaveStatus" class="text-[11px] text-slate-400"></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-1">
+                    <div class="text-xs text-slate-400 font-medium">Libero per spese variabili</div>
+                    <div id="planFree" class="text-lg font-bold text-indigo-400">€ 0,00</div>
+                    <div id="planFreeNote" class="text-[11px] text-slate-500">Stipendio meno tutte le spese fisse</div>
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4 h-fit">
+                    <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-indigo-400"></i> Nuova Spesa Fissa
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Nome</label>
+                            <input type="text" id="planName" placeholder="Es. Assicurazione Auto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Importo (€)</label>
+                                <input type="number" id="planAmount" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Frequenza</label>
+                                <select id="planFreq" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                                    <option value="monthly">Mensile</option>
+                                    <option value="quarterly">Trimestrale</option>
+                                    <option value="semiannual">Semestrale</option>
+                                    <option value="annual">Annuale</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Voce 50/30/20</label>
+                            <select id="planMacro" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                                <option value="need">Bisogno Essenziale</option>
+                                <option value="want">Svago / Desiderio</option>
+                                <option value="save">Risparmio / Accantonamento</option>
+                            </select>
+                        </div>
+                        <button onclick="addPlanFixed()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Aggiungi
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-3">
+                        <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-list text-indigo-400"></i> Spese Fisse
+                        </h3>
+                        <button id="planImportBtn" onclick="importPlanFromLegacy()" class="hidden px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition items-center gap-1.5">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Importa dal vecchio backup
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                                <tr>
+                                    <th class="py-3 px-3">Nome</th>
+                                    <th class="py-3 px-3">Voce</th>
+                                    <th class="py-3 px-3 text-right">Importo</th>
+                                    <th class="py-3 px-3 text-right">Al mese</th>
+                                    <th class="py-3 px-3 text-center">Azione</th>
+                                </tr>
+                            </thead>
+                            <tbody id="planTableBody" class="divide-y divide-slate-700/50"></tbody>
+                            <tfoot>
+                                <tr class="border-t-2 border-slate-700">
+                                    <td colspan="3" class="py-3 px-3 font-bold text-slate-100 uppercase text-xs">Totale mensile</td>
+                                    <td id="planTotalMonthly" class="py-3 px-3 text-right font-bold text-emerald-400">€ 0,00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="flex flex-wrap items-end gap-3 pt-3 border-t border-slate-700">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Mese del Budget</label>
+                            <input type="month" id="planBudgetMonth" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100">
+                        </div>
+                        <button onclick="addPlanToBudget()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> Aggiungi al Budget del mese
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Nel Budget vengono inserite come uscite le quote mensili (per le spese non mensili: importo diviso i mesi del periodo). Le voci già presenti con lo stesso nome non vengono duplicate.</p>
+                </div>
+            </div>
         </div>
 
         <!-- SECTION 2: PAC VANGUARD FTSE ALL-WORLD -->
@@ -302,7 +383,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-700">
                     <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
                         <div class="text-xs text-slate-400">Capitale Totale Versato</div>
                         <div id="pacTotalInvested" class="text-2xl font-bold text-slate-100 mt-1">€ 0.00</div>
@@ -320,6 +401,11 @@
                     <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
                         <div class="text-xs text-slate-400">Plusvalenza / Guadagno</div>
                         <div id="pacProfit" class="text-2xl font-bold text-indigo-400 mt-1">€ 0.00</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60">
+                        <div class="text-xs text-slate-400">Prezzo Medio di Acquisto</div>
+                        <div id="pacAvgPrice" class="text-2xl font-bold text-slate-100 mt-1">—</div>
+                        <div id="pacAvgNote" class="text-[11px] text-slate-500 mt-0.5"></div>
                     </div>
                 </div>
             </div>
@@ -340,8 +426,13 @@
                             <input type="number" id="pacAmount" placeholder="250.00" step="0.01" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Quote Acquistate (Opzionale)</label>
+                            <label class="block text-xs text-slate-400 mb-1">Quote Acquistate</label>
                             <input type="number" id="pacUnits" placeholder="2.15" step="0.001" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Prezzo per Quota (€)</label>
+                            <input type="number" id="pacPrice" placeholder="135.20" step="0.0001" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none">
+                            <p class="text-[11px] text-slate-500 mt-1">Compila le quote <u>oppure</u> il prezzo: l'altro valore viene calcolato dall'importo.</p>
                         </div>
                         <button onclick="addPacRate()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">
                             Aggiungi Versamento
@@ -387,6 +478,7 @@
                                 <th class="py-3 px-3">Data</th>
                                 <th class="py-3 px-3 text-right">Importo</th>
                                 <th class="py-3 px-3 text-right">Quote</th>
+                                <th class="py-3 px-3 text-right">Prezzo/quota</th>
                                 <th class="py-3 px-3 text-center">Azione</th>
                             </tr>
                         </thead>
@@ -514,6 +606,35 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-3">
+                        <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-indigo-400"></i> Spesa Carburante per Mese
+                        </h3>
+                        <select id="fuelAnCar" onchange="renderFuelAnalysis()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100"></select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Media mensile</div><div id="fuelAvgMonth" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Ultimi 12 mesi</div><div id="fuelLast12" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Prezzo medio al litro</div><div id="fuelAvgPrice" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                    </div>
+                    <div class="relative h-56"><canvas id="fuelMonthChart"></canvas></div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                                <tr>
+                                    <th class="py-3 px-3">Periodo</th>
+                                    <th class="py-3 px-3 text-right">Rifornimenti</th>
+                                    <th class="py-3 px-3 text-right">Litri</th>
+                                    <th class="py-3 px-3 text-right">Spesa</th>
+                                    <th class="py-3 px-3 text-right">€/L</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fuelMonthBody" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- SUBTAB 2: MANUTENZIONE -->
@@ -594,6 +715,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-3">
+                        <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-indigo-400"></i> Manutenzioni per Anno e Mese
+                        </h3>
+                        <select id="maintAnCar" onchange="renderMaintAnalysis()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100"></select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Anno corrente</div><div id="maintAnYear" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Media annua</div><div id="maintAnAvg" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60"><div class="text-[11px] text-slate-400">Totale complessivo</div><div id="maintAnTotal" class="text-sm sm:text-base font-bold text-slate-100">—</div></div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                                <tr>
+                                    <th class="py-3 px-3">Periodo</th>
+                                    <th class="py-3 px-3 text-right">Interventi</th>
+                                    <th class="py-3 px-3 text-right">Costo</th>
+                                    <th class="py-3 px-3">Dettaglio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintAnBody" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -613,11 +761,17 @@
                             <span class="text-xs text-slate-400 block">Totale Patrimonio (tutti i conti)</span>
                             <span id="contiTotal" class="text-3xl font-bold text-emerald-400">€ 0,00</span>
                             <span id="contiCount" class="text-xs text-slate-400 block mt-0.5">0 conti</span>
+                            <span id="contiDelta" class="text-xs block mt-0.5"></span>
                         </div>
                     </div>
-                    <button onclick="openContoModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2">
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openTransferModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs font-semibold rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-right-left"></i> Giroconto
+                        </button>
+                        <button onclick="openContoModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Aggiungi Conto
                     </button>
+                    </div>
                 </div>
             </div>
 
@@ -663,6 +817,65 @@
                     <p id="contiChartEmpty" class="text-xs text-slate-500 text-center hidden">Nessun dato da mostrare.</p>
                 </div>
             </div>
+            <!-- Storico patrimonio -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-indigo-400"></i> Storico Patrimonio
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="saveSnapshotNow()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-camera"></i> Registra mese corrente
+                        </button>
+                        <button onclick="openSnapModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-plus"></i> Aggiungi / modifica mese
+                        </button>
+                    </div>
+                </div>
+                <p id="contiHistNudge" class="hidden text-xs text-amber-400"></p>
+                <div class="relative h-56"><canvas id="contiHistChart"></canvas></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                            <tr>
+                                <th class="py-3 px-3">Mese</th>
+                                <th class="py-3 px-3 text-right">Patrimonio</th>
+                                <th class="py-3 px-3 text-right">Variazione</th>
+                                <th class="py-3 px-3 text-right">%</th>
+                                <th class="py-3 px-3 text-center">Azione</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contiHistBody" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Giroconti -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-right-left text-indigo-400"></i> Giroconti
+                    </h3>
+                    <button onclick="openTransferModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Nuovo giroconto
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase border-b border-slate-700">
+                            <tr>
+                                <th class="py-3 px-3">Data</th>
+                                <th class="py-3 px-3">Da → A</th>
+                                <th class="py-3 px-3 text-right">Importo</th>
+                                <th class="py-3 px-3">Note</th>
+                                <th class="py-3 px-3 text-center">Azione</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferBody" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
         <div id="section-settings" class="tab-content hidden space-y-6">
@@ -739,16 +952,36 @@
                 </div>
             </div>
 
+            <!-- Backup Online -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
+                <div class="flex flex-wrap justify-between items-start gap-3">
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i> Backup Online (JSON)
+                    </h2>
+                    <button id="btnOnlineBackup" onclick="createOnlineBackup()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Crea backup ora
+                    </button>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Copie complete dei tuoi dati salvate nel tuo spazio privato su Firebase. Vengono conservate le ultime 15; una copia automatica viene creata all'accesso se l'ultima ha più di 7 giorni. Prima di ogni ripristino viene salvata una copia di sicurezza dello stato attuale.
+                </p>
+                <div id="onlineBackupList" class="space-y-2"></div>
+            </div>
+
         </div>
 
     </main>
 
     <!-- MOBILE BOTTOM NAVIGATION BAR -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-md border-t border-slate-700 z-50 px-2 py-2">
-        <div class="grid grid-cols-5 text-center">
+        <div class="grid grid-cols-6 text-center">
             <button onclick="switchTab('budget')" id="mob-tab-budget" class="mob-nav-btn text-indigo-400 flex flex-col items-center gap-1 py-1">
                 <i class="fa-solid fa-wallet text-base"></i>
                 <span class="text-[10px] font-medium">Budget</span>
+            </button>
+            <button onclick="switchTab('plan')" id="mob-tab-plan" class="mob-nav-btn text-slate-400 flex flex-col items-center gap-1 py-1">
+                <i class="fa-solid fa-scale-balanced text-base"></i>
+                <span class="text-[10px] font-medium">50/30/20</span>
             </button>
             <button onclick="switchTab('pac')" id="mob-tab-pac" class="mob-nav-btn text-slate-400 flex flex-col items-center gap-1 py-1">
                 <i class="fa-solid fa-chart-line text-base"></i>
@@ -823,6 +1056,43 @@
         </div>
     </div>
 
+    <!-- MODAL: GIROCONTO -->
+    <div id="transferModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4">
+            <h3 class="text-base font-bold text-slate-100 flex items-center gap-2"><i class="fa-solid fa-right-left text-indigo-400"></i> Nuovo Giroconto</h3>
+            <div class="space-y-3">
+                <div><label class="block text-xs text-slate-400 mb-1">Dal conto</label><select id="trFrom" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></select></div>
+                <div><label class="block text-xs text-slate-400 mb-1">Al conto</label><select id="trTo" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></select></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs text-slate-400 mb-1">Importo (€)</label><input type="number" id="trAmount" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Data</label><input type="date" id="trDate" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></div>
+                </div>
+                <div><label class="block text-xs text-slate-400 mb-1">Note (opzionale)</label><input type="text" id="trNote" placeholder="Es. Accantono per vacanze" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeTransferModal()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
+                <button onclick="saveTransfer()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Esegui Giroconto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SALDI DEL MESE (STORICO) -->
+    <div id="snapModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-base font-bold text-slate-100 flex items-center gap-2"><i class="fa-solid fa-calendar-plus text-indigo-400"></i> Saldi del Mese</h3>
+            <p class="text-xs text-slate-400">Inserisci il saldo di ogni conto alla fine del mese scelto. Per il mese corrente i saldi dei conti vengono aggiornati; per i mesi passati si modifica solo lo storico.</p>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Mese</label>
+                <input type="month" id="snapMonth" onchange="buildSnapRows()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div id="snapRows" class="space-y-2"></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeSnapModal()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
+                <button onclick="saveSnap()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Salva Mese</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: MODIFICA GENERICA -->
     <div id="editModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
@@ -877,35 +1147,6 @@
         </div>
     </div>
 
-    <!-- MODAL: AGGIUNGI SALVADANAIO -->
-    <div id="piggyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 space-y-4">
-            <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-piggy-bank text-indigo-400"></i> Nuovo Salvadanaio / Obiettivo
-            </h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Nome Obiettivo</label>
-                    <input type="text" id="modalPiggyName" placeholder="Es. Assicurazione Auto, Fondo Emergenze" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Target (€)</label>
-                        <input type="number" id="modalPiggyTarget" placeholder="1000" step="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Quota Iniziale (€)</label>
-                        <input type="number" id="modalPiggyCurrent" placeholder="200" step="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100">
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closePiggyModal()" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Annulla</button>
-                <button onclick="saveNewPiggy()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl">Crea Salvadanaio</button>
-            </div>
-        </div>
-    </div>
-
     <!-- LOGIN OVERLAY -->
     <div id="loginOverlay" class="hidden fixed inset-0 z-[60] bg-slate-900 flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-8 text-center space-y-5">
@@ -931,7 +1172,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc, collection, getDocs, deleteDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'finance-fleet-app';
         // =====================================================================
@@ -960,12 +1201,11 @@
                 { id: '3', date: '2026-10', desc: 'Spesa Supermercato', amount: 350, type: 'expense', category: 'need' },
                 { id: '4', date: '2026-10', desc: 'Cena fuori e Cinema', amount: 120, type: 'expense', category: 'want' }
             ],
-            piggy: [
-                { id: '1', name: 'Fondo Emergenze', target: 3000, current: 1500 },
-                { id: '2', name: 'Assicurazione & Bollo Auto', target: 800, current: 450 }
-            ],
             pac: [],
             pacValue: null,
+            plan: { salary: 0, ratios: { need: 50, want: 30, save: 20 }, fixed: [] },
+            contiHistory: [],
+            transfers: [],
             cars: [
                 { id: 'c1', model: 'Fiat Panda 1.2 GPL', plate: 'GA123AB', km: 98000 }
             ],
@@ -988,7 +1228,7 @@
             try { localStorage.setItem(LOCAL_KEY, JSON.stringify(window.appState)); } catch (e) {}
         }
 
-        let db, auth, documentRef, unsubSnap = null;
+        let db, auth, documentRef, unsubSnap = null, autoBackupChecked = false;
 
         if (!cloudEnabled) {
             console.warn("Firebase non configurato: modalità solo locale.");
@@ -1082,12 +1322,14 @@
                     if (snap.exists()) {
                         const data = snap.data();
                         if (data.budget) window.appState.budget = data.budget;
-                        if (data.piggy) window.appState.piggy = data.piggy;
                         if (data.pac) window.appState.pac = data.pac;
                         if (data.cars) window.appState.cars = data.cars;
                         if (data.fuelLogs) window.appState.fuelLogs = data.fuelLogs;
                         if (data.maintLogs) window.appState.maintLogs = data.maintLogs;
                         if (data.conti) window.appState.conti = data.conti;
+                        if (data.contiHistory) window.appState.contiHistory = data.contiHistory;
+                        if (data.transfers) window.appState.transfers = data.transfers;
+                        if (data.plan) window.appState.plan = data.plan;
                         if (data.pacValue !== undefined) window.appState.pacValue = data.pacValue;
                     } else {
                         saveToCloud();
@@ -1095,6 +1337,10 @@
                     saveLocal();
                     renderAll();
                     updateSyncBadge("Cloud Sincronizzato", "success");
+                    if (!autoBackupChecked) {
+                        autoBackupChecked = true;
+                        window.cloudBackup.autoIfDue().catch(e => console.warn('Backup automatico non riuscito', e));
+                    }
                 }, 
                 (err) => {
                     console.error("Firestore sync error:", err);
@@ -1121,6 +1367,54 @@
         }
 
         window.saveToCloud = saveToCloud;
+
+        // CLOUD_BACKUP_START
+        const BACKUP_MAX = 15;
+        const BACKUP_EVERY_MS = 7 * 24 * 3600 * 1000;
+        const cb = {
+            available() { return cloudEnabled && !!db && !!auth && !!auth.currentUser; },
+            ref() { return collection(db, 'users', auth.currentUser.uid, 'backups'); },
+            async list() {
+                if (!cb.available()) return [];
+                const snap = await getDocs(query(cb.ref(), orderBy('createdAt', 'desc'), limit(BACKUP_MAX + 5)));
+                return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            },
+            async create(label) {
+                if (!cb.available()) throw new Error('Cloud non disponibile');
+                const st = window.appState;
+                const data = JSON.stringify(st);
+                if (data.length > 900000) throw new Error('Dati troppo grandi per un backup online (oltre 900 KB).');
+                const id = String(Date.now());
+                await setDoc(doc(db, 'users', auth.currentUser.uid, 'backups', id), {
+                    createdAt: new Date().toISOString(),
+                    label: label || 'Manuale',
+                    size: data.length,
+                    counts: {
+                        budget: (st.budget || []).length, conti: (st.conti || []).length,
+                        fuel: (st.fuelLogs || []).length, maint: (st.maintLogs || []).length, pac: (st.pac || []).length
+                    },
+                    data
+                });
+                // conserva solo gli ultimi BACKUP_MAX
+                const all = await cb.list();
+                for (const old of all.slice(BACKUP_MAX)) await cb.remove(old.id);
+                return id;
+            },
+            async remove(id) {
+                await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'backups', id));
+            },
+            async autoIfDue() {
+                if (!cb.available()) return;
+                const st = window.appState;
+                const has = (st.budget || []).length + (st.conti || []).length + (st.fuelLogs || []).length + (st.maintLogs || []).length + (st.pac || []).length;
+                if (!has) return;
+                const last = (await cb.list())[0];
+                if (last && Date.now() - new Date(last.createdAt).getTime() < BACKUP_EVERY_MS) return;
+                await cb.create('Automatico (settimanale)');
+            }
+        };
+        window.cloudBackup = cb;
+        // CLOUD_BACKUP_END
 
         function updateSyncBadge(text, state) {
             const badge = document.getElementById('syncBadge');
@@ -1177,6 +1471,7 @@
 
             const mobNav = document.getElementById(`mob-tab-${tabId}`);
             if (mobNav) mobNav.classList.add('text-indigo-400');
+            if (tabId === 'settings' && typeof renderOnlineBackups === 'function') renderOnlineBackups();
         }
 
         function switchFleetSubTab(subTab) {
@@ -1195,78 +1490,70 @@
         // RENDER ALL
         function renderAll() {
             renderBudgetSection();
-            renderPiggyGrid();
             renderPacSection();
             renderFleetSection();
             renderContiSection();
+            renderPlanSection();
         }
 
         // RENDER BUDGET
         function renderBudgetSection() {
             const selectedMonth = document.getElementById('budgetMonthPicker').value || curMonthStr;
             const items = (window.appState.budget || []).filter(i => i.date === selectedMonth);
+            items.sort((a, b) => (a.type === 'income' ? 0 : 1) - (b.type === 'income' ? 0 : 1) || (parseFloat(b.amount) || 0) - (parseFloat(a.amount) || 0));
 
             let income = 0, expense = 0;
-            let needSpent = 0, wantSpent = 0, saveSpent = 0;
-
             const tbody = document.getElementById('budgetTableBody');
             tbody.innerHTML = '';
 
             if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Nessun movimento inserito per questo mese</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">Nessun movimento per questo mese. Aggiungi entrate e uscite, oppure usa "Copia mese precedente".</td></tr>`;
             } else {
                 items.forEach((item) => {
                     const amt = parseFloat(item.amount) || 0;
-                    if (item.type === 'income') {
-                        income += amt;
-                    } else {
-                        expense += amt;
-                        if (item.category === 'need') needSpent += amt;
-                        if (item.category === 'want') wantSpent += amt;
-                        if (item.category === 'save') saveSpent += amt;
-                    }
-
+                    const isIn = item.type === 'income';
+                    if (isIn) income += amt; else expense += amt;
                     const row = document.createElement('tr');
                     row.className = "border-b border-slate-700/30 hover:bg-slate-700/20 transition";
                     row.innerHTML = `
                         <td class="py-3 px-3 font-medium text-slate-200">${escHtml(item.desc)}</td>
-                        <td class="py-3 px-3">
-                            <span class="px-2 py-0.5 rounded text-[11px] ${item.category === 'need' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : item.category === 'want' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
-                                ${item.category === 'need' ? 'Bisogno' : item.category === 'want' ? 'Svago' : 'Risparmio'}
-                            </span>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[11px] ${isIn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">${isIn ? 'Entrata' : 'Uscita'}</span></td>
+                        <td class="py-3 px-3 text-right font-semibold whitespace-nowrap ${isIn ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${isIn ? '+' : '-'} € ${amt.toFixed(2)}
                         </td>
-                        <td class="py-3 px-3 text-right font-semibold ${item.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${item.type === 'income' ? '+' : '-'} € ${amt.toFixed(2)}
-                        </td>
-                        <td class="py-3 px-3 text-center">
-                            <button onclick="openEdit('budget','${item.id}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button><button onclick="removeBudget('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="fa-solid fa-trash"></i></button>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <button onclick="openEdit('budget','${item.id}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button><button onclick="removeBudget('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
             }
 
+            const left = income - expense;
             document.getElementById('monthIncome').textContent = `€ ${income.toFixed(2)}`;
             document.getElementById('monthExpense').textContent = `€ ${expense.toFixed(2)}`;
-            document.getElementById('monthNet').textContent = `€ ${(income - expense).toFixed(2)}`;
-            document.getElementById('txCount').textContent = `${items.length} operazioni`;
+            const netEl = document.getElementById('monthNet');
+            netEl.textContent = `${left < 0 ? '-' : ''}€ ${Math.abs(left).toFixed(2)}`;
+            netEl.className = `text-base sm:text-lg font-bold ${left < 0 ? 'text-rose-400' : 'text-indigo-400'}`;
+            document.getElementById('txCount').textContent = `${items.length} ${items.length === 1 ? 'voce' : 'voci'}`;
+        }
 
-            // 50/30/20 Calculations
-            const needTarget = income * 0.50;
-            const wantTarget = income * 0.30;
-            const saveTarget = income * 0.20;
-
-            document.getElementById('needTarget').textContent = `Target: € ${needTarget.toFixed(0)}`;
-            document.getElementById('wantTarget').textContent = `Target: € ${wantTarget.toFixed(0)}`;
-            document.getElementById('saveTarget').textContent = `Target: € ${saveTarget.toFixed(0)}`;
-
-            document.getElementById('needActual').textContent = `€ ${needSpent.toFixed(2)}`;
-            document.getElementById('wantActual').textContent = `€ ${wantSpent.toFixed(2)}`;
-            document.getElementById('saveActual').textContent = `€ ${saveSpent.toFixed(2)}`;
-
-            document.getElementById('needBar').style.width = `${Math.min(100, (needSpent / (needTarget || 1)) * 100)}%`;
-            document.getElementById('wantBar').style.width = `${Math.min(100, (wantSpent / (wantTarget || 1)) * 100)}%`;
-            document.getElementById('saveBar').style.width = `${Math.min(100, (saveSpent / (saveTarget || 1)) * 100)}%`;
+        function copyPrevMonth() {
+            const month = document.getElementById('budgetMonthPicker').value || curMonthStr;
+            const [y, m] = month.split('-').map(Number);
+            const pd = new Date(y, m - 2, 1);
+            const prevKey = `${pd.getFullYear()}-${String(pd.getMonth() + 1).padStart(2, '0')}`;
+            const all = window.appState.budget || [];
+            const src = all.filter(i => i.date === prevKey);
+            if (!src.length) { showToast(`Nessuna voce nel mese precedente (${prevKey}).`, 'error'); return; }
+            const have = new Set(all.filter(i => i.date === month).map(i => `${i.type}|${i.desc}`));
+            const toAdd = src.filter(i => !have.has(`${i.type}|${i.desc}`));
+            if (!toAdd.length) { showToast('Le voci del mese precedente sono già presenti.', 'error'); return; }
+            if (!confirm(`Copiare ${toAdd.length} voci da ${prevKey} a ${month}?\nPotrai poi modificare gli importi che cambiano.`)) return;
+            toAdd.forEach((i, k) => window.appState.budget.push({ ...i, id: `${Date.now()}-${k}`, date: month }));
+            renderBudgetSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(`${toAdd.length} voci copiate.`);
         }
 
         function addTransaction() {
@@ -1274,7 +1561,6 @@
             const desc = document.getElementById('txDesc').value.trim();
             const amount = parseFloat(document.getElementById('txAmount').value);
             const type = document.getElementById('txType').value;
-            const category = document.getElementById('txCategory').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
                 showToast("Inserisci un'etichetta ed un importo valido.", "error");
@@ -1286,15 +1572,15 @@
                 date: month,
                 desc,
                 amount,
-                type,
-                category
+                type
             });
 
             document.getElementById('txDesc').value = '';
             document.getElementById('txAmount').value = '';
+            document.getElementById('txDesc').focus();
             renderBudgetSection();
             if (window.saveToCloud) window.saveToCloud();
-            showToast("Transazione salvata!");
+            showToast(type === "income" ? "Entrata salvata!" : "Uscita salvata!");
         }
 
         function removeBudget(id) {
@@ -1302,69 +1588,6 @@
             renderBudgetSection();
             if (window.saveToCloud) window.saveToCloud();
             showToast("Movimento rimosso.");
-        }
-
-        // SALVADANAI / SINKING FUNDS
-        function renderPiggyGrid() {
-            const list = window.appState.piggy || [];
-            const container = document.getElementById('piggyGrid');
-            container.innerHTML = '';
-
-            list.forEach((p, idx) => {
-                const pct = Math.min(100, Math.round((p.current / (p.target || 1)) * 100));
-                const card = document.createElement('div');
-                card.className = "bg-slate-900/60 p-4 rounded-xl border border-slate-700/60 space-y-3";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="font-bold text-sm text-slate-100">${escHtml(p.name)}</span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="openEdit('piggy','${p.id}')" class="text-slate-500 hover:text-indigo-400 text-xs" title="Modifica"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="removePiggy(${idx})" class="text-slate-500 hover:text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400">Accumulato: € ${p.current}</span>
-                        <span class="text-slate-300">Target: € ${p.target}</span>
-                    </div>
-                    <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-                        <div class="bg-indigo-500 h-full" style="width: ${pct}%"></div>
-                    </div>
-                    <div class="flex gap-2 pt-1">
-                        <button onclick="depositPiggy(${idx}, 50)" class="w-full py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded text-indigo-400 font-medium">+ €50</button>
-                        <button onclick="depositPiggy(${idx}, 100)" class="w-full py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs rounded text-indigo-400 font-medium">+ €100</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function depositPiggy(idx, val) {
-            window.appState.piggy[idx].current += val;
-            renderPiggyGrid();
-            if (window.saveToCloud) window.saveToCloud();
-            showToast(`Versati €${val} nel salvadanaio!`);
-        }
-
-        function removePiggy(idx) {
-            window.appState.piggy.splice(idx, 1);
-            renderPiggyGrid();
-            if (window.saveToCloud) window.saveToCloud();
-        }
-
-        function openPiggyModal() { document.getElementById('piggyModal').classList.remove('hidden'); }
-        function closePiggyModal() { document.getElementById('piggyModal').classList.add('hidden'); }
-        
-        function saveNewPiggy() {
-            const name = document.getElementById('modalPiggyName').value.trim();
-            const target = parseFloat(document.getElementById('modalPiggyTarget').value) || 0;
-            const current = parseFloat(document.getElementById('modalPiggyCurrent').value) || 0;
-
-            if (!name || target <= 0) return;
-
-            window.appState.piggy.push({ id: Date.now().toString(), name, target, current });
-            closePiggyModal();
-            renderPiggyGrid();
-            if (window.saveToCloud) window.saveToCloud();
         }
 
         // PAC VANGUARD
@@ -1388,14 +1611,34 @@
                 <tr>
                     <td class="py-3 px-3">${escHtml(i.date)}</td>
                     <td class="py-3 px-3 text-right font-semibold text-slate-100">€ ${(parseFloat(i.amount) || 0).toFixed(2)}</td>
-                    <td class="py-3 px-3 text-right text-slate-400">${i.units ? Number(i.units) : '-'}</td>
+                    <td class="py-3 px-3 text-right text-slate-400">${i.units ? Number(Number(i.units).toFixed(4)) : '-'}</td>
+                    <td class="py-3 px-3 text-right text-slate-400">${Number(i.units) > 0 ? '€ ' + ((parseFloat(i.amount) || 0) / Number(i.units)).toFixed(2) : '-'}</td>
                     <td class="py-3 px-3 text-center whitespace-nowrap">
                         <button onclick="openEdit('pac','${i.id}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button>
                         <button onclick="removePac('${i.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button>
                     </td>
-                </tr>`).join('') : '<tr><td colspan="4" class="text-center py-6 text-slate-500">Nessun versamento. Registra il primo PAC dal modulo a sinistra.</td></tr>';
+                </tr>`).join('') : '<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessun versamento. Registra il primo PAC dal modulo a sinistra.</td></tr>';
 
             document.getElementById('pacTotalInvested').textContent = `€ ${totalInvested.toFixed(2)}`;
+
+            // Prezzo medio di acquisto = totale versato / totale quote (solo versamenti con quote)
+            let unitsAmt = 0, unitsTot = 0, noUnits = 0;
+            list.forEach(i => {
+                const u = parseFloat(i.units) || 0;
+                if (u > 0) { unitsAmt += parseFloat(i.amount) || 0; unitsTot += u; } else { noUnits++; }
+            });
+            const avgEl = document.getElementById('pacAvgPrice');
+            const avgNote = document.getElementById('pacAvgNote');
+            if (unitsTot > 0) {
+                avgEl.textContent = `€ ${(unitsAmt / unitsTot).toFixed(2)}`;
+                let note = `${Number(unitsTot.toFixed(4))} quote`;
+                if (noUnits) note += ` · ${noUnits} versam. senza quote esclusi`;
+                else if (hasVal) note += ` · prezzo attuale ≈ € ${(curVal / unitsTot).toFixed(2)}`;
+                avgNote.textContent = note;
+            } else {
+                avgEl.textContent = '—';
+                avgNote.textContent = list.length ? 'Inserisci quote o prezzo per quota' : '';
+            }
             const valEl = document.getElementById('pacCurrentValue');
             const dateEl = document.getElementById('pacValueDate');
             const profEl = document.getElementById('pacProfit');
@@ -1480,12 +1723,16 @@
         function addPacRate() {
             const date = document.getElementById('pacDate').value;
             const amount = parseFloat(document.getElementById('pacAmount').value);
-            const units = parseFloat(document.getElementById('pacUnits').value) || 0;
+            let units = parseFloat(document.getElementById('pacUnits').value) || 0;
+            const price = parseFloat(document.getElementById('pacPrice').value) || 0;
 
-            if (isNaN(amount) || amount <= 0) return;
+            if (isNaN(amount) || amount <= 0) { showToast('Inserisci un importo valido.', 'error'); return; }
+            if (!units && price > 0) units = amount / price;
 
             window.appState.pac.push({ id: Date.now().toString(), date, amount, units });
             document.getElementById('pacAmount').value = '';
+            document.getElementById('pacUnits').value = '';
+            document.getElementById('pacPrice').value = '';
             renderPacSection();
             if (window.saveToCloud) window.saveToCloud();
             showToast("Quota PAC salvata!");
@@ -1696,7 +1943,6 @@
                     { key: 'desc', label: 'Descrizione', type: 'text', required: true },
                     { key: 'amount', label: 'Importo (€)', type: 'number', step: '0.01', required: true, positive: true },
                     { key: 'type', label: 'Tipo', type: 'select', options: () => [['income', 'Entrata (+)'], ['expense', 'Uscita (-)']] },
-                    { key: 'category', label: 'Categoria 50/30/20', type: 'select', options: () => [['need', 'Bisogno Essenziale (50%)'], ['want', 'Svago / Desiderio (30%)'], ['save', 'Risparmio / Accantonamento (20%)']] },
                     { key: 'date', label: 'Mese', type: 'month', required: true }
                 ]
             },
@@ -1731,6 +1977,15 @@
                     { key: 'notes', label: 'Note', type: 'text' }
                 ]
             },
+            planFixed: {
+                title: 'Modifica spesa fissa', getList: () => getPlan().fixed, refresh: () => renderPlanSection(),
+                fields: [
+                    { key: 'name', label: 'Nome', type: 'text', required: true },
+                    { key: 'amount', label: 'Importo (€)', type: 'number', step: '0.01', required: true, positive: true },
+                    { key: 'freq', label: 'Frequenza', type: 'select', options: () => Object.entries(PLAN_FREQ).map(([k, v]) => [k, v.label]) },
+                    { key: 'macro', label: 'Voce 50/30/20', type: 'select', options: () => Object.entries(PLAN_MACRO).map(([k, v]) => [k, v.label]) }
+                ]
+            },
             pac: {
                 title: 'Modifica versamento PAC', list: 'pac', refresh: () => renderPacSection(),
                 fields: [
@@ -1739,20 +1994,13 @@
                     { key: 'units', label: 'Quote Acquistate', type: 'number', step: '0.001' }
                 ]
             },
-            piggy: {
-                title: 'Modifica salvadanaio', list: 'piggy', refresh: () => renderPiggyGrid(),
-                fields: [
-                    { key: 'name', label: 'Nome Obiettivo', type: 'text', required: true },
-                    { key: 'target', label: 'Target (€)', type: 'number', step: '1', required: true, positive: true },
-                    { key: 'current', label: 'Accumulato (€)', type: 'number', step: '0.01' }
-                ]
-            }
         };
         let editCtx = null;
+        const schemaList = sc => (sc.getList ? sc.getList() : (window.appState[sc.list] || []));
 
         function openEdit(kind, id) {
             const schema = EDIT_SCHEMAS[kind];
-            const item = (window.appState[schema.list] || []).find(x => String(x.id) === String(id));
+            const item = schemaList(schema).find(x => String(x.id) === String(id));
             if (!item) { showToast('Elemento non trovato.', 'error'); return; }
             editCtx = { kind, id };
 
@@ -1799,7 +2047,7 @@
         function saveEdit() {
             if (!editCtx) return;
             const schema = EDIT_SCHEMAS[editCtx.kind];
-            const item = (window.appState[schema.list] || []).find(x => String(x.id) === String(editCtx.id));
+            const item = schemaList(schema).find(x => String(x.id) === String(editCtx.id));
             if (!item) { closeEdit(); return; }
 
             const values = {};
@@ -1824,6 +2072,630 @@
             showToast('Modifica salvata!');
         }
 
+
+        // ===== BACKUP ONLINE (UI) =====
+        let onlineBackups = [];
+
+        async function renderOnlineBackups() {
+            const box = document.getElementById('onlineBackupList');
+            if (!box) return;
+            const cbk = window.cloudBackup;
+            if (!cbk || !cbk.available()) {
+                box.innerHTML = '<p class="text-xs text-slate-500">Disponibile dopo l\'accesso con Google (cloud attivo).</p>';
+                return;
+            }
+            box.innerHTML = '<p class="text-xs text-slate-500">Caricamento...</p>';
+            try {
+                onlineBackups = await cbk.list();
+            } catch (e) {
+                console.error(e);
+                box.innerHTML = '<p class="text-xs text-rose-400">Impossibile leggere i backup online (controlla le regole di Firestore).</p>';
+                return;
+            }
+            if (!onlineBackups.length) {
+                box.innerHTML = '<p class="text-xs text-slate-500">Nessun backup online. Premi "Crea backup ora".</p>';
+                return;
+            }
+            box.innerHTML = onlineBackups.slice(0, 15).map(b => {
+                const d = new Date(b.createdAt).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
+                const c = b.counts || {};
+                return `
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900/60 border border-slate-700/60 rounded-xl p-3">
+                    <div>
+                        <div class="text-sm text-slate-100 font-medium">${d} <span class="text-xs text-slate-400 font-normal">· ${escHtml(b.label)}</span></div>
+                        <div class="text-[11px] text-slate-500">${c.budget || 0} movimenti · ${c.conti || 0} conti · ${c.fuel || 0} rifornimenti · ${c.maint || 0} manutenzioni · ${c.pac || 0} PAC · ${Math.max(1, Math.round((b.size || 0) / 1024))} KB</div>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <button onclick="restoreOnlineBackup('${b.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg">Ripristina</button>
+                        <button onclick="downloadOnlineBackup('${b.id}')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-lg" title="Scarica JSON"><i class="fa-solid fa-download"></i></button>
+                        <button onclick="deleteOnlineBackup('${b.id}')" class="px-3 py-1.5 bg-slate-700 hover:bg-rose-600 text-slate-200 font-semibold rounded-lg" title="Elimina"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function createOnlineBackup() {
+            const cbk = window.cloudBackup;
+            if (!cbk || !cbk.available()) { showToast('Accedi con Google per usare il backup online.', 'error'); return; }
+            const btn = document.getElementById('btnOnlineBackup');
+            btn.disabled = true;
+            try {
+                await cbk.create('Manuale');
+                showToast('Backup online creato!');
+                await renderOnlineBackups();
+            } catch (e) {
+                console.error(e);
+                showToast('Backup non riuscito: ' + (e.message || e.code || 'errore'), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function restoreOnlineBackup(id) {
+            const b = onlineBackups.find(x => x.id === id);
+            if (!b) return;
+            const when = new Date(b.createdAt).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
+            if (!confirm(`Ripristinare il backup del ${when}?\nI dati attuali verranno sostituiti (ne salvo prima una copia di sicurezza).`)) return;
+            try {
+                const parsed = JSON.parse(b.data);
+                await window.cloudBackup.create('Prima del ripristino');
+                Object.assign(window.appState, parsed);
+                renderAll();
+                if (window.saveToCloud) window.saveToCloud();
+                showToast('Backup ripristinato!');
+                await renderOnlineBackups();
+            } catch (e) {
+                console.error(e);
+                showToast('Ripristino non riuscito: ' + (e.message || 'dati non validi'), 'error');
+            }
+        }
+
+        function downloadOnlineBackup(id) {
+            const b = onlineBackups.find(x => x.id === id);
+            if (!b) return;
+            const a = document.createElement('a');
+            a.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(b.data));
+            a.setAttribute('download', `Finance_Fleet_Backup_${String(b.createdAt).slice(0, 10)}.json`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        async function deleteOnlineBackup(id) {
+            if (!confirm('Eliminare questo backup online?')) return;
+            try {
+                await window.cloudBackup.remove(id);
+                showToast('Backup eliminato.');
+                await renderOnlineBackups();
+            } catch (e) {
+                console.error(e);
+                showToast('Eliminazione non riuscita.', 'error');
+            }
+        }
+
+
+        // ===== HELPER MESI =====
+        const MONTHS_IT = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+        function monthLabel(key) {
+            const [y, m] = String(key).split('-');
+            const i = parseInt(m, 10) - 1;
+            return (MONTHS_IT[i] || key) + ' ' + y;
+        }
+        function monthShort(key) {
+            const [y, m] = String(key).split('-');
+            const i = parseInt(m, 10) - 1;
+            return (MONTHS_IT[i] ? MONTHS_IT[i].slice(0, 3) : m) + ' ' + String(y).slice(2);
+        }
+        function nowMonthKey() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+        const r2c = n => Math.round((Number(n) || 0) * 100) / 100;
+        const fmtSigned = n => `${n >= 0 ? '+' : '-'}${fmtEur(Math.abs(n))}`;
+        const chartTextColor = () => document.documentElement.getAttribute('data-theme') === 'light' ? '#334155' : '#cbd5e1';
+        const chartGridColor = () => document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(100,116,139,0.2)' : 'rgba(148,163,184,0.15)';
+
+        // ===== CONTI: STORICO E GIROCONTI =====
+        function ensureContiState() {
+            const st = window.appState;
+            if (!Array.isArray(st.conti)) st.conti = [];
+            if (!Array.isArray(st.contiHistory)) st.contiHistory = [];
+            if (!Array.isArray(st.transfers)) st.transfers = [];
+        }
+        function snapshotItems() {
+            return window.appState.conti.map(c => ({ id: c.id, name: c.name, type: c.type, balance: r2c(c.balance) }));
+        }
+        function upsertSnapshot(month, items) {
+            ensureContiState();
+            const total = r2c(items.reduce((s, i) => s + (Number(i.balance) || 0), 0));
+            const h = window.appState.contiHistory;
+            const ex = h.find(x => x.month === month);
+            if (ex) { ex.items = items; ex.total = total; ex.updatedAt = new Date().toISOString(); }
+            else h.push({ month, items, total, updatedAt: new Date().toISOString() });
+            h.sort((a, b) => a.month.localeCompare(b.month));
+        }
+        function autoSnapshot() {
+            ensureContiState();
+            if (!window.appState.conti.length) return;
+            upsertSnapshot(nowMonthKey(), snapshotItems());
+        }
+        function saveSnapshotNow() {
+            ensureContiState();
+            if (!window.appState.conti.length) { showToast('Aggiungi prima almeno un conto.', 'error'); return; }
+            autoSnapshot();
+            renderContiSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(`Registrato ${monthLabel(nowMonthKey())}.`);
+        }
+
+        let contiHistChart = null;
+        function renderContiHistory() {
+            ensureContiState();
+            const st = window.appState;
+            const hist = [...st.contiHistory].sort((a, b) => a.month.localeCompare(b.month));
+            const nowKey = nowMonthKey();
+
+            const nudge = document.getElementById('contiHistNudge');
+            if (st.conti.length && !hist.some(h => h.month === nowKey)) {
+                nudge.textContent = `Non hai ancora registrato ${monthLabel(nowKey)}: aggiorna i saldi dei conti oppure premi "Registra mese corrente".`;
+                nudge.classList.remove('hidden');
+            } else nudge.classList.add('hidden');
+
+            // variazione nell'intestazione
+            const prevSnap = [...hist].filter(h => h.month < nowKey).pop();
+            const deltaEl = document.getElementById('contiDelta');
+            const total = st.conti.reduce((s, c) => s + (Number(c.balance) || 0), 0);
+            if (prevSnap) {
+                const d = r2c(total - prevSnap.total);
+                const pct = prevSnap.total ? (d / prevSnap.total * 100) : 0;
+                deltaEl.textContent = `${fmtSigned(d)} (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%) rispetto a ${monthLabel(prevSnap.month)}`;
+                deltaEl.className = `text-xs block mt-0.5 ${d >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            } else { deltaEl.textContent = ''; }
+
+            const body = document.getElementById('contiHistBody');
+            if (!hist.length) {
+                body.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessuno storico. Modifica un saldo oppure premi "Registra mese corrente".</td></tr>';
+            } else {
+                body.innerHTML = hist.map((h, i) => {
+                    const prev = hist[i - 1];
+                    const d = prev ? r2c(h.total - prev.total) : null;
+                    const pct = prev && prev.total ? d / prev.total * 100 : null;
+                    const cls = d === null ? 'text-slate-500' : (d >= 0 ? 'text-emerald-400' : 'text-rose-400');
+                    return `<tr>
+                        <td class="py-3 px-3 whitespace-nowrap">${monthLabel(h.month)}</td>
+                        <td class="py-3 px-3 text-right font-semibold text-slate-100 whitespace-nowrap">${fmtEur(h.total)}</td>
+                        <td class="py-3 px-3 text-right whitespace-nowrap ${cls}">${d === null ? '—' : fmtSigned(d)}</td>
+                        <td class="py-3 px-3 text-right whitespace-nowrap ${cls}">${pct === null ? '—' : (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%'}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <button onclick="openSnapModal('${h.month}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="removeSnapshot('${h.month}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                }).reverse().join('');
+            }
+
+            const canvas = document.getElementById('contiHistChart');
+            if (contiHistChart) { contiHistChart.destroy(); contiHistChart = null; }
+            if (!hist.length || typeof Chart === 'undefined') { canvas.parentElement.classList.add('hidden'); return; }
+            canvas.parentElement.classList.remove('hidden');
+            contiHistChart = new Chart(canvas, {
+                type: 'line',
+                data: { labels: hist.map(h => monthShort(h.month)), datasets: [{ label: 'Patrimonio', data: hist.map(h => h.total), borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.15)', fill: true, tension: 0.3, pointRadius: 3 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${fmtEur(ctx.parsed.y)}` } } },
+                    scales: {
+                        x: { ticks: { color: chartTextColor() }, grid: { display: false } },
+                        y: { ticks: { color: chartTextColor(), callback: v => '€ ' + Number(v).toLocaleString('it-IT') }, grid: { color: chartGridColor() } }
+                    }
+                }
+            });
+        }
+
+        function prefillBalance(month, c) {
+            if (month === nowMonthKey()) return r2c(c.balance);
+            const before = [...window.appState.contiHistory].filter(h => h.month < month).sort((a, b) => a.month.localeCompare(b.month)).pop();
+            const it = before && before.items.find(i => i.id === c.id);
+            return it ? it.balance : r2c(c.balance);
+        }
+        function openSnapModal(month) {
+            ensureContiState();
+            if (!window.appState.conti.length && !window.appState.contiHistory.length) { showToast('Aggiungi prima almeno un conto.', 'error'); return; }
+            document.getElementById('snapMonth').value = month || nowMonthKey();
+            buildSnapRows();
+            document.getElementById('snapModal').classList.remove('hidden');
+        }
+        function closeSnapModal() { document.getElementById('snapModal').classList.add('hidden'); }
+        function buildSnapRows() {
+            ensureContiState();
+            const m = document.getElementById('snapMonth').value;
+            const ex = window.appState.contiHistory.find(h => h.month === m);
+            const rows = [];
+            const seen = new Set();
+            window.appState.conti.forEach(c => {
+                const si = ex && ex.items.find(i => i.id === c.id);
+                rows.push({ id: c.id, name: c.name, type: c.type, balance: si ? si.balance : prefillBalance(m, c), stale: false });
+                seen.add(c.id);
+            });
+            if (ex) ex.items.forEach(i => { if (!seen.has(i.id)) rows.push({ ...i, stale: true }); });
+            const box = document.getElementById('snapRows');
+            box.innerHTML = '';
+            rows.forEach(r => {
+                const t = CONTI_TYPES[r.type] || { label: r.type || '', color: '#64748b' };
+                const wrap = document.createElement('div');
+                wrap.className = 'flex items-center justify-between gap-3';
+                wrap.innerHTML = `<div class="min-w-0"><div class="text-sm text-slate-100 truncate">${escHtml(r.name)}${r.stale ? ' <span class="text-[10px] text-slate-500">(conto eliminato)</span>' : ''}</div><div class="text-[11px]" style="color:${t.color}">${escHtml(t.label)}</div></div>`;
+                const inp = document.createElement('input');
+                inp.type = 'number'; inp.step = '0.01';
+                inp.className = 'snap-input w-36 bg-slate-900 border border-slate-700 rounded-xl p-2 text-sm text-right text-slate-100';
+                inp.dataset.id = r.id; inp.dataset.name = r.name; inp.dataset.type = r.type || ''; inp.dataset.stale = r.stale ? '1' : '';
+                inp.value = r.balance;
+                wrap.appendChild(inp);
+                box.appendChild(wrap);
+            });
+            if (!rows.length) box.innerHTML = '<p class="text-xs text-slate-500">Nessun conto.</p>';
+        }
+        function saveSnap() {
+            const month = document.getElementById('snapMonth').value;
+            if (!month) { showToast('Scegli il mese.', 'error'); return; }
+            if (month > nowMonthKey()) { showToast('Non puoi registrare un mese futuro.', 'error'); return; }
+            const inputs = [...document.querySelectorAll('#snapRows .snap-input')];
+            const items = [];
+            for (const inp of inputs) {
+                const v = parseFloat(inp.value);
+                if (isNaN(v)) { showToast(`Saldo non valido: ${inp.dataset.name}`, 'error'); return; }
+                items.push({ id: inp.dataset.id, name: inp.dataset.name, type: inp.dataset.type, balance: r2c(v) });
+            }
+            if (month === nowMonthKey()) {
+                items.forEach(i => { const c = window.appState.conti.find(x => x.id === i.id); if (c) c.balance = i.balance; });
+            }
+            upsertSnapshot(month, items);
+            closeSnapModal();
+            renderContiSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(`${monthLabel(month)} salvato.`);
+        }
+        function removeSnapshot(month) {
+            if (!confirm(`Eliminare lo storico di ${monthLabel(month)}? (i saldi attuali dei conti non cambiano)`)) return;
+            window.appState.contiHistory = window.appState.contiHistory.filter(h => h.month !== month);
+            renderContiSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Mese eliminato dallo storico.');
+        }
+
+        // --- Giroconti ---
+        function openTransferModal() {
+            ensureContiState();
+            const cs = window.appState.conti;
+            if (cs.length < 2) { showToast('Servono almeno due conti per fare un giroconto.', 'error'); return; }
+            const opts = cs.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.name)} — ${fmtEur(c.balance)}</option>`).join('');
+            document.getElementById('trFrom').innerHTML = opts;
+            document.getElementById('trTo').innerHTML = opts;
+            document.getElementById('trTo').selectedIndex = 1;
+            document.getElementById('trAmount').value = '';
+            document.getElementById('trNote').value = '';
+            document.getElementById('trDate').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('transferModal').classList.remove('hidden');
+        }
+        function closeTransferModal() { document.getElementById('transferModal').classList.add('hidden'); }
+        function saveTransfer() {
+            ensureContiState();
+            const fromId = document.getElementById('trFrom').value;
+            const toId = document.getElementById('trTo').value;
+            const amount = parseFloat(document.getElementById('trAmount').value);
+            const date = document.getElementById('trDate').value || new Date().toISOString().slice(0, 10);
+            const note = document.getElementById('trNote').value.trim();
+            if (fromId === toId) { showToast('Scegli due conti diversi.', 'error'); return; }
+            if (isNaN(amount) || amount <= 0) { showToast('Inserisci un importo maggiore di zero.', 'error'); return; }
+            const A = window.appState.conti.find(c => c.id === fromId);
+            const B = window.appState.conti.find(c => c.id === toId);
+            if (!A || !B) { showToast('Conto non trovato.', 'error'); return; }
+            if (amount > (Number(A.balance) || 0) && !confirm(`L'importo supera il saldo di "${A.name}" (${fmtEur(A.balance)}). Procedere comunque?`)) return;
+            A.balance = r2c(A.balance - amount);
+            B.balance = r2c(B.balance + amount);
+            window.appState.transfers.push({ id: Date.now().toString(), date, from: A.id, to: B.id, fromName: A.name, toName: B.name, amount: r2c(amount), note });
+            autoSnapshot();
+            closeTransferModal();
+            renderContiSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Giroconto eseguito!');
+        }
+        function renderTransfers() {
+            ensureContiState();
+            const list = [...window.appState.transfers].sort((a, b) => String(b.date).localeCompare(String(a.date)) || String(b.id).localeCompare(String(a.id)));
+            const body = document.getElementById('transferBody');
+            if (!list.length) { body.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessun giroconto registrato.</td></tr>'; return; }
+            const nm = (id, fallback) => { const c = window.appState.conti.find(x => x.id === id); return c ? c.name : (fallback || '—'); };
+            body.innerHTML = list.map(t => `<tr>
+                <td class="py-3 px-3 whitespace-nowrap">${escHtml(new Date(t.date + 'T00:00:00').toLocaleDateString('it-IT'))}</td>
+                <td class="py-3 px-3">${escHtml(nm(t.from, t.fromName))} <i class="fa-solid fa-arrow-right text-slate-500 mx-1 text-xs"></i> ${escHtml(nm(t.to, t.toName))}</td>
+                <td class="py-3 px-3 text-right font-semibold text-slate-100 whitespace-nowrap">${fmtEur(t.amount)}</td>
+                <td class="py-3 px-3 text-slate-400">${escHtml(t.note || '')}</td>
+                <td class="py-3 px-3 text-center"><button onclick="removeTransfer('${t.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`).join('');
+        }
+        function removeTransfer(id) {
+            const t = window.appState.transfers.find(x => String(x.id) === String(id));
+            if (!t) return;
+            if (!confirm('Eliminare questo giroconto dall\'elenco?')) return;
+            const A = window.appState.conti.find(c => c.id === t.from);
+            const B = window.appState.conti.find(c => c.id === t.to);
+            if (A && B && confirm('Vuoi anche annullare l\'effetto sui saldi dei due conti?\nOK = ripristina i saldi\nAnnulla = lascia i saldi com\'è')) {
+                A.balance = r2c(A.balance + t.amount);
+                B.balance = r2c(B.balance - t.amount);
+                autoSnapshot();
+            }
+            window.appState.transfers = window.appState.transfers.filter(x => String(x.id) !== String(id));
+            renderContiSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Giroconto eliminato.');
+        }
+
+        // ===== PIANO 50/30/20 (spese fisse) =====
+        const PLAN_FREQ = { monthly: { label: 'Mensile', div: 1 }, quarterly: { label: 'Trimestrale', div: 3 }, semiannual: { label: 'Semestrale', div: 6 }, annual: { label: 'Annuale', div: 12 } };
+        const PLAN_MACRO = {
+            need: { label: 'Bisogno', cls: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' },
+            want: { label: 'Svago', cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+            save: { label: 'Risparmio', cls: 'bg-teal-500/10 text-teal-400 border border-teal-500/20' }
+        };
+        function getPlan() {
+            const st = window.appState;
+            if (!st.plan || typeof st.plan !== 'object') st.plan = {};
+            const p = st.plan;
+            p.salary = parseFloat(p.salary) || 0;
+            p.ratios = Object.assign({ need: 50, want: 30, save: 20 }, p.ratios || {});
+            if (!Array.isArray(p.fixed)) p.fixed = [];
+            return p;
+        }
+        const planMonthly = f => (parseFloat(f.amount) || 0) / ((PLAN_FREQ[f.freq] || PLAN_FREQ.monthly).div);
+
+        function savePlanSettings() {
+            const p = getPlan();
+            p.salary = Math.max(0, parseFloat(document.getElementById('planSalary').value) || 0);
+            p.ratios = {
+                need: Math.max(0, parseFloat(document.getElementById('planRNeed').value) || 0),
+                want: Math.max(0, parseFloat(document.getElementById('planRWant').value) || 0),
+                save: Math.max(0, parseFloat(document.getElementById('planRSave').value) || 0)
+            };
+            renderPlanSection();
+            if (window.saveToCloud) window.saveToCloud();
+        }
+
+        function renderPlanSection() {
+            const p = getPlan();
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el && document.activeElement !== el) el.value = v; };
+            setVal('planSalary', p.salary || '');
+            setVal('planRNeed', p.ratios.need); setVal('planRWant', p.ratios.want); setVal('planRSave', p.ratios.save);
+            const bm = document.getElementById('planBudgetMonth');
+            if (bm && !bm.value) bm.value = nowMonthKey();
+
+            const sumR = p.ratios.need + p.ratios.want + p.ratios.save;
+            const warn = document.getElementById('planRatioWarn');
+            if (Math.round(sumR) !== 100) { warn.textContent = `Le percentuali sommano ${sumR}%: di solito dovrebbero fare 100%.`; warn.classList.remove('hidden'); } else warn.classList.add('hidden');
+
+            const used = { need: 0, want: 0, save: 0 };
+            p.fixed.forEach(f => { if (used[f.macro] !== undefined) used[f.macro] += planMonthly(f); });
+            const totalFixed = used.need + used.want + used.save;
+            const fmt0 = n => n.toLocaleString('it-IT', { maximumFractionDigits: 0 });
+
+            [['need', 'Need', true, 'bg-indigo-500'], ['want', 'Want', true, 'bg-amber-500'], ['save', 'Save', false, 'bg-emerald-500']].forEach(([k, K, cap, base]) => {
+                const target = p.salary * p.ratios[k] / 100;
+                document.getElementById(`plan${K}Target`).textContent = `${p.ratios[k]}% · € ${fmt0(target)}`;
+                document.getElementById(`plan${K}Used`).textContent = fmtEur(used[k]);
+                const over = cap && used[k] > target + 0.005;
+                const bar = document.getElementById(`plan${K}Bar`);
+                bar.className = `${over ? 'bg-rose-500' : base} h-full transition-all`;
+                bar.style.width = `${target > 0 ? Math.min(100, used[k] / target * 100) : 0}%`;
+                const st = document.getElementById(`plan${K}Status`);
+                if (p.salary <= 0) { st.textContent = 'Inserisci lo stipendio'; st.className = 'text-[11px] text-slate-500'; return; }
+                const share = (used[k] / p.salary * 100).toFixed(0);
+                if (cap) {
+                    if (over) { st.textContent = `Sforato di € ${fmt0(used[k] - target)} · ${share}% dello stipendio`; st.className = 'text-[11px] text-rose-400'; }
+                    else { st.textContent = `Rimangono € ${fmt0(target - used[k])} · ${share}% dello stipendio`; st.className = 'text-[11px] text-slate-400'; }
+                } else {
+                    if (used[k] >= target - 0.005) { st.textContent = `Obiettivo raggiunto · ${share}% dello stipendio`; st.className = 'text-[11px] text-emerald-400'; }
+                    else { st.textContent = `Mancano € ${fmt0(target - used[k])} al target · ${share}% dello stipendio`; st.className = 'text-[11px] text-amber-400'; }
+                }
+            });
+
+            const free = p.salary - totalFixed;
+            const freeEl = document.getElementById('planFree');
+            freeEl.textContent = `${free < 0 ? '-' : ''}${fmtEur(Math.abs(free))}`;
+            freeEl.className = `text-lg font-bold ${free < 0 ? 'text-rose-400' : 'text-indigo-400'}`;
+            document.getElementById('planFreeNote').textContent = p.salary > 0 ? `${(totalFixed / p.salary * 100).toFixed(0)}% dello stipendio è già impegnato in spese fisse` : 'Stipendio meno tutte le spese fisse';
+
+            const order = { need: 0, want: 1, save: 2 };
+            const rows = [...p.fixed].sort((a, b) => (order[a.macro] ?? 3) - (order[b.macro] ?? 3) || planMonthly(b) - planMonthly(a));
+            const body = document.getElementById('planTableBody');
+            body.innerHTML = rows.length ? rows.map(f => {
+                const m = PLAN_MACRO[f.macro] || PLAN_MACRO.need;
+                const fr = PLAN_FREQ[f.freq] || PLAN_FREQ.monthly;
+                return `<tr>
+                    <td class="py-3 px-3 font-medium text-slate-200">${escHtml(f.name)}</td>
+                    <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[11px] ${m.cls}">${m.label}</span></td>
+                    <td class="py-3 px-3 text-right whitespace-nowrap">${fmtEur(f.amount)} <span class="text-[11px] text-slate-500">${fr.label.toLowerCase()}</span></td>
+                    <td class="py-3 px-3 text-right font-semibold text-slate-100 whitespace-nowrap">${fmtEur(planMonthly(f))}</td>
+                    <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <button onclick="openEdit('planFixed','${f.id}')" class="text-slate-500 hover:text-indigo-400 p-1 mr-1" title="Modifica"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="removePlanFixed('${f.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Elimina"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessuna spesa fissa. Aggiungine una dal modulo a sinistra.</td></tr>';
+            document.getElementById('planTotalMonthly').textContent = fmtEur(totalFixed);
+
+            const lg = window.appState.legacy;
+            const imp = document.getElementById('planImportBtn');
+            const canImport = !!(lg && Array.isArray(lg.quotas) && lg.quotas.length);
+            imp.classList.toggle('hidden', !canImport);
+            imp.classList.toggle('flex', canImport);
+        }
+
+        function addPlanFixed() {
+            const name = document.getElementById('planName').value.trim();
+            const amount = parseFloat(document.getElementById('planAmount').value);
+            const freq = document.getElementById('planFreq').value;
+            const macro = document.getElementById('planMacro').value;
+            if (!name || isNaN(amount) || amount <= 0) { showToast('Inserisci nome e importo validi.', 'error'); return; }
+            getPlan().fixed.push({ id: Date.now().toString(), name, amount: r2c(amount), freq, macro });
+            document.getElementById('planName').value = '';
+            document.getElementById('planAmount').value = '';
+            renderPlanSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Spesa fissa aggiunta!');
+        }
+        function removePlanFixed(id) {
+            if (!confirm('Eliminare questa spesa fissa?')) return;
+            const p = getPlan();
+            p.fixed = p.fixed.filter(f => String(f.id) !== String(id));
+            renderPlanSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Spesa fissa rimossa.');
+        }
+        function addPlanToBudget() {
+            const p = getPlan();
+            const month = document.getElementById('planBudgetMonth').value || nowMonthKey();
+            if (!p.fixed.length) { showToast('Non ci sono spese fisse da aggiungere.', 'error'); return; }
+            const descOf = f => (f.freq && f.freq !== 'monthly') ? `${f.name} (quota mensile)` : f.name;
+            const have = new Set((window.appState.budget || []).filter(i => i.date === month && i.type === 'expense').map(i => i.desc));
+            const toAdd = p.fixed.filter(f => !have.has(descOf(f)));
+            if (!toAdd.length) { showToast(`Le spese fisse sono già nel Budget di ${monthLabel(month)}.`, 'error'); return; }
+            const tot = toAdd.reduce((s, f) => s + planMonthly(f), 0);
+            if (!confirm(`Aggiungere ${toAdd.length} uscite (totale ${fmtEur(tot)}) al Budget di ${monthLabel(month)}?`)) return;
+            toAdd.forEach((f, k) => window.appState.budget.push({ id: `${Date.now()}-${k}`, date: month, desc: descOf(f), amount: r2c(planMonthly(f)), type: 'expense' }));
+            renderBudgetSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(`${toAdd.length} uscite aggiunte al Budget di ${monthLabel(month)}.`);
+        }
+        function importPlanFromLegacy() {
+            const lg = window.appState.legacy;
+            if (!lg || !Array.isArray(lg.quotas) || !lg.quotas.length) { showToast('Nessun dato del vecchio backup disponibile.', 'error'); return; }
+            const p = getPlan();
+            if (p.fixed.length && !confirm('Sostituire le spese fisse attuali con quelle del vecchio backup?')) return;
+            window.appState.plan = legacyToPlan(lg);
+            renderPlanSection();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast('Spese fisse importate dal vecchio backup.');
+        }
+
+        // ===== PARCO AUTO: ANALISI =====
+        let fuelChartInstance = null;
+        function fillCarFilter(el) {
+            const keep = el.value || 'all';
+            const cars = window.appState.cars || [];
+            el.innerHTML = `<option value="all">Tutti i veicoli</option>` + cars.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.model)} (${escHtml(c.plate)})</option>`).join('');
+            el.value = [...el.options].some(o => o.value === keep) ? keep : 'all';
+            return el.value;
+        }
+        const validDate = d => /^\d{4}-\d{2}/.test(String(d || ''));
+
+        function renderFuelAnalysis() {
+            const carId = fillCarFilter(document.getElementById('fuelAnCar'));
+            const logs = (window.appState.fuelLogs || []).filter(l => validDate(l.date) && (carId === 'all' || String(l.carId) === String(carId)));
+            const byMonth = {};
+            logs.forEach(l => {
+                const k = String(l.date).slice(0, 7);
+                const m = byMonth[k] || (byMonth[k] = { n: 0, liters: 0, total: 0, litersForPrice: 0, totalForPrice: 0 });
+                const tot = parseFloat(l.total) || 0, lit = parseFloat(l.liters) || 0;
+                m.n++; m.total += tot; m.liters += lit;
+                if (lit > 0) { m.litersForPrice += lit; m.totalForPrice += tot; }
+            });
+            const keys = Object.keys(byMonth).sort();
+
+            // statistiche
+            const grand = keys.reduce((a, k) => { a.total += byMonth[k].total; a.lp += byMonth[k].litersForPrice; a.tp += byMonth[k].totalForPrice; return a; }, { total: 0, lp: 0, tp: 0 });
+            let avgMonth = null;
+            if (keys.length) {
+                const [y1, m1] = keys[0].split('-').map(Number);
+                const lastKey = keys[keys.length - 1];
+                const [yl, ml] = lastKey.split('-').map(Number);
+                const span = Math.max(1, (yl - y1) * 12 + (ml - m1) + 1);
+                avgMonth = grand.total / span;
+            }
+            // ultimi 12 mesi (calendario)
+            const last12 = [];
+            const d0 = new Date(); d0.setDate(1);
+            for (let i = 11; i >= 0; i--) { const d = new Date(d0.getFullYear(), d0.getMonth() - i, 1); last12.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`); }
+            const last12Total = last12.reduce((s, k) => s + (byMonth[k] ? byMonth[k].total : 0), 0);
+            document.getElementById('fuelAvgMonth').textContent = avgMonth === null ? '—' : fmtEur(avgMonth);
+            document.getElementById('fuelLast12').textContent = keys.length ? fmtEur(last12Total) : '—';
+            document.getElementById('fuelAvgPrice').textContent = grand.lp > 0 ? `€ ${(grand.tp / grand.lp).toFixed(3)}` : '—';
+
+            // grafico
+            const canvas = document.getElementById('fuelMonthChart');
+            if (fuelChartInstance) { fuelChartInstance.destroy(); fuelChartInstance = null; }
+            if (!keys.length || typeof Chart === 'undefined') { canvas.parentElement.classList.add('hidden'); }
+            else {
+                canvas.parentElement.classList.remove('hidden');
+                fuelChartInstance = new Chart(canvas, {
+                    type: 'bar',
+                    data: { labels: last12.map(monthShort), datasets: [{ label: 'Spesa carburante', data: last12.map(k => r2c(byMonth[k] ? byMonth[k].total : 0)), backgroundColor: '#6366f1', borderRadius: 4 }] },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${fmtEur(ctx.parsed.y)}` } } },
+                        scales: {
+                            x: { ticks: { color: chartTextColor() }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: chartTextColor(), callback: v => '€ ' + v }, grid: { color: chartGridColor() } }
+                        }
+                    }
+                });
+            }
+
+            // tabella raggruppata per anno
+            const body = document.getElementById('fuelMonthBody');
+            if (!keys.length) { body.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-500">Nessun rifornimento registrato.</td></tr>'; return; }
+            const years = [...new Set(keys.map(k => k.slice(0, 4)))].sort().reverse();
+            const priceOf = (lp, tp) => lp > 0 ? `€ ${(tp / lp).toFixed(3)}` : '-';
+            let html = '';
+            years.forEach(y => {
+                const ks = keys.filter(k => k.startsWith(y)).sort().reverse();
+                const t = ks.reduce((a, k) => { const m = byMonth[k]; a.n += m.n; a.l += m.liters; a.t += m.total; a.lp += m.litersForPrice; a.tp += m.totalForPrice; return a; }, { n: 0, l: 0, t: 0, lp: 0, tp: 0 });
+                html += `<tr class="bg-slate-900/50 font-bold text-slate-100"><td class="py-2.5 px-3">${y}</td><td class="py-2.5 px-3 text-right">${t.n}</td><td class="py-2.5 px-3 text-right">${t.l.toFixed(1)}</td><td class="py-2.5 px-3 text-right">${fmtEur(t.t)}</td><td class="py-2.5 px-3 text-right">${priceOf(t.lp, t.tp)}</td></tr>`;
+                ks.forEach(k => {
+                    const m = byMonth[k];
+                    html += `<tr><td class="py-2.5 px-3 pl-6">${MONTHS_IT[parseInt(k.slice(5), 10) - 1]}</td><td class="py-2.5 px-3 text-right">${m.n}</td><td class="py-2.5 px-3 text-right">${m.liters.toFixed(1)}</td><td class="py-2.5 px-3 text-right font-semibold text-slate-100">${fmtEur(m.total)}</td><td class="py-2.5 px-3 text-right text-slate-400">${priceOf(m.litersForPrice, m.totalForPrice)}</td></tr>`;
+                });
+            });
+            body.innerHTML = html;
+        }
+
+        function renderMaintAnalysis() {
+            const carId = fillCarFilter(document.getElementById('maintAnCar'));
+            const logs = (window.appState.maintLogs || []).filter(l => validDate(l.date) && (carId === 'all' || String(l.carId) === String(carId)));
+            const byYear = {};
+            logs.forEach(l => {
+                const y = String(l.date).slice(0, 4), k = String(l.date).slice(0, 7);
+                const Y = byYear[y] || (byYear[y] = { n: 0, cost: 0, months: {} });
+                const M = Y.months[k] || (Y.months[k] = { n: 0, cost: 0, items: [] });
+                const c = parseFloat(l.cost) || 0;
+                Y.n++; Y.cost += c; M.n++; M.cost += c; M.items.push(l.category || 'Altro');
+            });
+            const years = Object.keys(byYear).sort().reverse();
+            const total = years.reduce((s, y) => s + byYear[y].cost, 0);
+            const curY = String(new Date().getFullYear());
+            document.getElementById('maintAnYear').textContent = years.length ? fmtEur(byYear[curY] ? byYear[curY].cost : 0) : '—';
+            document.getElementById('maintAnAvg').textContent = years.length ? fmtEur(total / years.length) : '—';
+            document.getElementById('maintAnTotal').textContent = years.length ? fmtEur(total) : '—';
+
+            const body = document.getElementById('maintAnBody');
+            if (!years.length) { body.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-500">Nessuna manutenzione registrata.</td></tr>'; return; }
+            let html = '';
+            years.forEach(y => {
+                const Y = byYear[y];
+                html += `<tr class="bg-slate-900/50 font-bold text-slate-100"><td class="py-2.5 px-3">${y}</td><td class="py-2.5 px-3 text-right">${Y.n}</td><td class="py-2.5 px-3 text-right">${fmtEur(Y.cost)}</td><td></td></tr>`;
+                Object.keys(Y.months).sort().reverse().forEach(k => {
+                    const M = Y.months[k];
+                    html += `<tr><td class="py-2.5 px-3 pl-6">${MONTHS_IT[parseInt(k.slice(5), 10) - 1]}</td><td class="py-2.5 px-3 text-right">${M.n}</td><td class="py-2.5 px-3 text-right font-semibold text-slate-100">${fmtEur(M.cost)}</td><td class="py-2.5 px-3 text-xs text-slate-400">${escHtml(M.items.join(', '))}</td></tr>`;
+                });
+            });
+            body.innerHTML = html;
+        }
+
+        // le tabelle esistenti aggiornano anche le analisi
+        const _renderFuelTableBase = renderFuelTable;
+        renderFuelTable = function () { _renderFuelTableBase(); renderFuelAnalysis(); };
+        const _renderMaintTableBase = renderMaintTable;
+        renderMaintTable = function () { _renderMaintTableBase(); renderMaintAnalysis(); };
+
         // ===== CONTI =====
         const CONTI_TYPES = {
             corrente:     { label: 'Conto Corrente', icon: 'fa-building-columns', color: '#6366f1' },
@@ -1846,6 +2718,8 @@
             const list = window.appState.conti || [];
             const total = list.reduce((s, c) => s + (Number(c.balance) || 0), 0);
 
+            renderContiHistory();
+            renderTransfers();
             document.getElementById('contiTotal').textContent = fmtEur(total);
             document.getElementById('contiTotalFoot').textContent = fmtEur(total);
             document.getElementById('contiCount').textContent = `${list.length} ${list.length === 1 ? 'conto' : 'conti'}`;
@@ -1945,6 +2819,7 @@
             } else {
                 window.appState.conti.push({ id: Date.now().toString(), type, name, balance, notes });
             }
+            autoSnapshot();
             closeContoModal();
             renderContiSection();
             if (window.saveToCloud) window.saveToCloud();
@@ -1954,6 +2829,7 @@
         function removeConto(id) {
             if (!confirm('Eliminare questo conto?')) return;
             window.appState.conti = (window.appState.conti || []).filter(c => c.id !== id);
+            autoSnapshot();
             renderContiSection();
             if (window.saveToCloud) window.saveToCloud();
             showToast('Conto rimosso.');
@@ -2005,13 +2881,29 @@
             return !hasNew && !!hasOld;
         }
 
+        function legacyToPlan(src) {
+            const fm = { monthly: 'monthly', quarterly: 'quarterly', semiannual: 'semiannual', annual: 'annual' };
+            const mm = { '50': 'need', '30': 'want', '20': 'save' };
+            const r = src.ratios || {};
+            const stamp = Date.now();
+            return {
+                salary: Number(src.salary) || 0,
+                ratios: { need: Number(r.r50) || 50, want: Number(r.r30) || 30, save: Number(r.r20) || 20 },
+                fixed: (src.quotas || []).map((q, i) => ({
+                    id: `q-${stamp}-${i}`, name: String(q.name || 'Spesa').trim(),
+                    amount: Math.round((Number(q.amount) || 0) * 100) / 100,
+                    freq: fm[q.freq] || 'monthly', macro: mm[String(q.macro)] || 'need'
+                }))
+            };
+        }
+
         function convertLegacyBackup(old, car) {
             const r2 = n => Math.round((Number(n) || 0) * 100) / 100;
             const todayIso = new Date().toISOString().slice(0, 10);
             let seq = 0;
             const nid = p => `${p}-${Date.now()}-${++seq}`;
 
-            const out = { budget: [], piggy: [], pac: [], pacValue: null, cars: [], fuelLogs: [], maintLogs: [] };
+            const out = { budget: [], pac: [], pacValue: null, cars: [], fuelLogs: [], maintLogs: [] };
 
             // Budget: da storico mensile (stipendio, spese fisse, spese variabili)
             const months = new Set();
@@ -2028,10 +2920,6 @@
             if (old.targetMonth && !months.has(old.targetMonth) && Number(old.salary) > 0)
                 out.budget.push({ id: nid('b'), date: old.targetMonth, desc: 'Stipendio', amount: r2(old.salary), type: 'income', category: 'save' });
 
-            // Salvadanai
-            (old.funds || []).forEach(f => out.piggy.push({
-                id: nid('p'), name: String(f.name || 'Fondo'), target: r2(f.target), current: r2(f.current)
-            }));
 
             // PAC: non importato (si riparte da zero); i dati originali restano in legacy.pac
 
@@ -2053,11 +2941,14 @@
                 }));
             }
 
+            // Scheda 50/30/20: stipendio, percentuali e spese fisse (quote)
+            if (Array.isArray(old.quotas) && old.quotas.length) out.plan = legacyToPlan(old);
+
             // Dati senza equivalente: conservati senza perdite
             out.legacy = {
                 importedAt: new Date().toISOString(),
                 salary: old.salary, targetMonth: old.targetMonth, ratios: old.ratios,
-                quotas: old.quotas || [], pac: old.pac || null,
+                quotas: old.quotas || [], funds: old.funds || [], pac: old.pac || null,
                 carCategories: (old.car && old.car.categories) || []
             };
             return out;
@@ -2074,7 +2965,7 @@
                     const parsed = JSON.parse(e.target.result);
 
                     if (isLegacyBackup(parsed)) {
-                        if (!confirm('Backup della versione precedente rilevato.\n\nVerranno SOSTITUITI budget, salvadanai, PAC e dati auto con quelli del file (i Conti non vengono toccati). Continuare?')) return;
+                        if (!confirm('Backup della versione precedente rilevato.\n\nVerranno SOSTITUITI budget, PAC, piano 50/30/20 e dati auto con quelli del file (i Conti non vengono toccati). Continuare?')) return;
                         let car = null;
                         if (parsed.car && ((parsed.car.fuel || []).length || (parsed.car.maintenance || []).length)) {
                             const model = prompt('Modello della tua auto (per i rifornimenti e le manutenzioni importati):', 'Auto');
@@ -2085,7 +2976,7 @@
                         Object.assign(window.appState, conv);
                         renderAll();
                         if (window.saveToCloud) window.saveToCloud();
-                        showToast(`Backup importato: ${conv.budget.length} movimenti, ${conv.fuelLogs.length} rifornimenti, ${conv.maintLogs.length} manutenzioni, ${conv.piggy.length} salvadanai.`);
+                        showToast(`Backup importato: ${conv.budget.length} movimenti, ${conv.fuelLogs.length} rifornimenti, ${conv.maintLogs.length} manutenzioni.`);
                     } else {
                         if (!confirm('Ripristinare questo backup? I dati attuali verranno sostituiti.')) return;
                         Object.assign(window.appState, parsed);
