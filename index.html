@@ -142,7 +142,8 @@
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 font-medium block">Mese di Riferimento</label>
-                        <input type="month" id="budgetMonthPicker" onchange="renderAll()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1 text-sm font-medium text-slate-100 focus:outline-none">
+                        <input type="month" id="budgetMonthPicker" onchange="window.budgetMonthTouched = true; renderAll()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1 text-sm font-medium text-slate-100 focus:outline-none">
+                        <span id="budgetCycleRange" class="text-[11px] text-slate-500 block mt-0.5"></span>
                     </div>
                 </div>
 
@@ -838,6 +839,7 @@
                         </button>
                     </div>
                 </div>
+                <p id="contiCycleNote" class="hidden text-xs text-slate-400"></p>
                 <p id="contiHistNudge" class="hidden text-xs text-amber-400"></p>
                 <div class="relative h-56"><canvas id="contiHistChart"></canvas></div>
                 <div class="overflow-x-auto">
@@ -934,6 +936,24 @@
                         </select>
                     </div>
                 </div>
+            </div>
+
+            <!-- Mese contabile -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
+                <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-check text-indigo-400"></i> Mese Contabile
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Se il tuo stipendio arriva a fine mese, puoi far iniziare il mese in quel giorno. Con il giorno 27, "Ottobre" va dal 27 settembre al 26 ottobre: lo stipendio del 27 ottobre conta per Novembre, sia nel Budget sia nello storico del patrimonio. Con 1 si usa il mese di calendario.
+                </p>
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Il mese inizia il giorno</label>
+                        <input type="number" id="cycleDayInput" min="1" max="28" step="1" class="w-28 w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <button onclick="saveCycleDay()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition">Salva</button>
+                </div>
+                <p id="cycleInfo" class="text-xs text-slate-500"></p>
             </div>
 
             <!-- Backup & Export Data Box -->
@@ -1209,6 +1229,7 @@
             ],
             pac: [],
             pacValue: null,
+            cycleDay: 1,
             plan: { salary: 0, ratios: { need: 50, want: 30, save: 20 }, fixed: [] },
             contiHistory: [],
             transfers: [],
@@ -1337,10 +1358,12 @@
                         if (data.transfers) window.appState.transfers = data.transfers;
                         if (data.plan) window.appState.plan = data.plan;
                         if (data.pacValue !== undefined) window.appState.pacValue = data.pacValue;
+                        if (data.cycleDay !== undefined) window.appState.cycleDay = data.cycleDay;
                     } else {
                         saveToCloud();
                     }
                     saveLocal();
+                    if (window.refreshDefaultMonth) window.refreshDefaultMonth();
                     renderAll();
                     updateSyncBadge("Cloud Sincronizzato", "success");
                     if (!autoBackupChecked) {
@@ -1448,10 +1471,9 @@
     <script>
         // Init Month Picker
         const today = new Date();
-        const curMonthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 
         window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('budgetMonthPicker').value = curMonthStr;
+            window.refreshDefaultMonth();
             document.getElementById('pacDate').valueAsDate = new Date();
             document.getElementById('fuelDate').valueAsDate = new Date();
             document.getElementById('maintDate').valueAsDate = new Date();
@@ -1500,16 +1522,19 @@
             renderFleetSection();
             renderContiSection();
             renderPlanSection();
+            renderCycleInfo();
         }
 
         // RENDER BUDGET
         function renderBudgetSection() {
-            const selectedMonth = document.getElementById('budgetMonthPicker').value || curMonthStr;
+            const selectedMonth = document.getElementById('budgetMonthPicker').value || getCurMonthStr();
             const items = (window.appState.budget || []).filter(i => i.date === selectedMonth);
             items.sort((a, b) => (a.type === 'income' ? 0 : 1) - (b.type === 'income' ? 0 : 1) || (parseFloat(b.amount) || 0) - (parseFloat(a.amount) || 0));
 
             let income = 0, expense = 0;
             fillTxAccountSelect(false);
+            const rangeEl = document.getElementById('budgetCycleRange');
+            if (rangeEl) rangeEl.textContent = getCycleDay() > 1 ? cycleRangeText(selectedMonth) : '';
             const tbody = document.getElementById('budgetTableBody');
             tbody.innerHTML = '';
 
@@ -1547,7 +1572,7 @@
         }
 
         function copyPrevMonth() {
-            const month = document.getElementById('budgetMonthPicker').value || curMonthStr;
+            const month = document.getElementById('budgetMonthPicker').value || getCurMonthStr();
             const [y, m] = month.split('-').map(Number);
             const pd = new Date(y, m - 2, 1);
             const prevKey = `${pd.getFullYear()}-${String(pd.getMonth() + 1).padStart(2, '0')}`;
@@ -1601,7 +1626,7 @@
         }
 
         function addTransaction() {
-            const month = document.getElementById('budgetMonthPicker').value || curMonthStr;
+            const month = document.getElementById('budgetMonthPicker').value || getCurMonthStr();
             const desc = document.getElementById('txDesc').value.trim();
             const amount = parseFloat(document.getElementById('txAmount').value);
             const type = document.getElementById('txType').value;
@@ -2248,9 +2273,57 @@
             const i = parseInt(m, 10) - 1;
             return (MONTHS_IT[i] ? MONTHS_IT[i].slice(0, 3) : m) + ' ' + String(y).slice(2);
         }
-        function nowMonthKey() {
-            const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        function nowMonthKey() { return cycleMonthKey(new Date()); }
+        function getCurMonthStr() { return cycleMonthKey(new Date()); }
+
+        // Mese contabile: se cycleDay = 27 il mese "Ottobre" va dal 27/09 al 26/10
+        function getCycleDay() {
+            const d = parseInt(window.appState && window.appState.cycleDay, 10);
+            return (d >= 2 && d <= 28) ? d : 1;
+        }
+        function cycleMonthKey(date) {
+            const cd = getCycleDay();
+            let y = date.getFullYear(), m = date.getMonth();
+            if (cd > 1 && date.getDate() >= cd) { m++; if (m > 11) { m = 0; y++; } }
+            return `${y}-${String(m + 1).padStart(2, '0')}`;
+        }
+        function cycleRange(key) {
+            const cd = getCycleDay();
+            const [y, m] = key.split('-').map(Number);
+            if (cd === 1) return { start: new Date(y, m - 1, 1), end: new Date(y, m, 0) };
+            return { start: new Date(y, m - 2, cd), end: new Date(y, m - 1, cd - 1) };
+        }
+        const fmtDM = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+        function cycleRangeText(key) {
+            const r = cycleRange(key);
+            return `dal ${fmtDM(r.start)} al ${fmtDM(r.end)}`;
+        }
+        window.budgetMonthTouched = false;
+        window.refreshDefaultMonth = function () {
+            const el = document.getElementById('budgetMonthPicker');
+            if (el && !window.budgetMonthTouched) el.value = getCurMonthStr();
+        };
+        function renderCycleInfo() {
+            const inp = document.getElementById('cycleDayInput');
+            if (inp && document.activeElement !== inp) inp.value = getCycleDay();
+            const info = document.getElementById('cycleInfo');
+            if (info) {
+                const key = nowMonthKey();
+                info.textContent = getCycleDay() === 1
+                    ? 'Impostazione attuale: mese di calendario (dal 1° all\'ultimo giorno).'
+                    : `Oggi siamo nel mese contabile di ${monthLabel(key)} (${cycleRangeText(key)}).`;
+            }
+        }
+        function saveCycleDay() {
+            const v = parseInt(document.getElementById('cycleDayInput').value, 10);
+            if (isNaN(v) || v < 1 || v > 28) { showToast('Inserisci un giorno da 1 a 28 (1 = mese di calendario).', 'error'); return; }
+            window.appState.cycleDay = v;
+            window.budgetMonthTouched = false;
+            window.refreshDefaultMonth();
+            const bm = document.getElementById('planBudgetMonth'); if (bm) bm.value = getCurMonthStr();
+            renderAll();
+            if (window.saveToCloud) window.saveToCloud();
+            showToast(v === 1 ? 'Mese di calendario impostato.' : `Il mese contabile ora inizia il giorno ${v}.`);
         }
         const r2c = n => Math.round((Number(n) || 0) * 100) / 100;
         const fmtSigned = n => `${n >= 0 ? '+' : '-'}${fmtEur(Math.abs(n))}`;
@@ -2298,7 +2371,18 @@
             const nowKey = nowMonthKey();
 
             const nudge = document.getElementById('contiHistNudge');
-            if (st.conti.length && !hist.some(h => h.month === nowKey)) {
+            const noteEl = document.getElementById('contiCycleNote');
+            const cd = getCycleDay();
+            if (cd > 1) {
+                noteEl.textContent = `Mese contabile dal ${cd} al ${cd - 1}: ora sei in ${monthLabel(nowKey)} (${cycleRangeText(nowKey)}). Registra i saldi di chiusura entro il giorno ${cd - 1}, prima dell'arrivo dello stipendio.`;
+                noteEl.classList.remove('hidden');
+            } else noteEl.classList.add('hidden');
+            const pm = new Date(...nowKey.split('-').map((v, i) => i === 0 ? Number(v) : Number(v) - 2), 1);
+            const prevKey = `${pm.getFullYear()}-${String(pm.getMonth() + 1).padStart(2, '0')}`;
+            if (cd > 1 && st.conti.length && hist.length && !hist.some(h => h.month === prevKey)) {
+                nudge.textContent = `Manca la chiusura di ${monthLabel(prevKey)} (saldi al ${fmtDM(cycleRange(prevKey).end)}). Inseriscila con "Aggiungi / modifica mese".`;
+                nudge.classList.remove('hidden');
+            } else if (cd === 1 && st.conti.length && !hist.some(h => h.month === nowKey)) {
                 nudge.textContent = `Non hai ancora registrato ${monthLabel(nowKey)}: aggiorna i saldi dei conti oppure premi "Registra mese corrente".`;
                 nudge.classList.remove('hidden');
             } else nudge.classList.add('hidden');
